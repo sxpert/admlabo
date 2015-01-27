@@ -1,10 +1,11 @@
 from django.core.management.base import BaseCommand, CommandError
 from django.core.exceptions import ObjectDoesNotExist
-from silabo.models import User, Group
-import sys
+from silabo.models import User, Group, MachineClass, Machine, NetworkIf, IPAddress, DomainName, Vlan
+import sys, hashlib
 sys.path.append ('/srv/progs/ipag')
 import directory as l
 import xmldb as x 
+d = l.Directory ()
 
 class Command(BaseCommand) :
 	help = 'Synchronizes the database from the LDAP server and the XML database'
@@ -12,12 +13,11 @@ class Command(BaseCommand) :
 	def log(self, message) :
 		self.stdout.write (message)
 
-	def group (self, group_data) :
-		self.log (repr(group_data))
-		if group_data is None :
+	def group (self, gd) :
+		if gd is None :
 			self.log ("group_data is None, aborting")
 			return
-		gidnumber = group_data['gidNumber']
+		gidnumber = gd['gidNumber']
 		if gidnumber is None :
 			self.log ("gidnumber is None, aborting")
 			return
@@ -36,57 +36,90 @@ class Command(BaseCommand) :
 			g = Group.objects.get(gidnumber = gidnumber)
 		except Group.DoesNotExist as e :
 			# group does not exists, add
-			self.log ("adding group "+str(gidnumber))
 			g = Group(gidnumber = gidnumber)
 			changed = True
-		else :
-			# group already exists, update
-			self.log ("updating group "+str(gidnumber))
 
-		if 'cn' not in group_data.keys() :
+		if 'cn' not in gd.keys() :
 			self.log ("problem, no name for group")
 			return
-		name = group_data['cn'][0]
+		name = gd['cn'][0]
 		if g.name != name :
 			g.name = name
 			changed = True
 			
 		description = None
-		if 'description' in group_data :
-			description = group_data['description'][0]
+		if 'description' in gd :
+			description = gd['description'][0]
 		if g.description != description :
 			g.description = description
+			changed = True
+
+		old_parent = None
+		if 'parent' in gd :
+			new_parent = gd['parent']
+			if g.parent is not None :
+				old_parent = g.parent.gidnumber
+			
+			if old_parent != new_parent :
+				p = None
+				try : 
+					p = Group.objects.get (gidnumber=new_parent)
+				except Group.DoesNotExist as e :
+					print "There is no group with gidnumber "+str(new_parent)
+					
+				if g.parent != p :
+					g.parent = p
+					changed = True
+
+		group_type = g.NORMAL_GROUP
+		if 'type' in gd :
+			if gd['type'] == 'SERVICE' :
+				group_type = g.SERVICE_GROUP
+			if gd['type'] == 'TEAM' :
+				group_type = g.TEAM_GROUP
+		if g.group_type != group_type :
+			g.group_type = group_type
 			changed = True
 
 		if changed :
 			g.save ()
 		
-			
 
+	# 'uid': ['cotere'], 
+	# 'objectClass': ['posixAccount', 'shadowAccount', 'inetOrgPerson'], 
+	# 'loginShell': ['/bin/bash'], 
+	# 'userPassword': ['{crypt}$1$qmktPDE5$Ct9TwmEpS/RNwhHzIo725.'], 
+	# 'uidNumber': ['281869'], 
+	# 'l': ['Saint Martin d Heres'], 
+	# 'gidNumber': ['3001'], 
+	# 'street': ['414 rue de la piscine'], 
+	# 'gecos': ['Remi Cote'], 
+	# 'sn': ['Cote'], 
+	# 'homeDirectory': ['/user/homedir/cotere'], 
+	# 'postalCode': ['38400'], 
+	# 'mail': ['Remi.Cote@obs.ujf-grenoble.fr'], 
+	# 'givenName': ['Remi'], 
+	# 'shadowLastChange': ['16405'], 
+	# 'shadowExpire': ['16860'], 
+	# 'cn': ['Remi Cote']
 
-	def user_add (self, user_data, xml_data) :
-		# 'uid': ['cotere'], 
-		# 'objectClass': ['posixAccount', 'shadowAccount', 'inetOrgPerson'], 
-		# 'loginShell': ['/bin/bash'], 
-		# 'userPassword': ['{crypt}$1$qmktPDE5$Ct9TwmEpS/RNwhHzIo725.'], 
-		# 'uidNumber': ['281869'], 
-		# 'l': ['Saint Martin d Heres'], 
-		# 'gidNumber': ['3001'], 
-		# 'street': ['414 rue de la piscine'], 
-		# 'gecos': ['Remi Cote'], 
-		# 'sn': ['Cote'], 
-		# 'homeDirectory': ['/user/homedir/cotere'], 
-		# 'postalCode': ['38400'], 
-		# 'mail': ['Remi.Cote@obs.ujf-grenoble.fr'], 
-		# 'givenName': ['Remi'], 
-		# 'shadowLastChange': ['16405'], 
-		# 'shadowExpire': ['16860'], 
-		# 'cn': ['Remi Cote']
+	def user (self, ud, xud) :
+				
+
+		pass
+		
+
+	def user_add (self, user_data, xml_data, groups) :
 
 		u = User(uidnumber = int(user_data['uidNumber'][0]))
 		u.login = user_data['uid'][0]
 		u.first_name = user_data['givenName'][0]
 		u.last_name = user_data['sn'][0]
+		if xml_data is not None :
+			if 'arrival_date' in xml_data.keys() :
+				u.arrival = xml_data['arrival_date']
+			if 'departure_date' in xml_data.keys() :
+				u.departure = xml_data['departure_date']
 
 		# email
 		if 'mail' in user_data.keys() :
@@ -94,10 +127,16 @@ class Command(BaseCommand) :
 		else :
 			u.mail = None
 		# 
-		
 		u.save()
+		
+		# setup groups
+		for g in groups :
+			gr = Group.objects.get (gidnumber = g)
+			if gr is not None :
+				u.groups.add (gr)
 
-	def user_update (self, user_data, xml_data, u) :
+
+	def user_update (self, user_data, xml_data, u, groups) :
 		uidnumber = int(user_data['uidNumber'][0])
 		changed = False
 		if u.uidnumber != uidnumber :
@@ -113,6 +152,7 @@ class Command(BaseCommand) :
 			changed = True
 		
 		if xml_data is not None :
+			# manager
 			old_manager = None
 			if u.manager is not None :
 				old_manager = u.manager.login
@@ -131,41 +171,73 @@ class Command(BaseCommand) :
 					u.manager = m
 					changed = True
 
+			# arrival date
+			if 'arrival_date' in xml_data.keys() :
+				if u.arrival != xml_data['arrival_date'] :
+					u.arrival = xml_data['arrival_date']
+					changed = True
+			# departure date
+			if 'departure_date' in xml_data.keys() :
+				if u.departure != xml_data['departure_date'] :
+					u.departure = xml_data['departure_date']
+					changed = True
+
+		# setup groups
+		# remove old groups
+		for g in u.groups.all() :
+			pass	 
+			#print g.gidnumber
+
+		# add new groups
+		for g in groups :			
+			gr = Group.objects.get (gidnumber = g)
+			if (gr is not None) and (gr not in u.groups.all()) :
+				u.groups.add (gr)
+				changed = True
+
 		if changed :
 			u.save()
 		
 
-	def handle (self, *args, **options) :
-		self.log('start synchronizing the database with the ldap')
-		d = l.Directory ()
-	
-		# groups
-		dgroups = d.get_groups ()
-#		xgroups = x.get_groups ()
+	#=============================================================================
+	#
+	# main functions
 
-		self.log(repr(dgroups))
+	def do_groups (self, dgroups, xgroups) :
 		for group in dgroups.keys() :
 			dn, group = d.get_group (dgroups[group])
 			self.log (dn)
-			self.group (group)
-			
-			
+			gid = int(group['gidNumber'][0])
+			if gid in xgroups.keys() :
+				xgroup = xgroups[gid]
+				group['parent'] = xgroup['parent']
+				group['type'] = xgroup['type']
+			else :
+				print "NOT FOUND IN XML DATABASE"
+			self.group (group)				
 
-		# users
-
-		dusers = d.get_users ()
-		xusers = x.get_users () 
-
+	def do_users (self, dusers, xusers, dgroups) :
 		for user in dusers :
 			dn, data = user
+			self.log (repr(dn))
+
 			uidnumber = int(data['uidNumber'][0])
 			uid = data['uid'][0]
 			if uidnumber in xusers.keys() :
 				xu = xusers[uidnumber]
 			else :
 				# user doesn't exist yet ?
-				self.log ("problem, unable to find user with uid "+str(uidnumber)+" in xml database - skipping")
+				self.log ("problem, unable to find user with uid "+str(uidnumber)+" in xml database - do without xml db information")
 				xu = None
+	
+			groups = []
+			for group in dgroups.keys() :
+				dn, group = d.get_group(dgroups[group])
+				if 'memberUid' in group :
+					members = group['memberUid']	
+					if uid in members :
+						gidnumber = int(group['gidNumber'][0])
+						groups.append(gidnumber)
 
 			try :
 				u = User.objects.get(uidnumber=uidnumber)
@@ -175,9 +247,196 @@ class Command(BaseCommand) :
 					u = User.objects.get(login=uid)
 				except User.DoesNotExist as e :
 					# ajouter l'utilisateur
-					self.user_add (data, xu)
+					self.user_add (data, xu, groups)
 				else:
-					self.user_update (data, xu, u)
+					self.user_update (data, xu, u, groups)
 			else:
-				self.user_update (data, xu, u)
+				self.user_update (data, xu, u, groups)
+
+	def do_machine_classes (self, xclasses) :
+		for cls in xclasses :	
+			changed = False
+			try:
+				c = MachineClass.objects.get(name=cls['name'])
+			except MachineClass.DoesNotExist as e:
+				c = MachineClass(name=cls['name'])
+				changed = True
+			if c.shortdesc != cls['title'] :
+				c.shortdesc = cls['title']
+				changed = True
+			if c.longdesc != cls['information'] :
+				c.longdesc = cls['information']
+				changed = True
+			if changed : 
+				c.save()	
+
+	def do_vlans (self, xvlans) :
+		for vlan in xvlans :
+			changed = False
+			try :
+				v = Vlan.objects.get(vlan_id=vlan['vlan_id'])
+			except Vlan.DoesNotExist as e:
+				v = Vlan(vlan_id=vlan['vlan_id'])
+				changed = True
+			if v.name != vlan['name'] :
+				v.name = vlan['name']
+				changed = True
+			if v.ip_block != vlan['ip_block'] :
+				v.ip_block = vlan['ip_block']
+				changed = True
+			if v.gateway != vlan['gateway'] :
+				v.gateway = vlan['gateway']
+				changed = True
+			if changed :
+				v.save()
+
+
+	def do_machines (self, xmachines) :
+		for m in xmachines :
+			#
+			# insert domain names
+			#
+			default_name = None
+			names = m['aliases']
+			names.append(m['name'])
+			domain_names = []
+			for n in names :
+				p = n.find('.')
+				name = n
+				if p==-1 :
+					name = n+'.obs.ujf-grenoble.fr'
+				changed = False
+				try :
+					d = DomainName.objects.get(fqdn=name)
+				except DomainName.DoesNotExist as e:
+					d = DomainName(fqdn=name)
+					changed = True
+				if changed :
+					d.save()
+				domain_names.append (d)
+				if n == m['name'] :
+					default_name = d
 			
+			# 
+			# insert IP address and link to default domain name
+			#	
+			if default_name is None :
+				print "problem, unable to define default domain name for "+str(names)
+				sys.exit(1)
+			# the XML database only allows one IP address per machine.
+			# those servers with multiple interfaces will need to be tackled some other way
+			changed = False
+			try :
+				ip = IPAddress.objects.get(address=m['ip'])
+			except IPAddress.DoesNotExist as e:	
+				ip = IPAddress(address=m['ip'])
+				changed = True
+			if ip.ptr != default_name :
+				ip.ptr = default_name
+				changed = True
+			if changed :
+				ip.save ()
+			
+			for n in domain_names :
+				if ip not in n.ips.all() :
+					n.ips.add (ip)
+		
+			# do the interface
+
+			if m['mac'] is None :
+				# generate bogus mac from name
+				# c0:00:00:xx:xx:xx
+				h = hashlib.sha1()
+				h.update (m['name'])
+				h = h.hexdigest()
+				mac = 'c0:00:00:'+h[0:2]+':'+h[2:4]+':'+h[4:6]
+				
+			else:
+				mac = m['mac']
+				
+			# need to create machine first
+			changed = False
+			try: 
+				mach = Machine.objects.get (default_name = default_name)
+			except Machine.DoesNotExist as e :
+				mach = Machine(default_name = default_name)	
+				changed = True
+			# owner
+			if m['owner'] is not None :
+				old_owner = mach.owner
+				try:
+					new_owner = User.objects.get(login=m['owner'])
+				except User.DoesNotExist as e:
+					print m
+					print "user "+str(m['owner'])+" not found"	
+				else :
+					if old_owner != new_owner :
+						mach.owner = new_owner
+						changed = True
+			else :	
+				print 'no owner registered for machine '+str(default_name)
+			if mach.comment != m['text'] :
+				mach.comment = m['text']
+			if changed :
+				mach.save()
+
+			# generate interface entry
+			# by default, interface name is 'eth0'
+			changed = False
+			try:
+				nif = NetworkIf.objects.get(mac_addr = mac)
+			except NetworkIf.DoesNotExist as e:
+				nif = NetworkIf (mac_addr = mac)
+				# sets the name only the first time around
+				nif.name = 'eth0'
+				changed = True
+			# set the machine	
+			if nif.machine != mach :
+				nif.machine = mach
+				changed = True
+
+			if (m['addrtype'] == None) or (m['addrtype'] == 'DHCP'):
+				new_addressing = NetworkIf.DHCP_ADDRESSING
+			if m['addrtype'] == 'DHCP-MAC' :
+				new_addressing = NetworkIf.DHCP_STATIC_ADDRESSING
+			if m['addrtype'] == 'STATIC' :
+				new_addressing = NetworkIf.STATIC_ADDRESSING
+			if new_addressing!=nif.addressing_type :
+				nif.addressing_type = new_addressing
+				changed = True
+
+			if changed : 
+				nif.save ()
+	
+			# add ip address
+			if ip not in nif.ips.all() :
+				nif.ips.add (ip)
+		
+			
+		
+
+	def handle (self, *args, **options) :
+		x.refresh_database()
+		self.log('start synchronizing the database with the ldap')
+	
+		dgroups = d.get_groups ()
+		xgroups = x.get_groups ()
+		dusers = d.get_users ()
+		xusers = x.get_users () 
+		xclasses = x.get_machine_classes() 
+		xvlans, xmachines = x.get_vlans_machines ()
+	
+		self.do_groups (dgroups, xgroups)
+		
+		# users
+
+
+		self.do_users (dusers, xusers, dgroups)
+			
+		# machine class
+		self.do_machine_classes(xclasses)	
+		
+		self.do_vlans (xvlans)
+		self.do_machines (xmachines)
+
+		# machines

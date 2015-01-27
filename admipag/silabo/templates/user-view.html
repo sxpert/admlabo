@@ -1,0 +1,23 @@
+{% extends "ipag-base.html" %}
+{% block title %} - {% endblock %}
+{% block content %}
+<p>user view</p>
+<table>
+</tbody>
+<tr><th>Prénom</th><td>{{ user.first_name }}</td><tr>
+<tr><th>Nom de Famille</th><td>{{ user.last_name }}</td></tr>
+<tr><th>login</th><td>{{ user.login }}</td></tr>
+<tr><th>uid</th><td>{{ user.uidnumber }}</td></tr>
+<tr><th>Room number</th><td></td></tr>
+<tr><th>Telephone</th><td></td></tr>
+<tr><th>Affiliation</th><td></td></tr>
+<tr><th>Mail</th><td></td></tr>
+<tr><th>Mailing lists</th><td></td></tr>
+<tr><th>Groups</th><td></td></tr>
+<tr><th>Machines</th><td></td></tr>
+<tr><th>User class</th><td></td></tr>
+<tr><th>Responsable</th><td></td></tr>
+<tr><th>Responsable de</th><td></td></tr>
+</tbody>
+</table>
+{% endblock %}

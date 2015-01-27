@@ -6,6 +6,7 @@ urlpatterns = patterns('',
     # url(r'^$', 'admipag.views.home', name='home'),
     # url(r'^blog/', include('blog.urls')),
 
+    url(r'^silabo/', include('silabo.urls')),
     url(r'^admin/', include(admin.site.urls)),
 )
 
