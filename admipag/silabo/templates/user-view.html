@@ -1,6 +1,7 @@
 {% extends "ipag-base.html" %}
 {% block title %} - {% endblock %}
 {% block content %}
+<p><a href="{% url 'dashboard' %}">retour au dashboard</a></p>
 <p>user view</p>
 <table>
 </tbody>
@@ -16,8 +17,13 @@
 <tr><th>Groups</th><td></td></tr>
 <tr><th>Machines</th><td></td></tr>
 <tr><th>User class</th><td></td></tr>
-<tr><th>Responsable</th><td></td></tr>
-<tr><th>Responsable de</th><td></td></tr>
+<tr><th>Responsable</th>
+	<td>{% if user.manager %}<a href="{% url 'user_view' user.manager.uidnumber %}">{{ user.manager.first_name }}
+		{{ user.manager.last_name }}</a>{% endif %}</td></tr>
+<tr><th>Responsable de</th><td><ul>{% for m in managed %}
+	<li><a href="{% url 'user_view' m.uidnumber %}">{{ m.first_name }} {{ m.last_name }}</a></li>
+	{% endfor %}
+</td></tr>
 </tbody>
 </table>
 {% endblock %}
