@@ -24,6 +24,17 @@ class Group (models.Model) :
 	def __str__ (self) :
 		return self.name
 
+class MailingList (models.Model) :
+	ml_id       = models.CharField(max_length=64, primary_key=True)
+	name        = models.CharField(max_length=128, unique=True)
+	description = models.CharField(max_length=256)
+	parent      = models.ForeignKey('self', null=True, blank=True)
+	group       = models.ForeignKey(Group, null=True, blank=True)
+
+	def __str__ (self) :
+		return self.name
+	
+
 class User (models.Model) :
 	uidnumber   = models.IntegerField(primary_key=True)
 	login       = models.CharField(max_length=64, unique=True)
@@ -51,6 +62,40 @@ class User (models.Model) :
 		if self.last_name is not None :
 			n.append(self.last_name)
 		return ' '.join(n)
+
+	def _get_parent_group (self, group) :
+		gr = []
+		pg = group.parent
+		if pg not in gr :
+			gr.append (pg)
+		if pg is not None :
+			tg = self._get_parent_group(pg)
+			if tg is not None :
+				for g in tg :
+					if g not in gr :
+						gr.append(g)
+		else :
+			gr = pg
+		return gr
+	
+	def all_groups (self) :
+		gr = []
+		for g in self.groups.all() :
+			if g not in gr :
+				gr.append(g)
+			tg = self._get_parent_group(g)
+			if tg is not None :
+				for pg in tg :
+					if pg not in gr :
+						gr.append(pg)
+		return gr
+
+	def manager_of (self) :
+		return User.objects.filter(manager = self)
+
+	def machines (self) :
+		return Machine.objects.filter(owner = self)
+	
 	
 
 #==================================================================================================================================
@@ -84,6 +129,9 @@ class Machine (models.Model) :
 
 	def __str__ (self) :
 		return str(self.default_name)
+
+	def interfaces (self) :
+		return NetworkIf.objects.filter(machine = self)
 	
 #==================================================================================================================================
 #

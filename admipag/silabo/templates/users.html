@@ -1,6 +1,7 @@
 {% extends "ipag-base.html" %}
 {% block title %} - Dashboard{% endblock %}
 {% block content %}
+<p><a href="{% url 'dashboard' %}">retour au dashboard</a></p>
 <p>silabo index</p>
 <h1>liste des utilisateurs</h1>
 <p>{{ users|length }} utilisateurs</p>

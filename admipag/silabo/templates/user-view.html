@@ -1,7 +1,7 @@
 {% extends "ipag-base.html" %}
 {% block title %} - {% endblock %}
 {% block content %}
-<p><a href="{% url 'dashboard' %}">retour au dashboard</a></p>
+<p><a href="{% url 'users' %}">retour à la liste des utilisateurs</a></p>
 <p>user view</p>
 <table>
 </tbody>
@@ -9,21 +9,30 @@
 <tr><th>Nom de Famille</th><td>{{ user.last_name }}</td></tr>
 <tr><th>login</th><td>{{ user.login }}</td></tr>
 <tr><th>uid</th><td>{{ user.uidnumber }}</td></tr>
+<tr><th>Arrival</th><td>{{ user.arrival.isoformat }}</td></tr>
+<tr><th>Departure</th><td>{{ user.departure.isoformat }}</td></tr>
 <tr><th>Room number</th><td></td></tr>
 <tr><th>Telephone</th><td></td></tr>
 <tr><th>Affiliation</th><td></td></tr>
 <tr><th>Mail</th><td></td></tr>
 <tr><th>Mailing lists</th><td></td></tr>
-<tr><th>Groups</th><td></td></tr>
-<tr><th>Machines</th><td></td></tr>
+<tr><th>Groups</th><td><ul>{% for g in user.all_groups %}
+	<li>{{ g }}</li>
+	{% endfor %}</ul></td></tr>
+<tr><th>Machines</th><td><ul>{% for m in user.machines.all %}
+	<li>{{ m.default_name }}
+		<ul>{% for i in m.interfaces.all %}
+			<li>{{ i }} ( {% for ip in i.ips.all %}{{ ip.address }} {% endfor %})</li>
+			{% endfor %}</ul>
+	</li>
+	{% endfor %}</ul></td></tr>
 <tr><th>User class</th><td></td></tr>
 <tr><th>Responsable</th>
 	<td>{% if user.manager %}<a href="{% url 'user_view' user.manager.uidnumber %}">{{ user.manager.first_name }}
 		{{ user.manager.last_name }}</a>{% endif %}</td></tr>
-<tr><th>Responsable de</th><td><ul>{% for m in managed %}
+<tr><th>Responsable de</th><td><ul>{% for m in user.manager_of.all %}
 	<li><a href="{% url 'user_view' m.uidnumber %}">{{ m.first_name }} {{ m.last_name }}</a></li>
-	{% endfor %}
-</td></tr>
+	{% endfor %}</ul></td></tr>
 </tbody>
 </table>
 {% endblock %}

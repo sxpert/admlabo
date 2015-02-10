@@ -5,12 +5,12 @@ import models
 #
 # tableau de bord
 # 
-def index (request) :
+def dashboard (request) :
 	users = models.User.objects.all()
 	context = {
 		'users': users,
 	}
-	return render(request, 'index.html', context)
+	return render(request, 'dashboard.html', context)
 
 
 
@@ -19,13 +19,21 @@ def index (request) :
 #
 
 #
+# liste des utilisateurs 
+#
+def users (request) :
+	users = models.User.objects.all()
+	context = {
+		'users': users,
+	}
+	return render(request, 'users.html', context)
+
+#
 # voir les informations d'un utilisateur
 #
 def user_view (request, user_id) :
 	u = models.User.objects.get(uidnumber = user_id)
-	m = models.User.objects.filter(manager = u)
 	context = {
 		'user' : u,
-		'managed' : m,
 	}
 	return render(request, 'user-view.html', context)

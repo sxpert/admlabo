@@ -185,8 +185,8 @@ class Command(BaseCommand) :
 		# setup groups
 		# remove old groups
 		for g in u.groups.all() :
+			# not implemented yet
 			pass	 
-			#print g.gidnumber
 
 		# add new groups
 		for g in groups :			
@@ -419,24 +419,18 @@ class Command(BaseCommand) :
 		x.refresh_database()
 		self.log('start synchronizing the database with the ldap')
 	
-		dgroups = d.get_groups ()
-		xgroups = x.get_groups ()
-		dusers = d.get_users ()
-		xusers = x.get_users () 
-		xclasses = x.get_machine_classes() 
-		xvlans, xmachines = x.get_vlans_machines ()
+#		dgroups = d.get_groups ()
+#		xgroups = x.get_groups ()
+		xmls = x.get_mailinglists()
+		for ml in xmls :
+			print xmls[ml]
+#		dusers = d.get_users ()
+#		xusers = x.get_users () 
+#		xclasses = x.get_machine_classes() 
+#		xvlans, xmachines = x.get_vlans_machines ()
 	
-		self.do_groups (dgroups, xgroups)
-		
-		# users
-
-
-		self.do_users (dusers, xusers, dgroups)
-			
-		# machine class
-		self.do_machine_classes(xclasses)	
-		
-		self.do_vlans (xvlans)
-		self.do_machines (xmachines)
-
-		# machines
+#		self.do_groups (dgroups, xgroups)
+#		self.do_users (dusers, xusers, dgroups)
+#		self.do_machine_classes(xclasses)	
+#		self.do_vlans (xvlans)
+#		self.do_machines (xmachines)
