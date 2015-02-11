@@ -13,9 +13,11 @@
 <tr><th>Departure</th><td>{{ user.departure.isoformat }}</td></tr>
 <tr><th>Room number</th><td></td></tr>
 <tr><th>Telephone</th><td></td></tr>
-<tr><th>Affiliation</th><td></td></tr>
-<tr><th>Mail</th><td></td></tr>
-<tr><th>Mailing lists</th><td></td></tr>
+<!--<tr><th>Affiliation</th><td></td></tr>-->
+<tr><th>Mail</th><td>{{ user.mail }}</td></tr>
+<tr><th>Mailing lists</th><td><ul>{% for ml in user.all_mailinglists %}
+	<li>{{ ml }}</li>
+	{% endfor %}</ul></td></tr>
 <tr><th>Groups</th><td><ul>{% for g in user.all_groups %}
 	<li>{{ g }}</li>
 	{% endfor %}</ul></td></tr>

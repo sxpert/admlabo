@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
 from django.core.exceptions import ObjectDoesNotExist
-from silabo.models import User, Group, MachineClass, Machine, NetworkIf, IPAddress, DomainName, Vlan
+from silabo.models import User, Group, MailingList, MachineClass, Machine, NetworkIf, IPAddress, DomainName, Vlan
 import sys, hashlib
 sys.path.append ('/srv/progs/ipag')
 import directory as l
@@ -83,8 +83,66 @@ class Command(BaseCommand) :
 
 		if changed :
 			g.save ()
-		
 
+	# 'description': u"Liste de diffusion de l'\xe9quipe Fost", 
+	# 'group': None, 
+	# 'id': 'ml_fost_ipag', 
+	# 'parent': None, 
+	# 'name': 'fost.ipag'
+	def mailinglist (self, ml) :
+		changed = False
+		print ml
+		try :
+			m = MailingList.objects.get(ml_id = ml['id'])
+		except MailingList.DoesNotExist as e :
+			m = MailingList(ml_id = ml['id'])
+			changed = True
+		
+		name = None
+		if 'name' in ml :
+			name = ml['name']
+		if name != m.name :
+			m.name = name
+			changed = True
+	
+		description = None
+		if 'description' in ml :
+			description = ml['description']
+		if description != m.description :
+			m.description = description
+			changed = True
+
+		parent = None
+		if 'parent' in ml :
+			parent = ml['parent']
+		if parent is not None :
+			try :
+				newparent = MailingList.objects.get(ml_id = parent)
+			except MailingList.DoesNotExist as e:
+				newparent = None
+		else :
+			newparent = None
+		if newparent != m.parent :
+			m.parent = newparent
+			changed = True
+
+		group = None
+		if 'group' in ml :
+			group = ml['group']
+		if group is not None :
+			try :
+				newgroup = Group.objects.get(name = group)
+			except Group.DoesNotExist as e :
+				newgroup = None
+		else :
+			newgroup = None
+		if newgroup != m.group :
+			m.group = newgroup
+			changed = True
+
+		if changed :
+			m.save ()
+		
 	# 'uid': ['cotere'], 
 	# 'objectClass': ['posixAccount', 'shadowAccount', 'inetOrgPerson'], 
 	# 'loginShell': ['/bin/bash'], 
@@ -215,6 +273,34 @@ class Command(BaseCommand) :
 			else :
 				print "NOT FOUND IN XML DATABASE"
 			self.group (group)				
+
+	def do_mailinglists (self, xmls) :
+		names = []
+		mls = []
+		# step 1 : those without parent
+		for k in xmls.keys() :
+			ml = xmls[k]
+			if ml['parent'] is None :
+				names.append(k)
+				mls.append(ml)
+				del xmls[k]
+		# step 2 : go around until everything is in...		
+		while len(xmls.keys()) > 0 :
+			i = 0
+			# find the next possible item to add
+			while True :
+				k = xmls.keys()[i]
+				ml = xmls[k]
+				p = ml['parent']
+				if p in names :
+					names.append(k)
+					mls.append(ml)
+					del xmls[k]
+					break
+				else :
+					i = i+1
+		for ml in mls :
+			self.mailinglist (ml)
 
 	def do_users (self, dusers, xusers, dgroups) :
 		for user in dusers :
@@ -373,8 +459,7 @@ class Command(BaseCommand) :
 					if old_owner != new_owner :
 						mach.owner = new_owner
 						changed = True
-			else :	
-				print 'no owner registered for machine '+str(default_name)
+
 			if mach.comment != m['text'] :
 				mach.comment = m['text']
 			if changed :
@@ -419,18 +504,17 @@ class Command(BaseCommand) :
 		x.refresh_database()
 		self.log('start synchronizing the database with the ldap')
 	
-#		dgroups = d.get_groups ()
-#		xgroups = x.get_groups ()
+		dgroups = d.get_groups ()
+		xgroups = x.get_groups ()
 		xmls = x.get_mailinglists()
-		for ml in xmls :
-			print xmls[ml]
-#		dusers = d.get_users ()
-#		xusers = x.get_users () 
-#		xclasses = x.get_machine_classes() 
-#		xvlans, xmachines = x.get_vlans_machines ()
+		dusers = d.get_users ()
+		xusers = x.get_users () 
+		xclasses = x.get_machine_classes() 
+		xvlans, xmachines = x.get_vlans_machines ()
 	
-#		self.do_groups (dgroups, xgroups)
-#		self.do_users (dusers, xusers, dgroups)
-#		self.do_machine_classes(xclasses)	
-#		self.do_vlans (xvlans)
-#		self.do_machines (xmachines)
+		self.do_groups (dgroups, xgroups)
+		self.do_mailinglists (xmls)
+		self.do_users (dusers, xusers, dgroups)
+		self.do_machine_classes(xclasses)	
+		self.do_vlans (xvlans)
+		self.do_machines (xmachines)

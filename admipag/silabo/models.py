@@ -45,6 +45,8 @@ class User (models.Model) :
 	arrival		= models.DateField(null=True, blank=True)
 	departure	= models.DateField(null=True, blank=True)
 	groups		= models.ManyToManyField(Group, blank=True, related_name='users')
+	room		= models.CharField(max_length=32, null=True, blank=True)
+	telephone   = models.CharField(max_length=32, null=True, blank=True)
 
 	class Meta :
 		ordering = ['login']
@@ -62,6 +64,30 @@ class User (models.Model) :
 		if self.last_name is not None :
 			n.append(self.last_name)
 		return ' '.join(n)
+
+	def all_mailinglists (self) :
+		mls = []
+		# mailing lists for user class
+		# mailing lists from groups
+		gr = self.all_groups ()
+		for g in gr :
+			try :
+				ml = MailingList.objects.get (group = g)
+			except MailingList.DoesNotExist as e :
+				pass
+			else :
+				mls.append(ml)
+		for ml in mls :
+			p = ml
+			while True :
+				p = p.parent
+				if p is not None :
+					if p not in mls :				
+						mls.append (p)
+				else :
+					break
+		return mls
+				
 
 	def _get_parent_group (self, group) :
 		gr = []

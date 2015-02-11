@@ -2,7 +2,7 @@ from django import forms
 from django.contrib import admin
 from django.utils.html import format_html
 from django.core.urlresolvers import reverse
-from silabo.models import User, Group, MachineClass, Machine, NetworkIf, DomainName, IPAddress, Vlan
+from silabo.models import User, Group, MailingList, MachineClass, Machine, NetworkIf, DomainName, IPAddress, Vlan
 import logging
 logger=logging.getLogger('django')
 
@@ -65,6 +65,7 @@ class GroupAdmin (admin.ModelAdmin) :
 		return obj.description
 
 admin.site.register(Group, GroupAdmin)
+admin.site.register(MailingList)
 admin.site.register(MachineClass)
 
 class NetworkIfInline (admin.StackedInline):
