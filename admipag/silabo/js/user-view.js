@@ -114,6 +114,7 @@ function df_set_value (field) {
 	df_ajax ('GET', url, null,
 		function (result) {
 			switch (f_type) {
+				case 'multiselect' : df_multiselect_set_value (field, result); break;
 				case 'select': df_select_set_value (field, result); break;
 			}
 		});
@@ -178,10 +179,8 @@ function df_multiselect_initialize (field, data) {
 function df_multiselect_remove_option (event) {
 	var field = data_field (event);
 	var option = $($(event.target).parents('[data-value]')[0])
-	console.log (option);
 	var key = option.attr('data-value');
 	var value = option.text();
-	console.log (key, value);
 	var select = field.find('[data-control=select-control]');
 	var list = select.children();
 	var newitem = $('<option value="'+key+'">'+value+'</option>');
@@ -225,6 +224,9 @@ function df_multiselect_add_option (event) {
 		}
 	}
 	if (! found) control.append(newitem);
+}
+
+function df_multiselect_set_value (field, data) {
 }
 
 /*
