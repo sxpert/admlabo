@@ -239,6 +239,16 @@ class Command(BaseCommand) :
 				if u.departure != xml_data['departure_date'] :
 					u.departure = xml_data['departure_date']
 					changed = True
+			
+			if 'room_number' in xml_data.keys() :
+				if u.room != xml_data['room_number'] :
+					u.root = xml_data['room_number']
+					changed = True
+
+			if 'telephone_number' in xml_data.keys() :
+				if u.telephone != xml_data['telephone_number'] :
+					u.telephone = xml_data['telephone_number']
+					changed = True
 
 		# setup groups
 		# remove old groups

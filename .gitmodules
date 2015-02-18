@@ -1,0 +1,6 @@
+[submodule "admipag/static/angular.js"]
+	path = admipag/static/angular.js
+	url = https://github.com/angular/angular.js.git
+[submodule "admipag/static/material-design-icons"]
+	path = admipag/static/material-design-icons
+	url = https://github.com/google/material-design-icons.git
