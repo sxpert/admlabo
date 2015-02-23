@@ -89,6 +89,16 @@ function df_save_value (field) {
 	url += 'value/'+f_type+'/'+f_name;
 	var data = null;
 	switch (f_type) {
+		case 'multiselect':
+			var control = field.find('[data-control=selected-list]');
+			// list all options 
+			var sel = [];
+			var list = control.find('[data-value]');
+			for (var i=0; i<list.length; i++)
+				sel.push(parseInt($(list[i]).attr('data-value')));
+			data = { 'values': sel };
+			console.log(data);
+			break;
 		case 'select': 
 			var control = field.find('[data-control=select]');
 			// only one option selected
@@ -101,6 +111,7 @@ function df_save_value (field) {
 		function (result) {
 			df_set_edit_icon(field);
 			switch (f_type) {
+				case 'multiselect': df_multiselect_set_value (field, result); break;
 				case 'select': df_select_set_value (field, result); break;
 			}
 		});
@@ -227,6 +238,20 @@ function df_multiselect_add_option (event) {
 }
 
 function df_multiselect_set_value (field, data) {
+	console.log (field);
+	console.log ("data",data);
+	var values = data['values'];
+	if (values===undefined) return;
+	var opt = [];
+	for (var i=0; i<values.length; i++)
+		opt.push ([values[i]['url'], values[i]['value']]);
+	opt.sort (function (a, b) { return a[1] > b[1]; });
+	console.log (opt);
+	var s = '<ul>';
+	for (var i=0; i<opt.length; i++) 
+		s+='<li><a href="'+opt[i][0]+'">'+opt[i][1]+'</a></li>';
+	s+='</ul>';
+	field.append($(s));
 }
 
 /*

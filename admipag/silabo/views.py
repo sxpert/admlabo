@@ -60,6 +60,7 @@ def user_view_field (request, user_id, action, fieldtype, fieldname) :
 				data['selected'] = u.manager.uidnumber
 			if action == 'value' :
 				m = u.manager
+				# save manager
 				if request.method == 'POST':
 					data = json.loads(request.body)
 					if 'value' in data.keys() :
@@ -83,6 +84,22 @@ def user_view_field (request, user_id, action, fieldtype, fieldname) :
 				for g in s :
 					selected.append(g.gidnumber)
 				data['selected'] = selected
+			if action == 'value' :
+				# save groups
+				if request.method == 'POST':
+					data = json.loads(request.body)
+					if 'values' in data.keys() :
+						values = data['values']
+						u.change_groups (values)
+					pass
+				# get current groups
+				groups = []
+				for g in u.all_groups() :
+					gdata = {}
+					gdata['url'] = reverse ('group_view', args=(g.gidnumber,))
+					gdata['value'] = g.name
+					groups.append(gdata)
+				data['values'] = groups
 		# managed
 	jsdata = json.dumps(data)
 	return HttpResponse(jsdata, content_type='application/json')

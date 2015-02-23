@@ -116,6 +116,25 @@ class User (models.Model) :
 						gr.append(pg)
 		return gr
 
+	# la grouplist est un array de gidnumbers
+	def change_groups (self, grouplist) :
+		changed = False
+		i=0
+		while i < len(grouplist) :
+			grouplist[i] = int(grouplist[i])
+			i += 1
+		for g in self.groups.all() :
+			if g.gidnumber not in grouplist :
+				self.groups.remove(g)
+				changed = True
+		for g in grouplist :
+			g = Group.objects.get(gidnumber=g)
+			if (g is not None) and (g not in self.groups.all()) :
+				self.groups.add (g)
+				changed = True
+		if changed :
+			self.save()
+
 	def manager_of (self) :
 		return User.objects.filter(manager = self)
 
