@@ -161,6 +161,9 @@ class Command(BaseCommand) :
 	# 'cn': ['Remi Cote']
 
 	def user (self, ud, xud, groups) :
+		mode = ''
+		changing=[]
+		uidnumber = int(ud['uidNumber'][0])
 		# try to find user
 		changed = False
 		try :
@@ -172,24 +175,30 @@ class Command(BaseCommand) :
 			except User.DoesNotExist as e :
 				# this is a new user entirely
 				u = User(uidnumber = int(ud['uidNumber'][0]))
+				mode = 'create'
 				changed = True
 			else:
 				# user has changed uid
 				u.uidnumber = ud['uidNumber'][0]
+				mode = 'update'
 				changed = true	
-		
+		else:
+			mode = 'update'
+
 		if 'mail' in ud.keys() :
 			mail = (ud['mail'][0]).lower()
 		else : 
 			mail = None
 		if u.mail != mail :
 			u.mail = mail
+			changing.append(('mail',mail))
 			changed = True
 	
 		if 'loginShell' in ud.keys() :
 			nls = ud['loginShell'][0];
 			if u.login_shell != nls :
 				u.login_shell = nls
+				changing.append(('login_shell', nls))
 				changed = True
 	
 		if xud is not None :
@@ -210,27 +219,38 @@ class Command(BaseCommand) :
 				
 				if u.manager != m :				
 					u.manager = m
+					changing.append(('manager',str(m)))
 					changed = True
 
 			# arrival date
 			if 'arrival_date' in xud.keys() :
-				if u.arrival != xud['arrival_date'] :
+				arr = None
+				if u.arrival is not None :
+					arr = u.arrival.isoformat() 
+				if arr != xud['arrival_date'] :
 					u.arrival = xud['arrival_date']
+					changing.append(('arr_date',u.arrival))
 					changed = True
 			# departure date
 			if 'departure_date' in xud.keys() :
-				if u.departure != xud['departure_date'] :
+				dep = None
+				if u.departure is not None :
+					dep = u.departure.isoformat()
+				if dep != xud['departure_date'] :
 					u.departure = xud['departure_date']
+					changing.append(('dep_date',u.departure))
 					changed = True
 			
 			if 'room_number' in xud.keys() :
 				if u.room != xud['room_number'] :
-					u.root = xud['room_number']
+					u.room = xud['room_number']
+					changing.append(('room',u.room))
 					changed = True
 
 			if 'telephone_number' in xud.keys() :
 				if u.telephone != xud['telephone_number'] :
 					u.telephone = xud['telephone_number']
+					changing.append(('phone',u.telephone))
 					changed = True
 
 		# setup groups
@@ -242,11 +262,16 @@ class Command(BaseCommand) :
 		# add new groups
 		for g in groups :			
 			gr = Group.objects.get (gidnumber = g)
+			ngr=[]
 			if (gr is not None) and (gr not in u.groups.all()) :
 				u.groups.add (gr)
+				ngr.append(gr)
 				changed = True
-
+			if len(ngr)>0 :
+				changing.append(('new_groups',repr(ngr)))
+		
 		if changed :
+			self.log(mode+' user '+u.login+' '+str(changing))
 			u.save()
 		
 
@@ -304,7 +329,6 @@ class Command(BaseCommand) :
 				xu = xusers[uidnumber]
 			else :
 				# user doesn't exist yet ?
-				self.log ("problem, unable to find user with uid "+str(uidnumber)+" in xml database - do without xml db information")
 				xu = None
 	
 			groups = []
