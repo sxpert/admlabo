@@ -164,6 +164,7 @@ class Command(BaseCommand) :
 		mode = ''
 		changing=[]
 		uidnumber = int(ud['uidNumber'][0])
+		uid = data['uid'][0]
 		# try to find user
 		changed = False
 		try :
