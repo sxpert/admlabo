@@ -1,7 +1,8 @@
 {% extends "ipag-base.html" %}
 {% load staticfiles %}
 {% block title %} - {% endblock %}
-{% block scripts %}<script src="{% static "silabo/user-view.js" %}"></script>{% endblock %}
+{% block scripts %}<script src="{% static "silabo/js/user-view.js" %}"></script>{% endblock %}
+{% block css %}<link rel="stylesheet" type="text/css" href="{% static "silabo/css/user-view.css" %}"/>{% endblock %}
 {% block content %}
 <p><a href="{% url 'users' %}">retour à la liste des utilisateurs</a></p>
 <p>user view</p>
@@ -17,13 +18,8 @@
 <tr><th>Room number</th><td>{% if user.room %}{{ user.room }}{% endif %}</td></tr>
 <tr><th>Telephone</th><td>{% if user.telephone %}{{ user.telephone }}{% endif %}</td></tr>
 <tr><th>Mail</th><td>{{ user.mail }}</td></tr>
-<tr><th>Mailing lists</th><td><ul>{% for ml in user.all_mailinglists %}
-	<li>{{ ml }}</li>
-	{% endfor %}</ul></td></tr>
-<tr><th>Groups</th>
-	<td data-field="groups" data-type="multiselect"><ul>{% for g in user.all_groups %}
-	<li>{{ g }}</li>
-	{% endfor %}</ul></td></tr>
+<tr><th>Mailing lists</th><td data-field="mailinglists" data-type="multiselect"></td></tr>
+<tr><th>Groups</th> <td data-field="groups" data-type="multiselect"></td></tr>
 <tr><th>Machines</th><td><ul>{% for m in user.machines.all %}
 	<li>{{ m.default_name }}
 		<ul>{% for i in m.interfaces.all %}
@@ -32,14 +28,8 @@
 	</li>
 	{% endfor %}</ul></td></tr>
 <tr><th>User class</th><td></td></tr>
-<tr><th>Responsable</th>
-	<td data-field="manager" data-type="select">{% if user.manager %}<a 
-		href="{% url 'user_view' user.manager.uidnumber %}">{{ user.manager.first_name }}
-		{{ user.manager.last_name }}</a>{% endif %}</td></tr>
-<tr><th>Responsable de</th>
-	<td data-field="managed" data-type="multiselect"><ul>{% for m in user.manager_of.all %}
-	<li><a href="{% url 'user_view' m.uidnumber %}">{{ m.first_name }} {{ m.last_name }}</a></li>
-	{% endfor %}</ul></td></tr>
+<tr><th>Responsable</th><td data-field="manager" data-type="select"></td></tr>
+<tr><th>Responsable de</th><td data-field="managed" data-type="multiselect"></td></tr>
 </tbody>
 </table>
 </form>

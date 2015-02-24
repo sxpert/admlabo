@@ -57,21 +57,55 @@ def user_view_field (request, user_id, action, fieldtype, fieldname) :
 					managers[m.uidnumber] = m.first_name+' '+m.last_name
 				data['options'] = managers
 				# add currently selected manager
-				data['selected'] = u.manager.uidnumber
+				if u.manager is not None :
+					data['selected'] = u.manager.uidnumber
+				else :
+					data['selected'] = None
 			if action == 'value' :
-				m = u.manager
 				# save manager
 				if request.method == 'POST':
 					data = json.loads(request.body)
 					if 'value' in data.keys() :
 						manager = data['value']
-						m = models.User.objects.get(uidnumber = manager)
+						if manager is not None :
+							m = models.User.objects.get(uidnumber = manager)
+						else :	
+							m = None
 						u.manager = m
 						u.save()
-				data['url'] = reverse ('user_view', args=(m.uidnumber,))
-				data['value'] = m.first_name+' '+m.last_name
+				m = u.manager
+				if m is not None :
+					data['url'] = reverse ('user_view', args=(m.uidnumber,))
+					data['value'] = m.first_name+' '+m.last_name
+				else :
+					data = {}
 	# multiselect field type
 	if fieldtype == 'multiselect' :
+		# mailing lists
+		if fieldname == 'mailinglists' :
+			if action == 'options' :
+				mls = {}
+				for ml in models.MailingList.objects.all() :
+					mls[ml.ml_id] = ml.name
+				data['options'] = mls
+				selected = []
+				for ml in u.all_mailinglists() :
+					selected.append(ml.ml_id)
+				data['selected'] = selected
+			if action == 'value' :
+				if request.method == 'POST' :
+					data = json.loads(request.body)
+					if 'values' in data.keys() :
+						values = data['values']
+						u.change_mailinglists (values)
+				mls = []
+				for ml in u.all_mailinglists() :
+					mdata = {}
+					mdata['url'] = reverse ('mailinglist_view', args=(ml.ml_id,)) 
+					mdata['value'] = ml.name
+					mls.append(mdata)
+				data['values'] = mls
+			pass
 		# groups
 		if fieldname == 'groups' :
 			if action == 'options' :
@@ -80,8 +114,7 @@ def user_view_field (request, user_id, action, fieldtype, fieldname) :
 					groups[g.gidnumber] = g.name
 				data['options'] = groups
 				selected = []
-				s = u.all_groups()
-				for g in s :
+				for g in u.all_groups() :
 					selected.append(g.gidnumber)
 				data['selected'] = selected
 			if action == 'value' :
@@ -90,8 +123,11 @@ def user_view_field (request, user_id, action, fieldtype, fieldname) :
 					data = json.loads(request.body)
 					if 'values' in data.keys() :
 						values = data['values']
-						u.change_groups (values)
-					pass
+						# values come in as strings
+						vs = []
+						for v in values :
+							vs.append(int(v))
+						u.change_groups (vs)
 				# get current groups
 				groups = []
 				for g in u.all_groups() :
@@ -101,5 +137,43 @@ def user_view_field (request, user_id, action, fieldtype, fieldname) :
 					groups.append(gdata)
 				data['values'] = groups
 		# managed
+		if fieldname == 'managed' :
+			if action == 'options' :
+				users = {}
+				for user in models.User.objects.all () :
+					users[user.uidnumber] = user.first_name+' '+user.last_name
+				data['options'] = users
+				selected = []
+				for user in u.manager_of () :
+					selected.append (user.uidnumber)
+				data['selected'] = selected
+			if action == 'value' :
+				# save managers
+				if request.method == 'POST':
+					data = json.loads(request.body)
+					if 'values' in data.keys () :
+						values = data['values']
+						u.change_managed (values)	
+				managed = []
+				for user in u.manager_of () :
+					udata = {}
+					udata['url'] = reverse ('user_view', args=(user.uidnumber,))
+					udata['value'] = user.first_name+' '+user.last_name
+					managed.append (udata)
+				data['values'] = managed
 	jsdata = json.dumps(data)
 	return HttpResponse(jsdata, content_type='application/json')
+
+#------------------------------------------------------------------
+# gestion des groupes
+#
+
+def group_view (request, group_id) :
+	pass
+
+#------------------------------------------------------------------
+# gestion des groupes
+#
+
+def mailinglist_view (request, ml_id) :
+	pass

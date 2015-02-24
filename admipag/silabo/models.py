@@ -38,6 +38,7 @@ class MailingList (models.Model) :
 class User (models.Model) :
 	uidnumber   = models.IntegerField(primary_key=True)
 	login       = models.CharField(max_length=64, unique=True)
+	login_shell = models.CharField(max_length=128, null=True, blank=True)
 	first_name	= models.CharField(max_length=128, null=True, blank=True)
 	last_name   = models.CharField(max_length=128, null=True, blank=True)
 	mail        = models.EmailField(null=True, blank=True)
@@ -68,6 +69,7 @@ class User (models.Model) :
 	def all_mailinglists (self) :
 		mls = []
 		# mailing lists for user class
+		
 		# mailing lists from groups
 		gr = self.all_groups ()
 		for g in gr :
@@ -88,6 +90,10 @@ class User (models.Model) :
 					break
 		return mls
 				
+	def change_mailinglists (self, mailinglists) :
+		# va savoir ce qu'il faut faire la dedans... 
+		# select all mailing lists not attached to a group
+		pass
 
 	def _get_parent_group (self, group) :
 		gr = []
@@ -137,6 +143,17 @@ class User (models.Model) :
 
 	def manager_of (self) :
 		return User.objects.filter(manager = self)
+
+	def change_managed (self, managed_list) :
+		for u in User.objects.filter(manager = self) :
+			if u.uidnumber not in managed_list :
+				u.manager = None
+				u.save ()
+		for un in managed_list :
+			u = User.objects.get(uidnumber = un)
+			if (u.manager != self) :
+				u.manager = self
+				u.save ()
 
 	def machines (self) :
 		return Machine.objects.filter(owner = self)

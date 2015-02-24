@@ -12,6 +12,7 @@ function icon_button (icon, func) {
 function df_initialize (index, elem) {
 	var field = $(elem).attr('data-field');
 	var  type = $(elem).attr('data-type');
+	df_set_value ($(elem))
 	df_set_edit_icon ($(elem))
 };
 
@@ -89,22 +90,8 @@ function df_save_value (field) {
 	url += 'value/'+f_type+'/'+f_name;
 	var data = null;
 	switch (f_type) {
-		case 'multiselect':
-			var control = field.find('[data-control=selected-list]');
-			// list all options 
-			var sel = [];
-			var list = control.find('[data-value]');
-			for (var i=0; i<list.length; i++)
-				sel.push(parseInt($(list[i]).attr('data-value')));
-			data = { 'values': sel };
-			console.log(data);
-			break;
-		case 'select': 
-			var control = field.find('[data-control=select]');
-			// only one option selected
-			var sel = parseInt($(control[0].selectedOptions[0]).val());
-			data = { 'value': sel };
-			break;
+		case 'multiselect': data = df_multiselect_get_value (field); break;
+		case 'select': data = df_select_get_value (field); break;
 	}
 	data = JSON.stringify (data);
 	df_ajax ('POST', url, data,
@@ -214,13 +201,13 @@ function df_multiselect_add_option (event) {
 	var control = field.find('[data-control=select-control]');
 	var sel = $(control[0].selectedOptions[0]).val();
 	if (sel===undefined) return;
-	sel = parseInt(sel);
+//	sel = parseInt(sel);
 	var opt = control.find('[value='+sel+']');
 	var key = opt.attr('value');
 	var value = opt.text();
 	opt.remove()
 	// insert the value into the list of things
-	var control = $('[data-control=selected-list]');
+	var control = field.find('[data-control=selected-list]');
 	var list = control.children();
 	var newitem = $('<li data-value="'+key+'">'+value+'</li>');
 	var b = icon_button ('content/svg/design/ic_remove_24px', df_multiselect_remove_option);
@@ -254,6 +241,18 @@ function df_multiselect_set_value (field, data) {
 	field.append($(s));
 }
 
+function df_multiselect_get_value (field) {
+	var control = field.find('[data-control=selected-list]');
+	// list all options 
+	var sel = [];
+	var list = control.find('[data-value]');
+	for (var i=0; i<list.length; i++)
+		sel.push($(list[i]).attr('data-value'));
+	data = { 'values': sel };
+	console.log(data);
+	return data;
+}
+
 /*
  * select type field
  */
@@ -265,6 +264,8 @@ function df_select_initialize (field, data) {
 	var topt = [];
 	for (var key in opt) topt.push([key, opt[key]]);
 	topt.sort(function(a, b) { return a[1] > b[1]; });
+	// add an empty option at the begining
+	topt.unshift(['','']);
 	for (opt in topt) {
 		var key = topt[opt][0];
 		var val = topt[opt][1];
@@ -277,8 +278,17 @@ function df_select_initialize (field, data) {
 }
 
 function df_select_set_value (field, data) {
+	if (!('value' in data)) return;
 	var val = $('<a href="'+data['url']+'">'+data['value']+'</a>');
 	field.append (val);
+}
+
+function df_select_get_value (field) {
+	var control = field.find('[data-control=select]');
+	var sel = parseInt($(control[0].selectedOptions[0]).val());
+	if (sel !== null) data = { 'value': sel };
+	else data= {};
+	return data;
 }
 
 /*

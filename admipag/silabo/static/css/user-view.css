@@ -1,0 +1,25 @@
+html {
+	font-size      : 10pt;
+	font-family    : sans;
+}
+form > table > tbody > tr > th {
+	vertical-align : top;
+	text-align     : left;
+}
+[data-type=multiselect] {
+	width          : 25em;
+}
+[data-type=multiselect] > ul {
+	margin         : 0;
+    padding        : 0;
+	width          : 20em;
+}
+[data-type=multiselect] > ul > li {
+	line-height    : 16pt;
+	margin-left    : 1em;
+}
+[data-control=button] {
+	width          : 14pt;
+	height         : 14pt;
+	cursor         : pointer;		
+}

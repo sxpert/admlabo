@@ -5,7 +5,6 @@ import sys, hashlib
 sys.path.append ('/srv/progs/ipag')
 import directory as l
 import xmldb as x 
-d = l.Directory ()
 
 class Command(BaseCommand) :
 	help = 'Synchronizes the database from the LDAP server and the XML database'
@@ -65,7 +64,7 @@ class Command(BaseCommand) :
 				try : 
 					p = Group.objects.get (gidnumber=new_parent)
 				except Group.DoesNotExist as e :
-					print "There is no group with gidnumber "+str(new_parent)
+					self.log("There is no group with gidnumber "+str(new_parent))
 					
 				if g.parent != p :
 					g.parent = p
@@ -91,7 +90,7 @@ class Command(BaseCommand) :
 	# 'name': 'fost.ipag'
 	def mailinglist (self, ml) :
 		changed = False
-		print ml
+		self.log(str(ml))
 		try :
 			m = MailingList.objects.get(ml_id = ml['id'])
 		except MailingList.DoesNotExist as e :
@@ -161,61 +160,45 @@ class Command(BaseCommand) :
 	# 'shadowExpire': ['16860'], 
 	# 'cn': ['Remi Cote']
 
-	def user (self, ud, xud) :
-				
-
-		pass
-		
-
-	def user_add (self, user_data, xml_data, groups) :
-
-		u = User(uidnumber = int(user_data['uidNumber'][0]))
-		u.login = user_data['uid'][0]
-		u.first_name = user_data['givenName'][0]
-		u.last_name = user_data['sn'][0]
-		if xml_data is not None :
-			if 'arrival_date' in xml_data.keys() :
-				u.arrival = xml_data['arrival_date']
-			if 'departure_date' in xml_data.keys() :
-				u.departure = xml_data['departure_date']
-
-		# email
-		if 'mail' in user_data.keys() :
-			u.mail = (user_data['mail'][0]).lower()
-		else :
-			u.mail = None
-		# 
-		u.save()
-		
-		# setup groups
-		for g in groups :
-			gr = Group.objects.get (gidnumber = g)
-			if gr is not None :
-				u.groups.add (gr)
-
-
-	def user_update (self, user_data, xml_data, u, groups) :
-		uidnumber = int(user_data['uidNumber'][0])
+	def user (self, ud, xud, groups) :
+		# try to find user
 		changed = False
-		if u.uidnumber != uidnumber :
-			u.uidnumber = uidnumber
-			changed = True
-
-		if 'mail' in user_data.keys() :
-			mail = (user_data['mail'][0]).lower()
+		try :
+			u = User.objects.get(uidnumber=uidnumber)
+		except User.DoesNotExist as e :
+			# checher si un utilisateur avec le meme login existe
+			try : 
+				u = User.objects.get(login=uid)
+			except User.DoesNotExist as e :
+				# this is a new user entirely
+				u = User(uidnumber = int(ud['uidNumber'][0]))
+				changed = True
+			else:
+				# user has changed uid
+				u.uidnumber = ud['uidNumber'][0]
+				changed = true	
+		
+		if 'mail' in ud.keys() :
+			mail = (ud['mail'][0]).lower()
 		else : 
 			mail = None
 		if u.mail != mail :
 			u.mail = mail
 			changed = True
-		
-		if xml_data is not None :
+	
+		if 'loginShell' in ud.keys() :
+			nls = ud['loginShell'][0];
+			if u.login_shell != nls :
+				u.login_shell = nls
+				changed = True
+	
+		if xud is not None :
 			# manager
 			old_manager = None
 			if u.manager is not None :
 				old_manager = u.manager.login
 			
-			new_manager = xml_data['manager']
+			new_manager = xud['manager']
 
 			if old_manager != new_manager :
 				# get manager object
@@ -230,24 +213,24 @@ class Command(BaseCommand) :
 					changed = True
 
 			# arrival date
-			if 'arrival_date' in xml_data.keys() :
-				if u.arrival != xml_data['arrival_date'] :
-					u.arrival = xml_data['arrival_date']
+			if 'arrival_date' in xud.keys() :
+				if u.arrival != xud['arrival_date'] :
+					u.arrival = xud['arrival_date']
 					changed = True
 			# departure date
-			if 'departure_date' in xml_data.keys() :
-				if u.departure != xml_data['departure_date'] :
-					u.departure = xml_data['departure_date']
+			if 'departure_date' in xud.keys() :
+				if u.departure != xud['departure_date'] :
+					u.departure = xud['departure_date']
 					changed = True
 			
-			if 'room_number' in xml_data.keys() :
-				if u.room != xml_data['room_number'] :
-					u.root = xml_data['room_number']
+			if 'room_number' in xud.keys() :
+				if u.room != xud['room_number'] :
+					u.root = xud['room_number']
 					changed = True
 
-			if 'telephone_number' in xml_data.keys() :
-				if u.telephone != xml_data['telephone_number'] :
-					u.telephone = xml_data['telephone_number']
+			if 'telephone_number' in xud.keys() :
+				if u.telephone != xud['telephone_number'] :
+					u.telephone = xud['telephone_number']
 					changed = True
 
 		# setup groups
@@ -273,7 +256,7 @@ class Command(BaseCommand) :
 
 	def do_groups (self, dgroups, xgroups) :
 		for group in dgroups.keys() :
-			dn, group = d.get_group (dgroups[group])
+			dn, group = self.d.get_group (dgroups[group])
 			self.log (dn)
 			gid = int(group['gidNumber'][0])
 			if gid in xgroups.keys() :
@@ -281,7 +264,7 @@ class Command(BaseCommand) :
 				group['parent'] = xgroup['parent']
 				group['type'] = xgroup['type']
 			else :
-				print "NOT FOUND IN XML DATABASE"
+				self.log("NOT FOUND IN XML DATABASE")
 			self.group (group)				
 
 	def do_mailinglists (self, xmls) :
@@ -315,8 +298,6 @@ class Command(BaseCommand) :
 	def do_users (self, dusers, xusers, dgroups) :
 		for user in dusers :
 			dn, data = user
-			self.log (repr(dn))
-
 			uidnumber = int(data['uidNumber'][0])
 			uid = data['uid'][0]
 			if uidnumber in xusers.keys() :
@@ -328,26 +309,13 @@ class Command(BaseCommand) :
 	
 			groups = []
 			for group in dgroups.keys() :
-				dn, group = d.get_group(dgroups[group])
+				dn, group = self.d.get_group(dgroups[group])
 				if 'memberUid' in group :
 					members = group['memberUid']	
 					if uid in members :
 						gidnumber = int(group['gidNumber'][0])
 						groups.append(gidnumber)
-
-			try :
-				u = User.objects.get(uidnumber=uidnumber)
-			except User.DoesNotExist as e :
-				# checher si un utilisateur avec le meme login existe
-				try : 
-					u = User.objects.get(login=uid)
-				except User.DoesNotExist as e :
-					# ajouter l'utilisateur
-					self.user_add (data, xu, groups)
-				else:
-					self.user_update (data, xu, u, groups)
-			else:
-				self.user_update (data, xu, u, groups)
+			self.user (data, xu, groups)
 
 	def do_machine_classes (self, xclasses) :
 		for cls in xclasses :	
@@ -408,7 +376,7 @@ class Command(BaseCommand) :
 					d = DomainName(fqdn=name)
 					changed = True
 				if changed :
-					d.save()
+					self.d.save()
 				domain_names.append (d)
 				if n == m['name'] :
 					default_name = d
@@ -417,7 +385,7 @@ class Command(BaseCommand) :
 			# insert IP address and link to default domain name
 			#	
 			if default_name is None :
-				print "problem, unable to define default domain name for "+str(names)
+				self.log("problem, unable to define default domain name for "+str(names))
 				sys.exit(1)
 			# the XML database only allows one IP address per machine.
 			# those servers with multiple interfaces will need to be tackled some other way
@@ -463,8 +431,8 @@ class Command(BaseCommand) :
 				try:
 					new_owner = User.objects.get(login=m['owner'])
 				except User.DoesNotExist as e:
-					print m
-					print "user "+str(m['owner'])+" not found"	
+					self.log(m)
+					self.log("user "+str(m['owner'])+" not found")
 				else :
 					if old_owner != new_owner :
 						mach.owner = new_owner
@@ -507,17 +475,16 @@ class Command(BaseCommand) :
 			if ip not in nif.ips.all() :
 				nif.ips.add (ip)
 		
-			
-		
 
 	def handle (self, *args, **options) :
+		self.d = l.Directory ()
 		x.refresh_database()
 		self.log('start synchronizing the database with the ldap')
 	
-		dgroups = d.get_groups ()
+		dgroups = self.d.get_groups ()
 		xgroups = x.get_groups ()
 		xmls = x.get_mailinglists()
-		dusers = d.get_users ()
+		dusers = self.d.get_users ()
 		xusers = x.get_users () 
 		xclasses = x.get_machine_classes() 
 		xvlans, xmachines = x.get_vlans_machines ()
@@ -528,3 +495,6 @@ class Command(BaseCommand) :
 		self.do_machine_classes(xclasses)	
 		self.do_vlans (xvlans)
 		self.do_machines (xmachines)
+		
+		#self.d.close()
+		self.log("end of procedure")
