@@ -23,7 +23,6 @@ function data_field (event) {
 
 function df_set_edit_icon (elem) {
 	var data_control = elem.find('[data-control]')
-	console.log ('set_edit_icon', data_control);
 	data_control.remove();
 	elem.prepend(icon_button('content/svg/design/ic_create_24px',df_start_edit));
 } 
