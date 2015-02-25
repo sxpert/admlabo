@@ -3,9 +3,16 @@ from django.db import models
 import netfields
 import logging
 logger=logging.getLogger('django')
+
+# other models used
 from silabo.models.group import Group
 from silabo.models.mailinglist import MailingList
 from silabo.models.machine import Machine
+
+# ldap access
+import sys
+sys.path.append ('/srv/progs')
+import ipag.ldaposug as lo
 
 class User (models.Model) :
 	uidnumber   = models.IntegerField(primary_key=True)
@@ -35,6 +42,8 @@ class User (models.Model) :
 		logger.error ('saving user '+self.login)
 		super (User, self).save(*args, **kwargs)
 		# save into the production ldap
+		l = lo.LdapOsug ()
+		l.logger = logger
 		logger.error ('user saved')
 
 	def full_name (self) :
