@@ -75,10 +75,10 @@ function df_get_data (field) {
 	url += 'options/'+f_type+'/'+f_name;
 	df_ajax ('GET', url, null, 
 		function (result) {
-			console.log(result);
 			switch (f_type) {
 				case 'multiselect': df_multiselect_initialize (field, result); break;
 				case 'select': df_select_initialize (field, result); break;
+				case 'text' : df_text_initialize (field, result); break;
 			}
 		});
 }
@@ -92,6 +92,7 @@ function df_save_value (field) {
 	switch (f_type) {
 		case 'multiselect': data = df_multiselect_get_value (field); break;
 		case 'select': data = df_select_get_value (field); break;
+		case 'text': data = df_text_get_value (field); break;
 	}
 	data = JSON.stringify (data);
 	df_ajax ('POST', url, data,
@@ -100,6 +101,7 @@ function df_save_value (field) {
 			switch (f_type) {
 				case 'multiselect': df_multiselect_set_value (field, result); break;
 				case 'select': df_select_set_value (field, result); break;
+				case 'text': df_text_set_value (field, result); break;
 			}
 		});
 }
@@ -114,6 +116,7 @@ function df_set_value (field) {
 			switch (f_type) {
 				case 'multiselect' : df_multiselect_set_value (field, result); break;
 				case 'select': df_select_set_value (field, result); break;
+				case 'text': df_text_set_value (field, result); break;
 			}
 		});
 }
@@ -225,15 +228,12 @@ function df_multiselect_add_option (event) {
 }
 
 function df_multiselect_set_value (field, data) {
-	console.log (field);
-	console.log ("data",data);
 	var values = data['values'];
 	if (values===undefined) return;
 	var opt = [];
 	for (var i=0; i<values.length; i++)
 		opt.push ([values[i]['url'], values[i]['value']]);
 	opt.sort (function (a, b) { return a[1] > b[1]; });
-	console.log (opt);
 	var s = '<ul>';
 	for (var i=0; i<opt.length; i++) 
 		s+='<li><a href="'+opt[i][0]+'">'+opt[i][1]+'</a></li>';
@@ -248,8 +248,7 @@ function df_multiselect_get_value (field) {
 	var list = control.find('[data-value]');
 	for (var i=0; i<list.length; i++)
 		sel.push($(list[i]).attr('data-value'));
-	data = { 'values': sel };
-	console.log(data);
+	var data = { 'values': sel };
 	return data;
 }
 
@@ -286,8 +285,32 @@ function df_select_set_value (field, data) {
 function df_select_get_value (field) {
 	var control = field.find('[data-control=select]');
 	var sel = parseInt($(control[0].selectedOptions[0]).val());
+	var data;
 	if (sel !== null) data = { 'value': sel };
 	else data= {};
+	return data;
+}
+
+/* 
+ * text type field
+ */
+
+function df_text_initialize (field, data) {
+	if (!('value' in data)) return;
+	var f = $('<input data-control="text"/>');
+	f.attr('value',data['value']);
+	field.append (f);
+}
+
+function df_text_set_value (field, data) {
+	if (!('value' in data)) return;
+	field.append ($('<span>'+data['value']+'</span>'));
+}
+
+function df_text_get_value (field) {
+	var control = field.find('[data-control=text]');
+	var val = control.val();
+	var data = {'value': val};
 	return data;
 }
 

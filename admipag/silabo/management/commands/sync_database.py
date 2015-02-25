@@ -3,7 +3,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from silabo.models import User, Group, MailingList, MachineClass, Machine, NetworkIf, IPAddress, DomainName, Vlan
 import sys, hashlib
 sys.path.append ('/srv/progs/ipag')
-import directory as l
+import ldaplaoG as l
 import xmldb as x 
 
 class Command(BaseCommand) :

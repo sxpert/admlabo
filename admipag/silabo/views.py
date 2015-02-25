@@ -185,14 +185,30 @@ def user_view_managed_field (request, userid, action) :
 	return data
 
 #----
+# loginshell
+#
+
+def user_view_loginshell_field (request, userid, action) :
+	u = models.User.objects.get(uidnumber = userid) 
+	data = {}
+	if action == 'options':
+		data['value'] = u.login_shell
+	if action == 'value':
+		if request.method == 'POST' :
+			data = json.loads(request.body)
+			if 'value' in data.keys() :
+				value = data['value']
+				u.login_shell = value
+				u.save()
+		data['value'] = u.login_shell
+	return data
+
+#----
 # main function
 #
 @csrf_protect
 def user_view_field (request, user_id, action, fieldtype, fieldname) :
 	data = {}	
-	if fieldtype == 'select' :
-		if fieldname == 'manager' :
-			data = user_view_manager_field (request, user_id, action)
 	if fieldtype == 'multiselect' :
 		if fieldname == 'mailinglists' : 
 			data = user_view_mailinglist_field (request, user_id, action)
@@ -200,6 +216,12 @@ def user_view_field (request, user_id, action, fieldtype, fieldname) :
 			data = user_view_group_field (request, user_id, action)
 		if fieldname == 'managed' :
 			data = user_view_managed_field (request, user_id, action)
+	if fieldtype == 'select' :
+		if fieldname == 'manager' :
+			data = user_view_manager_field (request, user_id, action)
+	if fieldtype == 'text' :
+		if fieldname == 'loginshell' :
+			data = user_view_loginshell_field (request, user_id, action) 
 	jsdata = json.dumps(data)
 	return HttpResponse(jsdata, content_type='application/json')
 

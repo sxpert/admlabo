@@ -9,9 +9,9 @@ logger=logging.getLogger('django')
 # Register your models here.
 
 class UserAdmin (admin.ModelAdmin) :
-	fields = ('uidnumber', 'login', 'first_name', 'last_name', 'manager', 'arrival', 'departure', 'groups')
+	fields = ('uidnumber', 'login', 'login_shell', 'first_name', 'last_name', 'room', 'telephone', 'mail', 'manager', 'arrival', 'departure', 'groups')
 	list_display = ('last_name', 'first_name', 'mail_link', 'login', 'uidnumber', 'manager_name') 
-	readonly_fields = ('uidnumber', 'login', 'first_name', 'last_name')
+	readonly_fields = ('uidnumber', 'login', 'first_name', 'last_name', 'mail')
 	filter_horizontal = ('groups',)
 
 	def manager_name (self, obj) :

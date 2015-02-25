@@ -13,7 +13,7 @@
 <tr><th>Nom de Famille</th><td>{{ user.last_name }}</td></tr>
 <tr><th>Login</th><td>{{ user.login }}</td></tr>
 <tr><th>Uid Number</th><td>{{ user.uidnumber }}</td></tr>
-<tr><th>Login Shell</th><td>{{ user.login_shell }}</td></tr>
+<tr><th>Login Shell</th><td data-field="loginshell" data-type="text"></td></tr>
 <tr><th>Arrival</th><td>{{ user.arrival.isoformat }}</td></tr>
 <tr><th>Departure</th><td>{{ user.departure.isoformat }}</td></tr>
 <tr><th>Room number</th><td>{% if user.room %}{{ user.room }}{% endif %}</td></tr>
