@@ -3,14 +3,90 @@ from django.core.exceptions import ObjectDoesNotExist
 from silabo.models import User, Group, MailingList, MachineClass, Machine, NetworkIf, IPAddress, DomainName, Vlan
 import sys, hashlib
 sys.path.append ('/srv/progs/ipag')
-import ldaplaoG as l
+import ldaplaog as l
 import xmldb as x 
 
 class Command(BaseCommand) :
+	group_map = [
+		# team groups
+		('ipagsite',            'ipag-pos-site'),
+		('perm',                'ipag-pos-permanent'),
+		('admin',               'ipag-pos-administratif'),
+		('chercheur',           'ipag-pos-chercheur'), 
+		('ingetech',            'ipag-pos-groupetechnique'),
+		('thesard',             'ipag-pos-doctorant'),
+		('invites',             'ipag-pos-invite'),
+		('postdoc',             'ipag-pos-postdoctorant'),
+		('stage',               'ipag-pos-stagiaire'),
+		('master2',             'ipag-pos-etudiant'),
+		('astromol',            'ipag-pos-astromol'),
+		('cristal',             'ipag-pos-cristal'),
+		('planeto',             'ipag-pos-planeto'),
+		('sherpas',             'ipag-pos-sherpas'),
+		('chercheuraffilie',    'ipag-pos-affilie'),
+	
+		('aero',                'ipag-pos-aero'),
+		('amber',               'ipag-pos-amber'),
+		('consert',             'ipag-pos-consert'),
+		('direction',           'ipag-pos-direction'),
+		('electronique',        'ipag-pos-electronique'),
+		('exoplanetes',         'ipag-pos-exoplanetes'),
+		('extra',               'ipag-pos-extra'),	
+		('fost',                'ipag-pos-fost'),
+		('gravity',             'ipag-pos-gravity'),
+		('informatique',        'ipag-pos-informatique'),
+		('jmmc',                'ipag-pos-jmmc'),
+		('marsis',              'ipag-pos-marsis'),
+		('neat',                'ipag-pos-neat'),
+		('odyssey',             'ipag-pos-odyssey'),
+		('pionier',             'ipag-pos-pionier'),
+		('radar',               'ipag-pos-radar'),
+		('safir',               'ipag-pos-safir'),
+		('services',            'ipag-pos-services'),
+		('sharad',              'ipag-pos-sharad'),
+		('spectro',             'ipag-pos-spectro'),
+		('sphere',              'ipag-pos-sphere'),
+		('virtis',              'ipag-pos-virtis'),
+		('xlabuser',            'ipag-pos-xlabuser'),
+
+		# machine related groups
+		('dmz98',               'ipag-ssh-dmz98'),
+		('extra-blue',          'ipag-ssh-extra-blue'),
+		('guepard',             'ipag-ssh-guepard'),
+		('maui',                'ipag-ssh-maui'),
+		('picsou',              'ipag-ssh-picsou'),
+
+		# web site related groups
+		('web-anr-chaos',       'ipag-web-anr-chaos'),
+		('web-asa',             'ipag-web-asa'),	
+		('web-benchmarks',      'ipag-web-benchmarks'),
+		('web-chemical-cosmos', 'ipag-web-chemical-cosmos'),
+		('web-desc',            'ipag-web-desc'),
+		('web-exochemistry',    'ipag-web-exochemistry'),
+		('web-focus',           'ipag-web-focus'),
+		('web-hydrides',        'ipag-web-hydrides'),
+		('web-nika2',           'ipag-web-nika2'),
+		('web-rt13',            'ipag-web-rt13'),
+		('web-stflorent',       'ipag-web-stflorent')
+	]
+
 	help = 'Synchronizes the database from the LDAP server and the XML database'
 
 	def log(self, message) :
-		self.stdout.write (message)
+		sys.stdout.write ("\n"+message)
+		sys.stdout.flush ()
+
+	def dot(self) :
+		sys.stdout.write ('.')
+		sys.stdout.flush ()
+
+	def map_group_name (self, name) :
+		for g in self.group_map :
+			o, n = g
+			if name == o :
+				name = n
+				break
+		return name
 
 	def group (self, gd) :
 		if gd is None :
@@ -31,17 +107,23 @@ class Command(BaseCommand) :
 		
 		# find if we already have that group
 		changed = False
+		mode = ''
 		try :
 			g = Group.objects.get(gidnumber = gidnumber)
 		except Group.DoesNotExist as e :
 			# group does not exists, add
 			g = Group(gidnumber = gidnumber)
+			mode = 'create'
 			changed = True
+		else: 
+			mode = 'update'
 
 		if 'cn' not in gd.keys() :
 			self.log ("problem, no name for group")
 			return
 		name = gd['cn'][0]
+		
+		name = self.map_group_name (name)
 		if g.name != name :
 			g.name = name
 			changed = True
@@ -81,6 +163,10 @@ class Command(BaseCommand) :
 			changed = True
 
 		if changed :
+			if mode == 'create':
+				self.log ('adding group '+g.name+' with id '+str(g.gidnumber))
+			else : 
+				self.log ('updating group '+g.name+' with id '+str(g.gidnumber))
 			g.save ()
 
 	# 'description': u"Liste de diffusion de l'\xe9quipe Fost", 
@@ -90,7 +176,6 @@ class Command(BaseCommand) :
 	# 'name': 'fost.ipag'
 	def mailinglist (self, ml) :
 		changed = False
-		self.log(str(ml))
 		try :
 			m = MailingList.objects.get(ml_id = ml['id'])
 		except MailingList.DoesNotExist as e :
@@ -129,6 +214,8 @@ class Command(BaseCommand) :
 		if 'group' in ml :
 			group = ml['group']
 		if group is not None :
+			# map group
+			group = self.map_group_name(group) 
 			try :
 				newgroup = Group.objects.get(name = group)
 			except Group.DoesNotExist as e :
@@ -140,6 +227,7 @@ class Command(BaseCommand) :
 			changed = True
 
 		if changed :
+			self.log('saving mailing list '+m.name)
 			m.save ()
 		
 	# 'uid': ['cotere'], 
@@ -164,7 +252,7 @@ class Command(BaseCommand) :
 		mode = ''
 		changing=[]
 		uidnumber = int(ud['uidNumber'][0])
-		uid = data['uid'][0]
+		uid = ud['uid'][0]
 		# try to find user
 		changed = False
 		try :
@@ -185,6 +273,30 @@ class Command(BaseCommand) :
 				changed = true	
 		else:
 			mode = 'update'
+
+		if 'uid' in ud.keys() :
+			login = ud['uid'][0]
+		else :
+			self.log ('ERROR: can\'t find login for user\n'+str(ud)+'\n')
+			sys.exit(1)			
+		if login != u.login :
+			u.login = login
+
+		if 'givenName' in ud.keys() :
+			first_name = ud['givenName'][0]
+		else :
+			self.log ('ERROR: can\'t find first name for user\n'+str(ud)+'\n')
+			sys.exit(1)
+		if first_name != u.first_name :
+			u.first_name = first_name
+
+		if 'sn' in ud.keys() :
+			last_name = ud['sn'][0]
+		else :
+			self.log ('ERROR: can\'t find last name for user\n'+str(ud)+'\n')
+			sys.exit (1)
+		if last_name != u.last_name :
+			u.last_name = last_name
 
 		if 'mail' in ud.keys() :
 			mail = (ud['mail'][0]).lower()
@@ -212,10 +324,13 @@ class Command(BaseCommand) :
 
 			if old_manager != new_manager :
 				# get manager object
-				try :
-					m = User.objects.get(login=new_manager)
-				except User.DoesNotExist as e :
-					self.log ("there's no user with login "+new_manager)
+				if new_manager is not None :
+					try :
+						m = User.objects.get(login=new_manager)
+					except User.DoesNotExist as e :
+						self.log ("there's no user with login "+str(new_manager)+'\n')
+						m = None
+				else :
 					m = None
 				
 				if u.manager != m :				
@@ -254,6 +369,12 @@ class Command(BaseCommand) :
 					changing.append(('phone',u.telephone))
 					changed = True
 
+		# if create, user has to be saved before changing groups
+		# we don't want to update the ldap server just yet
+		if mode == 'create' :
+			self.log ('creating user'+user)
+			u._save ()
+		
 		# setup groups
 		# remove old groups
 		for g in u.groups.all() :
@@ -270,11 +391,16 @@ class Command(BaseCommand) :
 				changed = True
 			if len(ngr)>0 :
 				changing.append(('new_groups',repr(ngr)))
-		
+
+		# user has been modified, save
 		if changed :
 			self.log(mode+' user '+u.login+' '+str(changing))
-			u.save()
-		
+			try :
+				u.save()
+			except :
+				self.log(repr(u))
+				sys.exit (1)
+	
 
 	#=============================================================================
 	#
@@ -283,7 +409,6 @@ class Command(BaseCommand) :
 	def do_groups (self, dgroups, xgroups) :
 		for group in dgroups.keys() :
 			dn, group = self.d.get_group (dgroups[group])
-			self.log (dn)
 			gid = int(group['gidNumber'][0])
 			if gid in xgroups.keys() :
 				xgroup = xgroups[gid]
@@ -322,6 +447,7 @@ class Command(BaseCommand) :
 			self.mailinglist (ml)
 
 	def do_users (self, dusers, xusers, dgroups) :
+		self.log ('Users\n')
 		for user in dusers :
 			dn, data = user
 			uidnumber = int(data['uidNumber'][0])
@@ -341,6 +467,7 @@ class Command(BaseCommand) :
 						gidnumber = int(group['gidNumber'][0])
 						groups.append(gidnumber)
 			self.user (data, xu, groups)
+			self.dot()
 
 	def do_machine_classes (self, xclasses) :
 		for cls in xclasses :	
@@ -465,6 +592,8 @@ class Command(BaseCommand) :
 
 			if mach.comment != m['text'] :
 				mach.comment = m['text']
+				changed = True
+
 			if changed :
 				mach.save()
 
@@ -522,4 +651,4 @@ class Command(BaseCommand) :
 		self.do_machines (xmachines)
 		
 		#self.d.close()
-		self.log("end of procedure")
+		self.log("end of procedure\n")

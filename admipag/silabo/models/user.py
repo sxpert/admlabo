@@ -34,17 +34,60 @@ class User (models.Model) :
 
 	def __init__ (self, *args, **kwargs) :
 		super(User, self).__init__(*args, **kwargs)
+
+	def __repr__ (self) :
+		s = 'uidnumber   '+str(self.uidnumber)+'\n'
+		s+= 'login       \''+str(self.login)+'\'\n'
+		s+= 'login_shell \''+str(self.login_shell)+'\'\n'
+		s+= 'first_name  \''+str(self.first_name)+'\'\n'
+		s+= 'last_name   \''+str(self.last_name)+'\'\n'
+		s+= 'mail        \''+str(self.mail)+'\'\n'
+		s+= 'manager     '
+		if self.manager is None :
+			s+= 'None'
+		else :
+			s+= '\''+str(self.manager)+'\''
+		s+= '\n'
+		s+= 'arrival     '+str(self.arrival)+'\n'
+		s+= 'departure   '+str(self.departure)+'\n'
+		s+= 'room        \''+str(self.room)+'\'\n'
+		s+= 'telephone   \''+str(self.telephone)+'\'\n'
+		return s
 	
 	def __str__ (self) :
 		return self.login
+	
+	#
+	# this internal save command only saves the user to the database
+	# no sync to the ldap is done
+	def _save (self, *args, **kwargs) :
+		logger.error ('saving user '+self.login+' before assigning groups')
+		super (User, self).save(*args, **kwargs)
 
+	def _update_ldap (self, l = None) :
+		# save into the production ldap
+		if l is None :
+			l = lo.LdapOsug ()
+			l.logger = logger
+		
+		# changer les groups dans lequel se trouve la personne
+		gr = self.all_groups()
+		# grab just the group names
+		groups = []
+		for g in gr :
+			groups.append (g.name)
+			g._update_ldap (l)
+		l.groups_update (self.login, groups)
+
+		logger.error ('user saved')
+
+	#
+	# the default save command syncs the user data to the ldap server
+	# as soon as the save command is launched
 	def save (self, *args, **kwargs) :
 		logger.error ('saving user '+self.login)
 		super (User, self).save(*args, **kwargs)
-		# save into the production ldap
-		l = lo.LdapOsug ()
-		l.logger = logger
-		logger.error ('user saved')
+		self._update_ldap()
 
 	def full_name (self) :
 		n = []
@@ -109,6 +152,32 @@ class User (models.Model) :
 					if pg not in gr :
 						gr.append(pg)
 		return gr
+	
+	def unique_groups (self) :
+		agr = self.all_groups()
+		# need to identify all groups for which there's a child in the list
+		parents = []
+		# identify all group histories
+		for g in agr :
+			gp = []
+			p = g
+			while p is not None :
+				gp.append (p)
+				p = p.parent
+			parents.append (gp)
+		# identify groups with child
+		groups_with_child = []
+		for gp in parents :
+			p = gp[1:]
+			for g in p :
+				if g not in groups_with_child :
+					groups_with_child.append (g)
+		# remove the groups with child from the list
+		groups = []
+		for g in agr: 
+			if g not in groups_with_child :
+				groups.append (g)
+		return groups
 
 	# la grouplist est un array de gidnumbers
 	def change_groups (self, grouplist) :

@@ -26,3 +26,23 @@ class Group (models.Model) :
 
 	def __str__ (self) :
 		return self.name
+	
+	# update the group object to the ldap server
+	def _update_ldap (self, l = None) :
+		if l is None :
+			# for now, do nothing if l has not been passed.
+			# should create a connection to the ldap in case this is not there
+			return
+		g = l.group_check_exists (self.name, self.gidnumber)
+		if g is None :
+			# can't find group, add it to the ldap server
+			l.group_create (self.name, self.gidnumber, self.description)
+		else :
+			# we have a group, attempt to update it
+			# 1. check if group needs renaming
+			name, gid = g
+			if name != self.name :
+				l.group_rename (name, self.name)
+			# 2. update group info
+			l.group_update (self.name, self.gidnumber, self.description)
+			

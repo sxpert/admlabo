@@ -22,7 +22,7 @@
 <tr><th>Mailing lists</th><td data-field="mailinglists" data-type="multiselect"></td></tr>
 <tr><th>Groups</th> <td data-field="groups" data-type="multiselect"></td></tr>
 <tr><th>Machines</th><td><ul>{% for m in user.machines.all %}
-	<li>{{ m.default_name }}
+	<li>{{ m.default_name }}<br/>{{ m.comment }}
 		<ul>{% for i in m.interfaces.all %}
 			<li>{{ i }} ( {% for ip in i.ips.all %}{{ ip.address }} {% endfor %})</li>
 			{% endfor %}</ul>
