@@ -18,9 +18,9 @@ class NetworkIf (models.Model) :
 
 	mac_addr = netfields.MACAddressField (primary_key = True)
 	name = models.CharField (max_length=32, null=True, blank=True)
-	ips = models.ManyToManyField (IPAddress, blank=True, related_name='networkinterfaces')
+	ips = models.ManyToManyField (IPAddress, blank=True, related_name='networkinterfaces', db_index=True)
 	addressing_type	= models.IntegerField(choices = ADDRESSING_CHOICES, default=DHCP_ADDRESSING)
-	machine = models.ForeignKey ('Machine', null=True, blank=True, related_name='interfaces')
+	machine = models.ForeignKey ('Machine', null=True, blank=True, related_name='interfaces', db_index=True)
 
 	class Meta:
 		app_label = 'silabo'

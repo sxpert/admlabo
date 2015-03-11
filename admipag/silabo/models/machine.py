@@ -8,7 +8,7 @@ from silabo.models.networkif import NetworkIf
 
 class Machine (models.Model) :
 	default_name = models.ForeignKey(DomainName, null=True, blank=True)
-	owner = models.ForeignKey ('User', blank=True, null=True)
+	owner = models.ForeignKey ('User', blank=True, null=True, db_index=True)
 	comment = models.CharField (max_length=256, blank=True, null=True)
 
 	class Meta:

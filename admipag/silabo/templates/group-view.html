@@ -9,28 +9,12 @@
 <form action="." method="post">{% csrf_token %}
 <table>
 <tbody>
-<tr><th>Nom de groupe</th><td>{{ user.first_name }}</td><tr>
-<tr><th></th><td>{{ user.last_name }}</td></tr>
-<tr><th>Login</th><td>{{ user.login }}</td></tr>
-<tr><th>Uid Number</th><td>{{ user.uidnumber }}</td></tr>
-<tr><th>Login Shell</th><td data-field="loginshell" data-type="text"></td></tr>
-<tr><th>Arrival</th><td>{{ user.arrival.isoformat }}</td></tr>
-<tr><th>Departure</th><td>{{ user.departure.isoformat }}</td></tr>
-<tr><th>Room number</th><td>{% if user.room %}{{ user.room }}{% endif %}</td></tr>
-<tr><th>Telephone</th><td>{% if user.telephone %}{{ user.telephone }}{% endif %}</td></tr>
-<tr><th>Mail</th><td>{{ user.mail }}</td></tr>
-<tr><th>Mailing lists</th><td data-field="mailinglists" data-type="multiselect"></td></tr>
-<tr><th>Groups</th> <td data-field="groups" data-type="multiselect"></td></tr>
-<tr><th>Machines</th><td><ul>{% for m in user.machines.all %}
-	<li>{{ m.default_name }}<br/>{{ m.comment }}
-		<ul>{% for i in m.interfaces.all %}
-			<li>{{ i }} ( {% for ip in i.ips.all %}{{ ip.address }} {% endfor %})</li>
-			{% endfor %}</ul>
-	</li>
-	{% endfor %}</ul></td></tr>
-<tr><th>User class</th><td></td></tr>
-<tr><th>Responsable</th><td data-field="manager" data-type="select"></td></tr>
-<tr><th>Responsable de</th><td data-field="managed" data-type="multiselect"></td></tr>
+<tr><th>Nom de groupe</th><td>{{ group.name }}</td><tr>
+<tr><th>Gid Number</th><td>{{ group.gidnumber }}</td></tr>
+<tr><th>Type de groupe</th><td>{{ group.group_type }}</td></tr>
+<tr><th>Description</th><td>{% if group.description %}{{ group.description }}{% endif %}</td></tr>
+<tr><th>Groupe parent</th><td data-field="parent" data-type="select"></td></tr>
+<tr><th>Membres</th><td data-field="members" data-type="multiselect"></td></tr>
 </tbody>
 </table>
 </form>
