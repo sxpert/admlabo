@@ -8,7 +8,7 @@ from django.views.decorators.csrf import csrf_exempt, csrf_protect
 import models
 
 #==============================================================================
-# tableau de bord
+# application dashboard
 # 
 def dashboard (request) :
 	users = models.User.objects.all()
@@ -20,11 +20,11 @@ def dashboard (request) :
 
 
 #==============================================================================
-# gestion des utilisateurs
+# users management
 #
 
 #
-# liste des utilisateurs 
+# complete list of active users
 #
 def users (request) :
 	users = models.User.objects.all()
@@ -34,7 +34,7 @@ def users (request) :
 	return render(request, 'users.html', context)
 
 #
-# voir les informations d'un utilisateur
+# user information form
 #
 def user_view (request, user_id) :
 	u = models.User.objects.get(uidnumber = user_id)
@@ -45,7 +45,7 @@ def user_view (request, user_id) :
 
 #------------------------------------------------------------------------------
 # 
-# modification des données dans le formulaire utilisateur
+# ajax bits for user edit
 #
 #
 
@@ -88,8 +88,8 @@ def user_view_manager_field (request, userid, action) :
 
 #----
 # mailing lists
-# TODO: pour l'instant se contente d'afficher
-# il n'y a rien a changer
+# TODO: just display things, nothing to edit
+# 
 def user_view_mailinglist_field (request, userid, action) :
 	u = models.User.objects.get(uidnumber = userid)
 	data = {}
@@ -226,14 +226,31 @@ def user_view_field (request, user_id, action, fieldtype, fieldname) :
 	return HttpResponse(jsdata, content_type='application/json')
 
 #==============================================================================
-# gestion des groupes
+# groups management
 #
 
+#
+# liste of all groups
+#
+def groups (request) :
+	groups = models.Group.objects.all()
+	context = {
+		'groups': groups,
+	}
+	return render(request, 'groups.html', context)
+
+#
+# details of one particular group
+#
 def group_view (request, group_id) :
-	pass
+	g = models.Group.objects.get(gidnumber = group_id)
+	context = {
+		'group' : g,
+	}
+	return render(request, 'group-view.html', context)
 
 #==============================================================================
-# gestion des mailing lists
+# mailing lists management
 #
 
 def mailinglist_view (request, ml_id) :
