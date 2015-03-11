@@ -70,7 +70,7 @@ class User (models.Model) :
 			l = lo.LdapOsug ()
 			l.logger = logger
 		
-		# changer les groups dans lequel se trouve la personne
+		# change groups to which the person belongs
 		gr = self.all_groups()
 		# grab just the group names
 		groups = []
@@ -78,7 +78,19 @@ class User (models.Model) :
 			groups.append (g.name)
 			g._update_ldap (l)
 		l.groups_update (self.login, groups)
-
+	
+		# modify attributes of the person that we can actually modify
+		uv = {}
+		uv['gecos'] = self.first_name+' '+self.last_name
+		if self.manager is not None :
+			uv['manager'] = l.user_dn(self.manager.login)	
+		uv['loginShell'] = self.login_shell
+		#
+		# don't change this that comes straight from Biper
+		#uv['roomNumber'] = self.room
+		#uv['telephoneNumber'] = self.telephone		
+		logger.error (str(uv))
+		l.user_update (self.login, uv)
 		logger.error ('user saved')
 
 	#
