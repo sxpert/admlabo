@@ -372,7 +372,7 @@ class Command(BaseCommand) :
 		# if create, user has to be saved before changing groups
 		# we don't want to update the ldap server just yet
 		if mode == 'create' :
-			self.log ('creating user'+user)
+			self.log ('creating user'+u.login)
 			u._save ()
 		
 		# setup groups
@@ -528,7 +528,7 @@ class Command(BaseCommand) :
 					d = DomainName(fqdn=name)
 					changed = True
 				if changed :
-					self.d.save()
+					d.save()
 				domain_names.append (d)
 				if n == m['name'] :
 					default_name = d

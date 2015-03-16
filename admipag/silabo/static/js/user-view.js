@@ -257,13 +257,15 @@ function df_multiselect_get_value (field) {
  
 function df_select_initialize (field, data) {
 	var s = '<select data-control="select">';
-	var opt = data['options']
-	var sel = data['selected']
+	var noblank = data['noblank']; // no blank option
+	var opt = data['options'];
+	var sel = data['selected'];
 	var topt = [];
 	for (var key in opt) topt.push([key, opt[key]]);
 	topt.sort(function(a, b) { return a[1] > b[1]; });
 	// add an empty option at the begining
-	topt.unshift(['','']);
+	if (!((noblank !== undefined) && (noblank===true)))
+		topt.unshift(['','']);
 	for (opt in topt) {
 		var key = topt[opt][0];
 		var val = topt[opt][1];
@@ -277,7 +279,12 @@ function df_select_initialize (field, data) {
 
 function df_select_set_value (field, data) {
 	if (!('value' in data)) return;
-	var val = $('<a href="'+data['url']+'">'+data['value']+'</a>');
+	var url = data['url']
+	var value = data['value']
+	if (url!==undefined) 
+		var val = $('<a href="'+data['url']+'">'+value+'</a>');
+	else	
+		var val = $('<span>'+value+'</span>')
 	field.append (val);
 }
 

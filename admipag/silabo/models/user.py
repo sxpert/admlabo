@@ -77,7 +77,8 @@ class User (models.Model) :
 		for g in gr :
 			groups.append (g.name)
 			g._update_ldap (l)
-		l.groups_update (self.login, groups)
+		# may not be necessary
+		#l.groups_update (self.login, groups)
 	
 		# modify attributes of the person that we can actually modify
 		uv = {}

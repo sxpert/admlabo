@@ -9,6 +9,8 @@ urlpatterns = patterns( '',
 		views.user_view_field, name='user_view_field'),
 	url(r'^groups/', views.groups, name='groups'),
 	url(r'^group/(?P<group_id>\d+)/view/$', views.group_view, name='group_view'),
+	url(r'^group/(?P<group_id>\d+)/view/(?P<action>[^/]*)/(?P<fieldtype>[^/]*)/(?P<fieldname>[^/]*)$', 
+		views.group_view_field, name='group_view_field'),
 	url(r'^mailinglist/(?P<ml_id>[a-z0-9_]+)/view/$', views.mailinglist_view, name='mailinglist_view'),
 )
 
