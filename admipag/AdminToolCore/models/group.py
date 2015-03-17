@@ -33,27 +33,22 @@ class Group (models.Model) :
 		return self.name
 	
 	# update the group object to the ldap server
-	def _update_ldap (self, l = None) :
-		if l is None :
-			l = lo.LdapOsug ()
-			l.logger = logger
-	
+	def _update_ldap (self) :
 		# get members list
 		members = self.member_logins()
 
-		g = l.group_check_exists (self.name, self.gidnumber)
-		if g is None :
-			# can't find group, add it to the ldap server
-			l.group_create (self.name, self.gidnumber, self.description, members)
-		else :
-			# we have a group, attempt to update it
-			# 1. check if group needs renaming
-			name, gid = g
-			if name != self.name :
-				l.group_rename (name, self.name)
-			# 2. update group info
-			l.group_update (self.name, self.gidnumber, self.description, members)
+		g = {}
+		g['cn']          = self.name
+		g['gidNumber']   = self.gidnumber
+		g['description'] = self.description
+		g['memberUid']   = members
 
+		import command, json
+		c = command.Command ()
+		c.verb = 'UpdateGroup'
+		c.data = json.dumps(g)
+		c.save ()
+		
 	def save (self, *args, **kwargs) :
 		logger.error ("saving group '"+self.name+"'")
 		super (Group, self).save (*args, **kwargs)

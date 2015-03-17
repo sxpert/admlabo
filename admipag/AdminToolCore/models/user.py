@@ -64,35 +64,28 @@ class User (models.Model) :
 		logger.error ('saving user '+self.login+' before assigning groups')
 		super (User, self).save(*args, **kwargs)
 
-	def _update_ldap (self, l = None) :
-		# save into the production ldap
-		if l is None :
-			l = lo.LdapOsug ()
-			l.logger = logger
-		
+	def _update_ldap (self) :
 		# change groups to which the person belongs
 		gr = self.all_groups()
 		# grab just the group names
-		groups = []
 		for g in gr :
-			groups.append (g.name)
-			g._update_ldap (l)
-		# may not be necessary
-		#l.groups_update (self.login, groups)
+			g._update_ldap ()
 	
 		# modify attributes of the person that we can actually modify
-		uv = {}
-		uv['gecos'] = self.first_name+' '+self.last_name
+		u = {}
+		u['uid'] = self.login
+		u['gecos'] = self.first_name+' '+self.last_name
 		if self.manager is not None :
-			uv['manager'] = l.user_dn(self.manager.login)	
-		uv['loginShell'] = self.login_shell
-		#
-		# don't change this that comes straight from Biper
-		#uv['roomNumber'] = self.room
-		#uv['telephoneNumber'] = self.telephone		
-		logger.error (str(uv))
-		l.user_update (self.login, uv)
-		logger.error ('user saved')
+			u['manager'] = self.manager.login
+		u['loginShell'] = self.login_shell
+		u['roomNumber'] = self.room
+		u['telephoneNumber'] = self.telephone		
+
+		import command, json
+		c = command.Command ()
+		c.verb = 'UpdateUser'
+		c.data = json.dumps (u)
+		c.save ()
 
 	#
 	# the default save command syncs the user data to the ldap server

@@ -7,3 +7,4 @@ from AdminToolCore.models.domainname import DomainName
 from AdminToolCore.models.ipaddress import IPAddress
 from AdminToolCore.models.vlan import Vlan
 from AdminToolCore.models.user import User
+from AdminToolCore.models.command import Command

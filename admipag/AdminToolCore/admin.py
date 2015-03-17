@@ -2,7 +2,7 @@ from django import forms
 from django.contrib import admin
 from django.utils.html import format_html
 from django.core.urlresolvers import reverse
-from AdminToolCore.models import User, Group, MailingList, MachineClass, Machine, NetworkIf, DomainName, IPAddress, Vlan
+from AdminToolCore.models import User, Group, MailingList, MachineClass, Machine, NetworkIf, DomainName, IPAddress, Vlan, Command
 import logging
 logger=logging.getLogger('django')
 
@@ -127,3 +127,9 @@ class DomainNameAdmin (admin.ModelAdmin) :
 admin.site.register(DomainName, DomainNameAdmin)
 admin.site.register(IPAddress)
 admin.site.register(Vlan)
+
+class CommandAdmin (admin.ModelAdmin) :
+	fields = ('created', 'modified', 'user', 'verb', 'data', 'done',)
+	readonly_fields = ('created', 'modified', 'user')
+
+admin.site.register(Command, CommandAdmin)
