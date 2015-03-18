@@ -167,7 +167,8 @@ class Command(BaseCommand) :
 				self.log ('adding group '+g.name+' with id '+str(g.gidnumber))
 			else : 
 				self.log ('updating group '+g.name+' with id '+str(g.gidnumber))
-			g.save ()
+		# save in all cases...
+		g.save ()
 
 	# 'description': u"Liste de diffusion de l'\xe9quipe Fost", 
 	# 'group': None, 
@@ -415,7 +416,7 @@ class Command(BaseCommand) :
 				group['parent'] = xgroup['parent']
 				group['type'] = xgroup['type']
 			else :
-				self.log("NOT FOUND IN XML DATABASE")
+				self.log("ERROR: group "+str(gid)+" not found in XML database")
 			self.group (group)				
 
 	def do_mailinglists (self, xmls) :

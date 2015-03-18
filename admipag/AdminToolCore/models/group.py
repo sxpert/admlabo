@@ -50,7 +50,6 @@ class Group (models.Model) :
 		c.save ()
 		
 	def save (self, *args, **kwargs) :
-		logger.error ("saving group '"+self.name+"'")
 		super (Group, self).save (*args, **kwargs)
 		self._update_ldap ()
 

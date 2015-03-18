@@ -54,7 +54,6 @@ class UpdateLauncher (object) :
 	def _UpdateGroup_LDAP (self, command) :
 		l = lo.LdapOsug (self.logger)
 		c = json.loads(command.data)
-		self.log (str(c))
 		ck = c.keys()
 		cn = None
 		if 'cn' in ck :
@@ -70,7 +69,6 @@ class UpdateLauncher (object) :
 			memberUid = c['memberUid']
 
 		g = l.group_check_exists (cn, gidNumber)
-		self.log (str(g))
 		if g is None :
 			# group not found. add the group as new
 			return l.group_create (cn, gidNumber, description, memberUid)
@@ -86,8 +84,6 @@ class UpdateLauncher (object) :
 	# for now, only changes in the ldap
 	# would go around in other things later if needed
 	def verbUpdateGroup (self, command) :
-		self.log ('updating group')
-		self.log (command.data)
 		return self._UpdateGroup_LDAP (command)
 	
 	#
