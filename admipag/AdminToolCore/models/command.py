@@ -26,7 +26,8 @@ class Command (models.Model) :
 	done      = models.BooleanField (default=False)
 
 	class Meta:
-		ordering  = ['created']
+		get_latest_by = 'created'
+		ordering  = ['-created']
 		app_label = 'AdminToolCore'
 
 	def __str__ (self) :
@@ -37,8 +38,6 @@ class Command (models.Model) :
 		super(Command, self).save()
 		if not self.done :
 			self.execute ()
-		else :
-			logger.error ('COMMAND ALREADY HANDLED')	
 
 	def execute(self) :
 		import AdminToolCore.management.commands.LaunchUpdates as lu

@@ -18,6 +18,9 @@ class UpdateLauncher (object) :
 		else :
 			print message	
 
+	# launches updates that are not done yet in order.
+	# stops at the first problematic update (to allow debugging,
+	# and to be sure that everything is working properly)
 	def doUpdates (self) :
 		from AdminToolCore.models.command import Command	
 		self.log ("do updates")
@@ -36,6 +39,18 @@ class UpdateLauncher (object) :
 					c.done = True
 					c.save ()
 
+	#----------------------------------------------------------------------------------------------
+	#
+	# update scripts
+	#
+	# these update scripts are designed so that they leave things in a known state.
+	# also, they are designed so that they don't change anything if nothing needs be changed
+	# this allows restarting an update order at anytime.
+	#
+
+	#
+	# actual update of group in ldap
+	#
 	def _UpdateGroup_LDAP (self, command) :
 		l = lo.LdapOsug (self.logger)
 		c = json.loads(command.data)
@@ -66,11 +81,48 @@ class UpdateLauncher (object) :
 				l.group_rename (oldcn, cn)
 			return l.group_update (cn, gidNumber, description, memberUid)
 
+	#
+	# this update when a group was modified
+	# for now, only changes in the ldap
+	# would go around in other things later if needed
 	def verbUpdateGroup (self, command) :
 		self.log ('updating group')
 		self.log (command.data)
 		return self._UpdateGroup_LDAP (command)
-		
+	
+	#
+	# actual update of user in ldap
+	#
+	def _UpdateUser_LDAP (self, command) :
+		l = lo.LdapOsug (self.logger)
+		c = json.loads (command.data)
+		self.log (str(c))
+		ck = c.keys()
+		uid = None
+		if 'uid' in ck :
+			uid = c['uid']
+		else :
+			self.log ('FATAL: _UpdateUser_LDAP unable to find uid in UpdateUser command data')
+			return False
+		d = {}
+		if 'loginShell' in ck :
+			d['loginShell'] = c['loginShell']
+		if 'gecos' in ck :
+			d['gecos'] = c['gecos']
+		if 'manager' in ck :
+			d['manager'] = l.user_dn(c['manager'])
+		return l.user_update (uid, d)
+
+	#
+	# this updates when a user was modified
+	def verbUpdateUser (self, command) :
+		self.log ('updating user')
+		self.log (command.data)
+		return self._UpdateUser_LDAP (command)
+	
+#
+# base django command line tool object.
+#
 
 from django.core.management.base import BaseCommand, CommandError
 

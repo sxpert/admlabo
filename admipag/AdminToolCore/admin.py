@@ -130,6 +130,7 @@ admin.site.register(Vlan)
 
 class CommandAdmin (admin.ModelAdmin) :
 	fields = ('created', 'modified', 'user', 'verb', 'data', 'done',)
-	readonly_fields = ('created', 'modified', 'user')
+	readonly_fields = ('created', 'modified', 'user',)
+	list_display = ('user', 'verb', 'done', 'created',)
 
 admin.site.register(Command, CommandAdmin)
