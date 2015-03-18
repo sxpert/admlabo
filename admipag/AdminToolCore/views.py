@@ -4,6 +4,7 @@ import json
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.core.urlresolvers import reverse
+from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 import models
 
@@ -230,8 +231,9 @@ def user_view_field (request, user_id, action, fieldtype, fieldname) :
 #
 
 #
-# liste of all groups
+# list of all groups
 #
+@login_required
 def groups (request) :
 	groups = models.Group.objects.all()
 	context = {
@@ -254,6 +256,27 @@ def group_view (request, group_id) :
 # ajax bits for group edit
 #
 #
+
+def group_view_name_field (request, group_id, action) :
+	g = models.Group.objects.get(gidnumber=group_id)
+	data = {}
+	if action == 'options':
+		d = g.name
+		if d is None : # should not happen
+			d = ''
+		data['value'] = d
+	if action == 'value' :
+		if request.method == 'POST' :
+			data = json.loads(request.body)
+			if 'value' in data.keys() :
+				value = data['value']
+				g.name = value
+				g.save()
+		d = g.name
+		if d is None : # should not happen
+			d = ''
+		data['value'] = d
+	return data
 
 def group_view_members_field (request, group_id, action) :
 	g = models.Group.objects.get(gidnumber=group_id)
@@ -358,6 +381,8 @@ def group_view_field (request, group_id, action, fieldtype, fieldname) :
 		if fieldname == 'parent' :
 			data = group_view_parent_field (request, group_id, action) 
 	if fieldtype == 'text' :
+		if fieldname == 'name' :
+			data = group_view_name_field (request, group_id, action)
 		if fieldname == 'description' :
 			data = group_view_description_field (request, group_id, action)
 	jsdata = json.dumps(data)

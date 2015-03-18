@@ -53,6 +53,35 @@ ROOT_URLCONF = 'AdminTool.urls'
 
 WSGI_APPLICATION = 'AdminTool.wsgi.application'
 
+# Authentication 
+AUTHENTICATION_BACKENDS = (
+	'django_auth_ldap.backend.LDAPBackend',
+#	'django.contrib.auth.backends.ModelBackend',
+)
+import sys
+sys.path.append ('/srv/progs/ipag')
+import osugconfig
+import ldap
+from django_auth_ldap.config import LDAPSearch
+AUTH_LDAP_SERVER_URI = osugconfig.OSUG_LDAP_URI
+
+##
+## wtf ?? how is this possible ?
+## tls appears not to work... mebbe the test server ?
+## 
+#AUTH_LDAP_START_TLS = True
+
+AUTH_LDAP_BIND_DN = osugconfig.OSUG_LDAP_ROOT
+AUTH_LDAP_BIND_PASSWORD = osugconfig.OSUG_LDAP_PASS
+AUTH_LDAP_USER_SEARCH = LDAPSearch(osugconfig.OSUG_LDAP_IPAG_PEOPLE_OU+','+osugconfig.OSUG_LDAP_IPAG_BASE,
+								   ldap.SCOPE_SUBTREE, "(uid=%(user)s)")
+import logging
+logger = logging.getLogger('django_auth_ldap')
+logger.addHandler(logging.StreamHandler())
+logger.setLevel(logging.DEBUG)
+
+# currently using the admin site login form... good enough for now
+LOGIN_URL='/admin/login'
 
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
