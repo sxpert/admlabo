@@ -1,8 +1,9 @@
 from django.conf.urls import patterns, url
-from AdminToolCore import views
+import views
 
 urlpatterns = patterns( '',
 	url(r'^$', views.dashboard, name='dashboard'),
+	url(r'^login$', views.login_form, name='login-form'),
 	url(r'^users/', views.users, name='users'),
 	url(r'^user/(?P<user_id>\d+)/view/$', views.user_view, name='user_view'),
 	url(r'^user/(?P<user_id>\d+)/view/(?P<action>[^/]*)/(?P<fieldtype>[^/]*)/(?P<fieldname>[^/]*)$', 

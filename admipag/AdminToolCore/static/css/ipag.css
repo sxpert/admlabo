@@ -2,6 +2,12 @@ html {
 	font-size      : 10pt;
 	font-family    : sans;
 }
+#headblock {
+	font-size: 8pt;
+}
+#loggedin {
+	float: right;
+}
 form > table > tbody > tr > th {
 	vertical-align : top;
 	text-align     : left;

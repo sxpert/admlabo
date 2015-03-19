@@ -6,7 +6,7 @@ from django.shortcuts import render
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
-import models
+from .. import models
 
 #==============================================================================
 # application dashboard
@@ -233,7 +233,7 @@ def user_view_field (request, user_id, action, fieldtype, fieldname) :
 #
 # list of all groups
 #
-@login_required
+@login_required(login_url='login-form')
 def groups (request) :
 	groups = models.Group.objects.all()
 	context = {
