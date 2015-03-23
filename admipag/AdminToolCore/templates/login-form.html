@@ -6,10 +6,10 @@
 {% endcomment %}
 {% block css %}<link rel="stylesheet" type="text/css" href="{% static "AdminToolCore/css/ipag.css" %}"/>{% endblock %}
 {% block content %}
-<form action="{% url 'django.contrib.auth.views.login' %}" method="post">{% csrf_token %}
+<form action="{{ action_url }}" method="post">{% csrf_token %}
 <table>
 <tbody>
-<tr><th>Nom d'utilisateur</th><td><input type="text" name="username"/></td><tr>
+<tr><th>Nom d'utilisateur</th><td><input type="text" name="username"/></td></tr>
 <tr><th>Mot de passe</th><td><input type="password" name="password"/></td></tr>
 <tr><th></th><td><button>connexion</button></td></tr>
 </tbody>

@@ -12,7 +12,7 @@
 <body>
 <div id="headblock">
 <span id="loggedin">{% if user.is_authenticated %}{{ user.username }} -
-<a href="/admin/logout">logout</a>{% endif %}</span>
+<a href="{% url 'logout-view' %}">logout</a>{% endif %}</span>
 </div>
 {% block content %}{% endblock %}
 </body>
