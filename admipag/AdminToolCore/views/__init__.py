@@ -1,3 +1,5 @@
-from login_form import *
-from logout_view import *
+from loginform import *
+from logoutview import *
+from dashboard import *
+from userlistview import *
 from views import *

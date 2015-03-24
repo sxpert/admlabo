@@ -7,14 +7,15 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from .. import models
-
+from decorators import *
 
 import logging
 logger = logging.getLogger('django_auth_ldap')
 
 #==============================================================================
 # application dashboard
-# 
+#
+@admin_login 
 def dashboard (request) :
 	users = models.User.objects.all()
 	context = {
@@ -29,23 +30,9 @@ def dashboard (request) :
 #
 
 #
-# complete list of active users
-#
-
-
-@login_required(login_url='login-form')
-@user_passes_test(lambda u: u.is_staff, login_url='login-form')
-def users (request) :
-	users = models.User.objects.all()
-	context = {
-		'users': users,
-	}
-	return render(request, 'users.html', context)
-
-#
 # user information form
 #
-@login_required(login_url='login-form')
+@admin_login
 def user_view (request, user_id) :
 	u = models.User.objects.get(uidnumber = user_id)
 	context = {
@@ -216,6 +203,7 @@ def user_view_loginshell_field (request, userid, action) :
 #----
 # main function
 #
+@admin_login
 @csrf_protect
 def user_view_field (request, user_id, action, fieldtype, fieldname) :
 	data = {}	
@@ -242,7 +230,7 @@ def user_view_field (request, user_id, action, fieldtype, fieldname) :
 #
 # list of all groups
 #
-@login_required(login_url='login-form')
+@admin_login
 def groups (request) :
 	groups = models.Group.objects.all()
 	context = {
@@ -253,7 +241,7 @@ def groups (request) :
 #
 # details of one particular group
 #
-@login_required(login_url='login-form')
+@admin_login
 def group_view (request, group_id) :
 	g = models.Group.objects.get(gidnumber = group_id)
 	context = {
@@ -389,6 +377,7 @@ def group_view_description_field (request, group_id, action) :
 		data['value'] = d
 	return data
 
+@admin_login
 @csrf_protect
 def group_view_field (request, group_id, action, fieldtype, fieldname) :
 	data = {}

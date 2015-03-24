@@ -91,7 +91,7 @@ logger.addHandler(logging.StreamHandler())
 logger.setLevel(logging.DEBUG)
 
 # currently using the admin site login form... good enough for now
-LOGIN_URL='/admin/login'
+LOGIN_URL='login-form'
 
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
