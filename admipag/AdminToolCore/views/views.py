@@ -27,6 +27,7 @@ def dashboard (request) :
 #
 # complete list of active users
 #
+@login_required(login_url='login-form')
 def users (request) :
 	users = models.User.objects.all()
 	context = {
@@ -37,10 +38,11 @@ def users (request) :
 #
 # user information form
 #
+@login_required(login_url='login-form')
 def user_view (request, user_id) :
 	u = models.User.objects.get(uidnumber = user_id)
 	context = {
-		'user' : u,
+		'edited_user' : u,
 	}
 	return render(request, 'user-view.html', context)
 
@@ -244,6 +246,7 @@ def groups (request) :
 #
 # details of one particular group
 #
+@login_required(login_url='login-form')
 def group_view (request, group_id) :
 	g = models.Group.objects.get(gidnumber = group_id)
 	context = {
@@ -281,7 +284,17 @@ def group_view_name_field (request, group_id, action) :
 def group_view_members_field (request, group_id, action) :
 	g = models.Group.objects.get(gidnumber=group_id)
 	data = {}
+	if action=='options':
+		mem = []
+		for u in g.members() :
+			mem.append (u.uidnumber)
+		data['selected'] = mem
+		opt = {}
+		for u in models.User.objects.all () :
+			opt[u.uidnumber] = u.full_name()
+		data['options'] = opt
 	if action=='value' :
+		# TODO: post action 
 		# get current group members
 		members = []
 		for u in g.members() :
