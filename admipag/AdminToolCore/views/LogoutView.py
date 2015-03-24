@@ -9,7 +9,7 @@ from django.contrib.auth import logout
 import logging
 logger=logging.getLogger('django')
 
-def logout_view (request) :
+def LogoutView (request) :
 	logger.error('logging out '+request.user.username)
 	logout (request)
 	return redirect('dashboard')

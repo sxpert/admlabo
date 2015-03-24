@@ -14,7 +14,7 @@ import logging
 logger=logging.getLogger('django')
 
 @csrf_protect
-def login_form (request) :
+def LoginForm (request) :
 	redirect_to = request.GET.get  ('next','')
 	username    = request.POST.get ('username', '')
 	password    = request.POST.get ('password', '')
