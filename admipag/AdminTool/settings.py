@@ -62,7 +62,7 @@ import sys
 sys.path.append ('/srv/progs/ipag')
 import osugconfig
 import ldap
-from django_auth_ldap.config import LDAPSearch
+from django_auth_ldap.config import LDAPSearch, PosixGroupType
 AUTH_LDAP_SERVER_URI = osugconfig.OSUG_LDAP_URI
 
 ##
@@ -75,6 +75,16 @@ AUTH_LDAP_BIND_DN = osugconfig.OSUG_LDAP_ROOT
 AUTH_LDAP_BIND_PASSWORD = osugconfig.OSUG_LDAP_PASS
 AUTH_LDAP_USER_SEARCH = LDAPSearch(osugconfig.OSUG_LDAP_IPAG_PEOPLE_OU+','+osugconfig.OSUG_LDAP_IPAG_BASE,
 								   ldap.SCOPE_SUBTREE, "(uid=%(user)s)")
+
+AUTH_LDAP_GROUP_SEARCH = LDAPSearch(osugconfig.OSUG_LDAP_IPAG_GROUP_OU+','+osugconfig.OSUG_LDAP_IPAG_BASE,
+									ldap.SCOPE_SUBTREE, "(objectClass=posixGroup)")
+AUTH_LDAP_GROUP_TYPE = PosixGroupType(name_attr='cn')
+AUTH_LDAP_USER_FLAGS_BY_GROUP = {
+	"is_staff" : osugconfig.OSUG_LDAP_IPAG_SERVICES_GROUP
+}
+AUTH_LDAP_ALWAYS_UPDATE_USER = True
+AITH_LDAP_FIND_GROUP_PERMS = True
+
 import logging
 logger = logging.getLogger('django_auth_ldap')
 logger.addHandler(logging.StreamHandler())

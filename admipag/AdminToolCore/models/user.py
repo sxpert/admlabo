@@ -65,11 +65,12 @@ class User (models.Model) :
 		super (User, self).save(*args, **kwargs)
 
 	def _update_ldap (self) :
+		# this fails to remove user from old groups
 		# change groups to which the person belongs
-		gr = self.all_groups()
+#		gr = self.all_groups()
 		# grab just the group names
-		for g in gr :
-			g._update_ldap ()
+#		for g in gr :
+#			g._update_ldap ()
 	
 		# modify attributes of the person that we can actually modify
 		u = {}
@@ -195,14 +196,16 @@ class User (models.Model) :
 		for g in self.groups.all() :
 			if g.gidnumber not in grouplist :
 				self.groups.remove(g)
-				changed = True
+				g._update_ldap()
+#				changed = True
 		for g in grouplist :
 			g = Group.objects.get(gidnumber=g)
 			if (g is not None) and (g not in self.groups.all()) :
 				self.groups.add (g)
-				changed = True
-		if changed :
-			self.save()
+				g._update_ldap()
+#				changed = True
+#		if changed :
+#			self.save()
 
 	def manager_of (self) :
 		return User.objects.filter(manager = self)

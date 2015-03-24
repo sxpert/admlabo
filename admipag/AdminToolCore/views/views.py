@@ -4,9 +4,13 @@ import json
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.core.urlresolvers import reverse
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from .. import models
+
+
+import logging
+logger = logging.getLogger('django_auth_ldap')
 
 #==============================================================================
 # application dashboard
@@ -27,7 +31,10 @@ def dashboard (request) :
 #
 # complete list of active users
 #
+
+
 @login_required(login_url='login-form')
+@user_passes_test(lambda u: u.is_staff, login_url='login-form')
 def users (request) :
 	users = models.User.objects.all()
 	context = {
