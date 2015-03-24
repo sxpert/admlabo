@@ -24,16 +24,21 @@ def LoginForm (request) :
 	error = None
 	if username!='' and password!='' :
 		user = authenticate(username=username, password=password)
-		if user is not None :
+		if user is not None :	
+			logger.error (str(user))
 			if user.is_active :
+				logger.error ('user is active')
 				login (request, user)
+				logger.error ('redirecting to '+redirect_to)
 				return redirect(redirect_to)
 			else :
 				# user supposedly disabled ?
+				logger.error ('user not active')
 				pass
 		else :
 			# invalid login
 			error='invalid login'	
+			logger.error (error)
 	context = {}
 	context['action_url']  = request.path+'?'+request.META['QUERY_STRING']
 	context['error'] = error

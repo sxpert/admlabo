@@ -2,7 +2,7 @@ from django.conf.urls import patterns, url
 import views
 
 urlpatterns = patterns( '',
-	url(r'^$', views.dashboard, name='dashboard'),
+	url(r'^$', views.Dashboard, name='dashboard'),
 	url(r'^login$', views.LoginForm, name='login-form'),
 	url(r'^logout$', views.LogoutView, name='logout-view'),
 	url(r'^new-arrival$', views.NewArrivalForm, name='new-arrival-form'),

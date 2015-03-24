@@ -13,19 +13,6 @@ import logging
 logger = logging.getLogger('django_auth_ldap')
 
 #==============================================================================
-# application dashboard
-#
-@admin_login 
-def dashboard (request) :
-	users = models.User.objects.all()
-	context = {
-		'users': users,
-	}
-	return render(request, 'dashboard.html', context)
-
-
-
-#==============================================================================
 # users management
 #
 

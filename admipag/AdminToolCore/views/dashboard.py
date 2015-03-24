@@ -4,11 +4,15 @@ from django.shortcuts import render, redirect
 from .. import models
 from django.contrib.auth.decorators import login_required
 
+import logging
+logger=logging.getLogger('django')
+
 #==============================================================================
 # application dashboard
 #
 @login_required
-def dashboard (request) :
+def Dashboard (request) :
+	logger.error (str(request.user))
 	if not request.user.is_staff :
 		logger.error ('user is not staff')
 		logger.error ('redirecting to new arrival form')
