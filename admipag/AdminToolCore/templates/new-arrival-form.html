@@ -51,8 +51,8 @@
 	<span class="note">Si le nouvel arrivant n'est <strong>PAS</strong> futur personnel IPAG, lui attribuer le statut <strong>Invité</strong>
 		ou <strong>Stagiaire</strong></span></th><td><select name="statut">{% for uc in alluserclasses %}
 <option value="{{ uc.id }}">{% if uc.fr %}{{ uc.fr }}{% else %}{{ uc }}{% endif %}</option>{% endfor %}</select></td></tr>
-<tr><th class="right note">précisez le niveau (L1, L2, M1, ...)</th></tr>
-<tr><th class="right note">Étudiant UJF</th></tr>
+<tr style="display: none;"><th class="right note">précisez le niveau (L1, L2, M1, ...)</th></tr>
+<tr style="display: none;"><th class="right note">Étudiant UJF</th></tr>
 <tr><th>Bureau</th></tr>
 <tr><th class="right note">Précisez</th><tr>
 </tbody></table>

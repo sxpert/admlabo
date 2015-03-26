@@ -1,3 +1,7 @@
+function get_statut () {
+	return parseInt ($('[name=statut]').val());
+}
+
 $(function() {
 	$(".hasDatePicker").datepicker({
 		showOn: "button",
@@ -9,11 +13,17 @@ $(function() {
 		dateFormat: "yy-mm-dd",
 	});
 	$("[name=statut]").change(function(ev) {
-		var sel = parseInt($(ev.target.selectedOptions[0]).val());
+		var sel = get_statut();
+		// get target's tr
+		var target_tr = $($(ev.target).parents('tr')[0]);
+		var tr1 = target_tr.next('tr');
+		var tr2 = tr1.next('tr')
 		if (sel == 9) {
-			
+			tr1.show();
+			tr2.show();
 		} else {
-			
+			tr2.hide();
+			tr1.hide();
 		}
 	});
 });
