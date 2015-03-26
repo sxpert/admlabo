@@ -8,3 +8,5 @@ from AdminToolCore.models.ipaddress import IPAddress
 from AdminToolCore.models.vlan import Vlan
 from AdminToolCore.models.user import User
 from AdminToolCore.models.command import Command
+from AdminToolCore.models.country import Country
+from AdminToolCore.models.userclass import UserClass

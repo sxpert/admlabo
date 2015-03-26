@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
 from django.core.exceptions import ObjectDoesNotExist
-from AdminToolCore.models import User, Group, MailingList, MachineClass, Machine, NetworkIf, IPAddress, DomainName, Vlan
+from AdminToolCore.models import *
 import sys, hashlib
 sys.path.append ('/srv/progs/ipag')
 import ldaplaog as l
@@ -182,13 +182,20 @@ class Command(BaseCommand) :
 		except MailingList.DoesNotExist as e :
 			m = MailingList(ml_id = ml['id'])
 			changed = True
-		
+	
+		print m.ml_id
+	
 		name = None
 		if 'name' in ml :
 			name = ml['name']
 		if name != m.name :
 			m.name = name
 			changed = True
+	
+		if 'userclass' in ml :
+			userclass = ml['userclass']
+		else :
+			userclass = None
 	
 		description = None
 		if 'description' in ml :
@@ -230,7 +237,30 @@ class Command(BaseCommand) :
 		if changed :
 			self.log('saving mailing list '+m.name)
 			m.save ()
-		
+
+		# do u user class label
+		if userclass is not None :
+			changed = False
+			try :
+				u = UserClass.objects.get(ref=userclass)
+				print u
+			except UserClass.DoesNotExist as e :
+				u = UserClass()
+				u.ref = userclass
+				changed = True
+
+			if 'ucl' in ml :
+				ucl = ml['ucl'] 
+				if ucl is not None and type(ucl) is dict :
+					ks = ucl.keys()
+					for k in ks :
+						o = getattr (u, k)
+						if o != ucl[k]:
+							setattr (u, k, ucl[k])
+							changed = True
+			if changed :
+				u.save()
+
 	# 'uid': ['cotere'], 
 	# 'objectClass': ['posixAccount', 'shadowAccount', 'inetOrgPerson'], 
 	# 'loginShell': ['/bin/bash'], 

@@ -1,0 +1,47 @@
+#warning {
+	border: 2px solid red;
+	padding: 1ex;
+	width:  60em;
+}
+
+h1, h2 {
+	color: #13598f;
+}
+h2 {
+	border-bottom: 1px solid #ccc;
+}
+form > table > tbody > tr > th {
+	width: 20em;
+	padding-right: 1em;
+}
+.note {
+	font-weight: normal;
+	font-size: 8pt;
+}
+.right {
+	text-align: right;
+}
+.must-have {
+	color: red;
+}
+select {
+	width: 20em;
+	-moz-appearance: none;
+	appearance: none;
+	box-sizing: content-box;
+	border: 1px solid #999;
+	border-radius: 2px;
+	padding: 3px;
+}
+input[type=text] {
+	width: 20em;
+	-moz-appearance : none;
+	appearance : none;
+	box-sizing: content-box;
+	border: 1px solid #999;
+	border-radius: 3px;
+	padding: 3px
+}
+.hasDatePicker + img {
+	vertical-align: bottom;
+}

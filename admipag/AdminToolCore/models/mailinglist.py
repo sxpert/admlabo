@@ -14,6 +14,7 @@ class MailingList (models.Model) :
 
 	class Meta:
 		app_label = 'AdminToolCore'
+		ordering  = ['ml_id']
 
 	def __str__ (self) :
 		return self.name

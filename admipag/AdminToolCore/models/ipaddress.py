@@ -10,6 +10,7 @@ class IPAddress (models.Model) :
 	
 	class Meta:
 		app_label = 'AdminToolCore'
+		verbose_name_plural = 'IP Addresses'
 
 	def __str__ (self) :
 		return str(self.address)

@@ -2,7 +2,7 @@ from django import forms
 from django.contrib import admin
 from django.utils.html import format_html
 from django.core.urlresolvers import reverse
-from AdminToolCore.models import User, Group, MailingList, MachineClass, Machine, NetworkIf, DomainName, IPAddress, Vlan, Command
+from AdminToolCore.models import *
 import logging
 logger=logging.getLogger('django')
 
@@ -134,3 +134,9 @@ class CommandAdmin (admin.ModelAdmin) :
 	list_display = ('user', 'verb', 'done', 'created',)
 
 admin.site.register(Command, CommandAdmin)
+
+class CountryAdmin (admin.ModelAdmin) :
+	list_display = ('iso2', 'name', 'citizenship')
+
+admin.site.register(Country, CountryAdmin)
+admin.site.register(UserClass)

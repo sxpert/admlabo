@@ -1,0 +1,78 @@
+{% extends "ipag-base.html" %}
+{% load staticfiles %}
+{% block title %} - Nouvelle arrivée{% endblock %}
+{% block scripts %}<script src="{% static "AdminToolCore/js/new-arrival-form.js" %}"></script>{% endblock %}
+{% block css %}<link rel="stylesheet" type="text/css" href="{% static "AdminToolCore/css/ipag.css" %}"/>
+<link rel="stylesheet" type="text/css" href="{% static "AdminToolCore/css/new-arrival-form.css" %}"/>{% endblock %}
+{% block content %}
+<h1>Formulaire d'enregistrement du nouvel arrivant</h1>
+<div id="warning"><p>Afin d'accueillir la personne dans les <strong>meilleures conditions,</strong> vous devez remplir ce formulaire
+<strong>au plus tôt</strong> (15 jours minimum avant son arrivée).</p>
+<p>Le respect de ce délai lui permettra de disposer&nbsp;:</p>
+<ul><li>d'un <strong>bureau</strong> pour la durée du séjour</li>
+	<ul><li>vérifier la <strong>disponibilité</strong> et les <strong>caractéristiques</strong> des salles pour les 
+			<a href="http://ipag.osug.fr/twiki/bin/view/Ipag/Intranet/Arrivant#Visiteurs_invit_s">visiteurs</a></li>
+		<li>vérifier la <strong>disponibilité</strong> et les <strong>caractéristiques</strong> des salles poue les
+			<a href="http://ipag.osug.fr/twiki/bin/view/Ipag/Intranet/DisponibiliteSallesStagiairesVisu1An?skin=plain">stagiaires</a></li></ul>
+	<li>d'un <strong>badge d'accès au bâtiment</strong></li>
+	<li>d'un <strong>badge pour le parking</strong></li>
+	<li>d'une carte de restauration pour les personnels bénéficiaires</li>
+	<li>d'un <strong>compte informatique</strong> pour accéder au système d'information de l'Institut</li>
+	<li>d'un <strong>compte informatique</strong> pour accéder au système d'information de l'Université</li>
+</ul>
+<p>Si le nouvel arrivant n'est pas de nationalité européenne, il peut être nécessaire de déclarer sa présence auprès du 
+<a href="http://www.dgdr.cnrs.fr/FSD/securite-echanges/visites.htm">Fonctionnaire Sécurité Défense</a>. Contactez 
+<a href="beatrice.pibaret@obs.ujf-grenoble.fr">Béatrice Pibaret</a> en lui fournissant les renseignements suivants&nbsp;:</p>
+<ul><li>date et lieu de naissance</li>
+	<li>nom et adresse de l'établissement d'origine</li>
+	<li>le programme scientifique (quelques lignes)</li>
+	<li>la source de financement du séjour</li></ul>
+</div>
+
+<form action="{{ action_url }}" method="post">{% csrf_token %}
+
+<h2>L'accueillant (ou le responsable hiérarchique</h2>
+<table><tbody>
+<tr><th>Nom</th><td><select name="responsable">{% for u in allusers %}
+<option value="{{ u.uidnumber }}"{% if user.username == u.login %} selected{% endif %}>{{ u.full_name }}</option>{% endfor %}</select></td></tr
+</tbody></table>
+
+<h2>Le nouvel arrivant</h2>
+<table><tbody>
+<tr><th>Nom&nbsp;<span class="must-have">⚫</span></th><td><input type="text" name="last_name" value="{{ last_name }}"/></td></tr>
+<tr><th>Prénom&nbsp;<span class="must-have">⚫</span></th><td><input type="text" name="first_name" value="{{ first_name }}"/></td></tr>
+<tr><th>Date de naissance&nbsp;<span class="must-have">⚫</span></th><td><input type="text" class="hasDatePicker" 
+	name="date_de_naissance" value="{{ date_de_naissance }}"/></td></tr>
+<tr><th>Adresse email externe&nbsp;<span class="must-have">⚫</span></th><td><input type="text" name="external_email" value="{{ external_email }}"/></td><tr>
+<tr><th>Nationalité&nbsp;<span class="must-have">⚫</span></th><td><select name="citizenship">{% for c in allcountries %}
+<option value="{{ c.iso2 }}">{{ c.citizenship }}</option>
+{% endfor %}</select></td></tr>
+<tr><th>Statut au sein de l'IPAG<br/>
+	<span class="note">Si le nouvel arrivant n'est <strong>PAS</strong> futur personnel IPAG, lui attribuer le statut <strong>Invité</strong>
+		ou <strong>Stagiaire</strong></span></th><td><select name="statut">{% for uc in alluserclasses %}
+<option value="{{ uc.id }}">{% if uc.fr %}{{ uc.fr }}{% else %}{{ uc }}{% endif %}</option>{% endfor %}</select></td></tr>
+<tr><th class="right note">précisez le niveau (L1, L2, M1, ...)</th></tr>
+<tr><th class="right note">Étudiant UJF</th></tr>
+<tr><th>Bureau</th></tr>
+<tr><th class="right note">Précisez</th><tr>
+</tbody></table>
+
+<h2>Le séjour</h2>
+<table><tbody>
+<tr><th>Date d'arrivée</th></tr>
+<tr><th>Date de départ<br/><span class="note">pour les pesonnels non-permanents uniquement</span></th><tr>
+</tbody></table>
+
+<h2>Les moyens techniques</h2>
+<h3>Informatique</h3>
+
+<h3>Autres</h3>
+
+<table>
+<tbody>
+
+<tr><th></th><td><button>envoyer la demande</button></td></tr>
+</tbody>
+</table>
+</form>
+{% endblock %}

@@ -11,5 +11,9 @@ from django.contrib.auth.decorators import login_required
 
 @login_required
 def NewArrivalForm (request) :
-	return render(request, 'newarrivalform.html')
+	context = {}
+	context['allusers'] = models.User.objects.all()
+	context['allcountries'] = models.Country.objects.all()
+	context['alluserclasses'] = models.UserClass.objects.all()
+	return render(request, 'new-arrival-form.html', context)
 
