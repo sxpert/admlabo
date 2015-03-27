@@ -36,6 +36,7 @@ class Group (models.Model) :
 	def _update_ldap (self) :
 		# get members list
 		members = self.member_logins()
+		logger.error ("saving group to ldap, members list : "+str(members))
 
 		g = {}
 		g['cn']          = self.name

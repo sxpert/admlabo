@@ -54,10 +54,10 @@ class GroupAdmin (admin.ModelAdmin) :
 		return super(GroupAdmin, self).get_form(request, obj, **kwargs)
 
 	def save_model (self, request, obj, form, change) :
-		super(GroupAdmin, self).save_model(request, obj, form, change)
 		obj.users.clear()
 		for user in form.cleaned_data['users'] :
 			obj.users.add(user)
+		super(GroupAdmin, self).save_model(request, obj, form, change)
 
 	def group_description (self, obj) :
 		if obj.description is None:

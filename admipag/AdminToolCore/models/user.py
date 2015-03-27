@@ -36,6 +36,7 @@ class User (models.Model) :
 		super(User, self).__init__(*args, **kwargs)
 
 	def __repr__ (self) :
+		return self.login
 		s = 'uidnumber   '+str(self.uidnumber)+'\n'
 		s+= 'login       \''+str(self.login)+'\'\n'
 		s+= 'login_shell \''+str(self.login_shell)+'\'\n'

@@ -18,6 +18,6 @@ def NewArrivalForm (request) :
 	context['alluserclasses'] = models.UserClass.objects.all().order_by('fr')
 	context['allteams'] = models.Group.objects.filter(group_type=models.Group.TEAM_GROUP).order_by('name')
 	context['alloffices'] = models.Office.objects.all()
-	context['allostypes'] = []
+	context['allostypes'] = models.NewUser.NEWUSER_OS_TYPES
 	return render(request, 'new-arrival-form.html', context)
 
