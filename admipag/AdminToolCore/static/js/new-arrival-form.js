@@ -1,5 +1,17 @@
-function get_statut () {
-	return parseInt ($('[name=statut]').val());
+function toggle_statut () {
+	var statut = $('[name=statut]');
+	var sel = parseInt (statut.val());
+	// get target's tr
+	var target_tr = $(statut.parents('tr')[0]);
+	var tr1 = target_tr.next('tr');
+	var tr2 = tr1.next('tr')
+	if (sel == 9) {
+		tr1.show();
+		tr2.show();
+	} else {
+		tr2.hide();
+		tr1.hide();
+	}
 }
 
 $(function() {
@@ -13,17 +25,7 @@ $(function() {
 		dateFormat: "yy-mm-dd",
 	});
 	$("[name=statut]").change(function(ev) {
-		var sel = get_statut();
-		// get target's tr
-		var target_tr = $($(ev.target).parents('tr')[0]);
-		var tr1 = target_tr.next('tr');
-		var tr2 = tr1.next('tr')
-		if (sel == 9) {
-			tr1.show();
-			tr2.show();
-		} else {
-			tr2.hide();
-			tr1.hide();
-		}
+		toggle_statut();
 	});
+	toggle_statut();
 });
