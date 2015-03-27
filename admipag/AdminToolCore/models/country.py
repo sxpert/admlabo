@@ -20,6 +20,7 @@ class Country (models.Model) :
 	iso2 = models.CharField(max_length=2, primary_key=True)
 	name = models.CharField(max_length=128)
 	citizenship = models.CharField(max_length=128)
+	eu_member = models.BooleanField (default = False)
 
 	class Meta:
 		app_label = 'AdminToolCore'

@@ -43,7 +43,7 @@
 <tr><th>Prénom&nbsp;<span class="must-have">⚫</span></th><td><input type="text" name="first_name" value="{{ first_name }}"/></td></tr>
 <tr><th>Date de naissance&nbsp;<span class="must-have">⚫</span></th><td><input type="text" class="hasDatePicker" 
 	name="date_de_naissance" value="{{ date_de_naissance }}"/></td></tr>
-<tr><th>Adresse email externe&nbsp;<span class="must-have">⚫</span></th><td><input type="text" name="external_email" value="{{ external_email }}"/></td><tr>
+<tr><th>Adresse email externe&nbsp;<span class="must-have">⚫</span></th><td><input type="text" name="external_email" value="{{ external_email }}"/></td></tr>
 <tr><th>Nationalité&nbsp;<span class="must-have">⚫</span></th><td><select name="citizenship">{% for c in allcountries %}
 <option value="{{ c.iso2 }}">{{ c.citizenship }}</option>
 {% endfor %}</select></td></tr>
@@ -51,9 +51,15 @@
 	<span class="note">Si le nouvel arrivant n'est <strong>PAS</strong> futur personnel IPAG, lui attribuer le statut <strong>Invité</strong>
 		ou <strong>Stagiaire</strong></span></th><td><select name="statut">{% for uc in alluserclasses %}
 <option value="{{ uc.id }}">{% if uc.fr %}{{ uc.fr }}{% else %}{{ uc }}{% endif %}</option>{% endfor %}</select></td></tr>
-<tr style="display: none;"><th class="right note">précisez le niveau (L1, L2, M1, ...)</th></tr>
-<tr style="display: none;"><th class="right note">Étudiant UJF</th></tr>
-<tr><th>Bureau</th></tr>
+<tr style="display: none;"><th class="right note">précisez le niveau (L1, L2, M1, ...)</th>
+	<td><input type="text" name="study_level" value="{{ study_level }}"/></td></tr>
+<tr style="display: none;"><th class="right note">Étudiant UJF</th>
+	<td><input type="radio" name="ujf_student" value="1">oui 
+		<input type="radio" name="ujf_student" value="0">non</td></tr>
+<tr><th>Équipe</th><td><select name="team">{% for team in allteams %}
+<option value="{{ team.gidnumbe }}">{{ team.name }}</option>{% endfor %}</select></td></tr>
+<tr><th>Bureau</th><td><select name="office">{% for o in alloffices %}
+<option value="{{o}}">{{o}}</option>{% endfor %}</select></td></tr>
 <tr><th class="right note">Précisez</th><tr>
 </tbody></table>
 

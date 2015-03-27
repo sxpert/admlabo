@@ -91,8 +91,13 @@ logger = logging.getLogger('django_auth_ldap')
 logger.addHandler(logging.StreamHandler())
 logger.setLevel(logging.DEBUG)
 
-# currently using the admin site login form... good enough for now
+#==================================================================================================
+#
+# Application specific configuration
+#
+
 LOGIN_URL='login-form'
+DEFAULT_COUNTRY = 'FR'
 
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases

@@ -140,3 +140,4 @@ class CountryAdmin (admin.ModelAdmin) :
 
 admin.site.register(Country, CountryAdmin)
 admin.site.register(UserClass)
+admin.site.register(Office)
