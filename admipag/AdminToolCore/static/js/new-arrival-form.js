@@ -14,8 +14,18 @@ function toggle_statut () {
 	}
 }
 
+function toggle_office () {
+	var office = $('[name=office]')
+	var sel = office.val();
+	var tr = $(office.parents('tr')[0]).next('tr')
+	if (sel=='') 
+		tr.show();
+	else
+		tr.hide();
+}
+
 $(function() {
-	$(".hasDatePicker").datepicker({
+	$("[name=birthdate]").datepicker({
 		showOn: "button",
 		buttonImage: "/static/material-design-icons/action/svg/design/ic_event_24px.svg",
 		buttonImageOnly: true,
@@ -27,5 +37,23 @@ $(function() {
 	$("[name=statut]").change(function(ev) {
 		toggle_statut();
 	});
+	$('[name=office]').change(function(ev) {
+		toggle_office();
+	});
 	toggle_statut();
+	toggle_office();
+	$("[name=arrival]").datepicker({
+		showOn: "button",
+		buttonImage: "/static/material-design-icons/action/svg/design/ic_event_24px.svg",
+		buttonImageOnly: true,
+		changeYear: true,
+		dateFormat: "yy-mm-dd",
+	});
+	$("[name=departure]").datepicker({
+		showOn: "button",
+		buttonImage: "/static/material-design-icons/action/svg/design/ic_event_24px.svg",
+		buttonImageOnly: true,
+		changeYear: true,
+		dateFormat: "yy-mm-dd",
+	});
 });

@@ -12,16 +12,12 @@ from django.conf import settings
 @login_required
 def NewArrivalForm (request) :
 	context = {}
-	users = models.User.objects.all()
-	context['allusers'] = users
+	context['allusers'] = models.User.objects.all()
 	context['DEFAULT_COUNTRY'] = settings.DEFAULT_COUNTRY
 	context['allcountries'] = models.Country.objects.all().order_by('citizenship')
-	context['alluserclasses'] = models.UserClass.objects.all()
+	context['alluserclasses'] = models.UserClass.objects.all().order_by('fr')
 	context['allteams'] = models.Group.objects.filter(group_type=models.Group.TEAM_GROUP).order_by('name')
-	offices = []
-	for u in users.order_by('room') :
-		if u.room is not None  and u.room not in offices :
-			offices.append (u.room)
-	context['alloffices'] = offices
+	context['alloffices'] = models.Office.objects.all()
+	context['allostypes'] = []
 	return render(request, 'new-arrival-form.html', context)
 

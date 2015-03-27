@@ -11,3 +11,4 @@ from AdminToolCore.models.command import Command
 from AdminToolCore.models.country import Country
 from AdminToolCore.models.userclass import UserClass
 from AdminToolCore.models.office import Office
+from AdminToolCore.models.newuser import NewUser

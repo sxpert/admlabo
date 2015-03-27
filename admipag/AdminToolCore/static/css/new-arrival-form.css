@@ -1,4 +1,4 @@
-#warning {
+.warning {
 	border: 2px solid red;
 	padding: 1ex;
 	width:  60em;
@@ -42,6 +42,6 @@ input[type=text] {
 	border-radius: 3px;
 	padding: 3px
 }
-.hasDatePicker + img {
+.hasDatepicker + img {
 	vertical-align: bottom;
 }

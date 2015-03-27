@@ -2,11 +2,10 @@
 {% load staticfiles %}
 {% block title %} - Nouvelle arrivée{% endblock %}
 {% block scripts %}<script src="{% static "AdminToolCore/js/new-arrival-form.js" %}"></script>{% endblock %}
-{% block css %}<link rel="stylesheet" type="text/css" href="{% static "AdminToolCore/css/ipag.css" %}"/>
-<link rel="stylesheet" type="text/css" href="{% static "AdminToolCore/css/new-arrival-form.css" %}"/>{% endblock %}
+{% block css %}<link rel="stylesheet" type="text/css" href="{% static "AdminToolCore/css/new-arrival-form.css" %}"/>{% endblock %}
 {% block content %}
 <h1>Formulaire d'enregistrement du nouvel arrivant</h1>
-<div id="warning"><p>Afin d'accueillir la personne dans les <strong>meilleures conditions,</strong> vous devez remplir ce formulaire
+<div class="warning"><p>Afin d'accueillir la personne dans les <strong>meilleures conditions,</strong> vous devez remplir ce formulaire
 <strong>au plus tôt</strong> (15 jours minimum avant son arrivée).</p>
 <p>Le respect de ce délai lui permettra de disposer&nbsp;:</p>
 <ul><li>d'un <strong>bureau</strong> pour la durée du séjour</li>
@@ -41,39 +40,67 @@
 <table><tbody>
 <tr><th>Nom&nbsp;<span class="must-have">⚫</span></th><td><input type="text" name="last_name" value="{{ last_name }}"/></td></tr>
 <tr><th>Prénom&nbsp;<span class="must-have">⚫</span></th><td><input type="text" name="first_name" value="{{ first_name }}"/></td></tr>
-<tr><th>Date de naissance&nbsp;<span class="must-have">⚫</span></th><td><input type="text" class="hasDatePicker" 
-	name="date_de_naissance" value="{{ date_de_naissance }}"/></td></tr>
+<tr><th>Date de naissance&nbsp;<span class="must-have">⚫</span></th>
+	<td><input type="text" name="birthdate" value="{{ birthdate }}"/></td></tr>
 <tr><th>Adresse email externe&nbsp;<span class="must-have">⚫</span></th><td><input type="text" name="external_email" value="{{ external_email }}"/></td></tr>
+<tr><th>{{DEFAULT_COUNTRY}}</th></tr>
 <tr><th>Nationalité&nbsp;<span class="must-have">⚫</span></th><td><select name="citizenship">{% for c in allcountries %}
-<option value="{{ c.iso2 }}">{{ c.citizenship }}</option>
+<option value="{{ c.iso2 }}"{% if c.iso2 == DEFAULT_COUNTRY %} selected{% endif %}>{{ c.citizenship }}</option>
 {% endfor %}</select></td></tr>
-<tr><th>Statut au sein de l'IPAG<br/>
+<tr><th>Statut au sein de l'IPAG&nbsp;<span class="must-have">⚫</span><br/>
 	<span class="note">Si le nouvel arrivant n'est <strong>PAS</strong> futur personnel IPAG, lui attribuer le statut <strong>Invité</strong>
 		ou <strong>Stagiaire</strong></span></th><td><select name="statut">{% for uc in alluserclasses %}
 <option value="{{ uc.id }}">{% if uc.fr %}{{ uc.fr }}{% else %}{{ uc }}{% endif %}</option>{% endfor %}</select></td></tr>
-<tr style="display: none;"><th class="right note">précisez le niveau (L1, L2, M1, ...)</th>
+<tr><th class="right note">précisez le niveau (L1, L2, M1, ...)</th>
 	<td><input type="text" name="study_level" value="{{ study_level }}"/></td></tr>
-<tr style="display: none;"><th class="right note">Étudiant UJF</th>
+<tr><th class="right note">Étudiant UJF</th>
 	<td><input type="radio" name="ujf_student" value="1">oui 
 		<input type="radio" name="ujf_student" value="0">non</td></tr>
-<tr><th>Équipe</th><td><select name="team">{% for team in allteams %}
+<tr><th>Équipe&nbsp;<span class="must-have">⚫</span></th><td><select name="team">{% for team in allteams %}
 <option value="{{ team.gidnumbe }}">{{ team.name }}</option>{% endfor %}</select></td></tr>
-<tr><th>Bureau</th><td><select name="office">{% for o in alloffices %}
-<option value="{{o}}">{{o}}</option>{% endfor %}</select></td></tr>
-<tr><th class="right note">Précisez</th><tr>
+<tr><th>Bureau&nbsp;<span class="must-have">⚫</span></th><td><select name="office">
+<option value="">Autre</option>{% for o in alloffices %}
+<option value="{{o.ref}}">{{o}}</option>{% endfor %}</select></td></tr>
+<tr><th class="right note">Précisez</th><td><input type="text" name="other_office" value="{{other_office}}"/></td><tr>
 </tbody></table>
 
 <h2>Le séjour</h2>
 <table><tbody>
-<tr><th>Date d'arrivée</th></tr>
-<tr><th>Date de départ<br/><span class="note">pour les pesonnels non-permanents uniquement</span></th><tr>
+<tr><th>Date d'arrivée&nbsp;<span class="must-have">⚫</span></th>
+	<td><input type="text" name="arrival" value="{{ arrival }}"/></td></tr>
+<tr><th>Date de départ<br/><span class="note">pour les pesonnels non-permanents uniquement</span></th>
+	<td><input type="text" name="departure" value="{{ departure }}"/></td><tr>
 </tbody></table>
 
 <h2>Les moyens techniques</h2>
 <h3>Informatique</h3>
+<div class="warning">
+<ul><li>Une station de travail fixe ne sera installée que dans un <strong>bureau définitif</strong></li>
+<li>Les stagiaires <strong>doivent</strong> utiliser une station de travail libre service.<br/>
+	Consultez le tableau de réservation des places
+	<a href="http://ipag.osug.fr/twiki/bin/view/Ipag/Intranet/DisponibiliteSallesStagiairesVisu1An?skin=plain">stagiaire</a></li>
+<li><strong>Les équipements personnels ne sont pas autorisés sur le réseau de l'institut</strong></li></ul>
+</div>
+<table><tbody>
+<tr><th>Compte informatique&nbsp;<span class="must-have">⚫</span></th>
+	<td><input type="radio" name="comp_account" value="1">oui
+		<input type="radio" name="comp_account" value="0">non</td></tr>
+<tr><th>Type de station de travail&nbsp;<span class="must-have">⚫</span></th>
+	<td></td></tr>
+<tr><th class="right note">Précisez</th>
+	<td><input type="text" name="specific_os" value="{{ specific_os }}"/></td></tr>
+<tr><th>Achat de matériel en cours&nbsp;<span class="must-have">⚫</span></th>
+	<td><input type="radio" name="comp_purchase" value="1">oui
+        <input type="radio" name="comp_purchase" value="0">non</td></tr>
+</tbody></table>
+
 
 <h3>Autres</h3>
 
+
+<h2>Hygiène et sécurité</h2>
+
+<h2>Commentaires éventuels</h2>
 <table>
 <tbody>
 

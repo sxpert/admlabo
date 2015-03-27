@@ -136,8 +136,9 @@ class CommandAdmin (admin.ModelAdmin) :
 admin.site.register(Command, CommandAdmin)
 
 class CountryAdmin (admin.ModelAdmin) :
-	list_display = ('iso2', 'name', 'citizenship')
+	list_display = ('iso2', 'name', 'citizenship', 'eu_member')
 
 admin.site.register(Country, CountryAdmin)
 admin.site.register(UserClass)
 admin.site.register(Office)
+admin.site.register(NewUser)

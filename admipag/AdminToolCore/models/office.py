@@ -5,10 +5,13 @@ logger=logging.getLogger('django')
 
 class Office (models.Model) :
 	ref = models.CharField (max_length=16, null=False)
+	desc = models.CharField (max_length=16, null=True, blank=True)
 
 	class Meta:
 		app_label = 'AdminToolCore'
 		ordering  = ['ref']
 
 	def __str__ (self) :
-		return str(self.ref)
+		if self.desc is not None :
+			return self.desc
+		return self.ref
