@@ -24,6 +24,16 @@ function toggle_office () {
 		tr.hide();
 }
 
+function toggle_os_type () {
+	var os_type = $('[name=os_type]')
+	var sel = os_type.val();
+	var tr = $(os_type.parents('tr')[0]).next('tr')
+	if (sel=='0') 
+		tr.show();
+	else
+		tr.hide();
+}
+
 $(function() {
 	$("[name=birthdate]").datepicker({
 		showOn: "button",
@@ -56,4 +66,8 @@ $(function() {
 		changeYear: true,
 		dateFormat: "yy-mm-dd",
 	});
+	$('[name=os_type]').change(function(ev) {
+		toggle_os_type();
+	});
+	toggle_os_type();
 });
