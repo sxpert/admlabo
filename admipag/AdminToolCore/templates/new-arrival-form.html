@@ -61,7 +61,7 @@
 <tr><th>Bureau&nbsp;<span class="must-have">⚫</span></th><td><select name="office">
 <option value="">Autre</option>{% for o in alloffices %}
 <option value="{{o.ref}}">{{o}}</option>{% endfor %}</select></td></tr>
-<tr><th class="right note">Précisez</th><td><input type="text" name="other_office" value="{{other_office}}"/></td><tr>
+<tr><th class="right note">Précisez</th><td><input type="text" name="other_office" value="{{other_office}}"/></td></tr>
 </tbody></table>
 
 <h2>Le séjour</h2>
@@ -69,7 +69,7 @@
 <tr><th>Date d'arrivée&nbsp;<span class="must-have">⚫</span></th>
 	<td><input type="text" name="arrival" value="{{ arrival }}"/></td></tr>
 <tr><th>Date de départ<br/><span class="note">pour les pesonnels non-permanents uniquement</span></th>
-	<td><input type="text" name="departure" value="{{ departure }}"/></td><tr>
+	<td><input type="text" name="departure" value="{{ departure }}"/></td></tr>
 </tbody></table>
 
 <h2>Les moyens techniques</h2>
@@ -97,16 +97,35 @@
 
 
 <h3>Autres</h3>
-
+<table><tbody>
+<tr><th>Accès laboratoires optique IR&nbsp;<span class="must-have">⚫</span></th>
+	<td><input type="radio" name="ir_lab" value="1">oui
+        <input type="radio" name="ir_lab" value="0">non</td></tr>
+<tr><th>Accès atelier mécanique&nbsp;<span class="must-have">⚫</span></th>
+	<td><input type="radio" name="workshop" value="1">oui
+        <input type="radio" name="workshop" value="0">non</td></tr>
+<tr><th>Accès laboratoires de chimie&nbsp;<span class="must-have">⚫</span></th>
+	<td><input type="radio" name="chem_lab" value="1">oui
+        <input type="radio" name="chem_lab" value="0">non</td></tr>
+</tbody></table>
 
 <h2>Hygiène et sécurité</h2>
+<div class="warning">Le nouvel arrivant est-il susceptible d'effectuer des travaux dans des salles de manip (laboratoires
+infrarouge, laboratoire de chimie, hall d'intégration, labo SWIFTS...), même pour une activité infime&nbsp;? il est
+<strong>impératif</strong> qu'il ait été sensibilisé au préalable par les Assistants de Prévention</div>
+<table><tbody>
+<tr><th>Activité à risques&nbsp;<span class="must-have">⚫</span></th>
+	<td><input type="radio" name="risky_activity" value="1">oui
+        <input type="radio" name="risky_activity" value="0">non</td></tr>
+</tbody></table>
 
 <h2>Commentaires éventuels</h2>
-<table>
-<tbody>
+<table><tbody>
+<tr><td colspan=2><textarea name="comments"></textarea></td></tr>
 
+
+<table> <tbody>
 <tr><th></th><td><button>envoyer la demande</button></td></tr>
-</tbody>
-</table>
+</tbody> </table>
 </form>
 {% endblock %}

@@ -29,3 +29,9 @@ form > table > tbody > tr > th {
 	height         : 14pt;
 	cursor         : pointer;		
 }
+#footer {
+	min-height: 10ex;
+}
+#copyright { 
+ 	font-size: 7pt;
+}

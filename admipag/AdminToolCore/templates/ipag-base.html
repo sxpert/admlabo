@@ -13,6 +13,8 @@
 <a href="{% url 'logout-view' %}">logout</a>{% endif %}</span>
 </div>
 {% block content %}{% endblock %}
+<div id="footer">{%block footer %}{% endblock %}</div>
+<div id="copyright">© Raphaël Jacquot / IPAG 2015</div>
 <script src="{% static "jquery/jquery.js" %}"></script>
 <script src="{% static "jquery/jquery.cookie.js" %}"></script>
 <script src="{% static "jquery/jquery-ui/jquery-ui.min.js" %}"></script>

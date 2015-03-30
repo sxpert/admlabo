@@ -10,9 +10,16 @@ h1, h2 {
 h2 {
 	border-bottom: 1px solid #ccc;
 }
+td, th {
+	padding-left: 0;
+	padding-right: 0;
+}
 form > table > tbody > tr > th {
 	width: 20em;
 	padding-right: 1em;
+}
+table {
+	border-collapse: collapse;
 }
 .note {
 	font-weight: normal;
@@ -30,17 +37,30 @@ select {
 	appearance: none;
 	box-sizing: content-box;
 	border: 1px solid #999;
-	border-radius: 2px;
+	border-radius: 3px;
 	padding: 3px;
 }
-input[type=text] {
+input[type="text"] {
 	width: 20em;
 	-moz-appearance : none;
 	appearance : none;
 	box-sizing: content-box;
 	border: 1px solid #999;
 	border-radius: 3px;
-	padding: 3px
+	padding: 3px;
+}
+textarea {
+	font-family: inherit;
+	font-size: inherit;
+	font-weight: inherit;
+	-moz-appearance: none;
+	appearance: none;
+	box-sizing: content-box;
+	border: 1px solid #999;
+	border-radius: 3px;
+	width: 41em;
+	height: 20ex;
+	padding: 3px;
 }
 .hasDatepicker + img {
 	vertical-align: bottom;
