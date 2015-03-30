@@ -28,21 +28,35 @@
 	<li>la source de financement du séjour</li></ul>
 </div>
 
-<form action="{{ action_url }}" method="post">{% csrf_token %}
+<form action="{% url 'new-arrival-form' %}" method="post">{% csrf_token %}
 
 <h2>L'accueillant (ou le responsable hiérarchique</h2>
 <table><tbody>
-<tr><th>Nom</th><td><select name="responsable">{% for u in allusers %}
-<option value="{{ u.uidnumber }}"{% if user.username == u.login %} selected{% endif %}>{{ u.full_name }}</option>{% endfor %}</select></td></tr
+<tr><th>Nom</th><td><select name="manager">{% for u in allusers %}
+<option value="{{ u.uidnumber }}"
+{% if newuser.manager %}
+	{% if u.uidnumber == newuser.manager %}
+		selected
+	{% endif %}
+{% else %}
+	{% if user.username == u.login %}
+		selected
+	{% endif %}
+{% endif %}>{{ u.full_name }}</option>{% endfor %}</select></td></tr>
 </tbody></table>
 
 <h2>Le nouvel arrivant</h2>
 <table><tbody>
-<tr><th>Nom&nbsp;<span class="must-have">⚫</span></th><td><input type="text" name="last_name" value="{{ last_name }}"/></td></tr>
-<tr><th>Prénom&nbsp;<span class="must-have">⚫</span></th><td><input type="text" name="first_name" value="{{ first_name }}"/></td></tr>
+{% if errors.last_name %}<tr><td colspan="2" class="form-error">{{ errors.last_name }}</td></tr>{% endif %}
+<tr><th>Nom&nbsp;<span class="must-have">⚫</span></th><td><input type="text" name="last_name" value="{{ newuser.last_name }}"/></td></tr>
+{% if errors.first_name %}<tr><td colspan="2" class="form-error">{{ errors.first_name }}</td></tr>{% endif %}
+<tr><th>Prénom&nbsp;<span class="must-have">⚫</span></th><td><input type="text" name="first_name" value="{{ newuser.first_name }}"/></td></tr>
+{% if errors.birthdate %}<tr><td colspan="2" class="form-error">{{ errors.birthdate }}</td></tr>{% endif %}
 <tr><th>Date de naissance&nbsp;<span class="must-have">⚫</span></th>
-	<td><input type="text" name="birthdate" value="{{ birthdate }}"/></td></tr>
-<tr><th>Adresse email externe&nbsp;<span class="must-have">⚫</span></th><td><input type="text" name="external_email" value="{{ external_email }}"/></td></tr>
+	<td><input type="text" name="birthdate" value="{{ newuser.birthdate }}"/></td></tr>
+{% if errors.external_email %}<tr><td colspan="2" class="form-error">{{ errors.external_email }}</td></tr>{% endif %}
+<tr><th>Adresse email externe&nbsp;<span class="must-have">⚫</span></th>
+	<td><input type="text" name="external_email" value="{{ newuser.external_email }}"/></td></tr>
 <tr><th>{{DEFAULT_COUNTRY}}</th></tr>
 <tr><th>Nationalité&nbsp;<span class="must-have">⚫</span></th><td><select name="citizenship">{% for c in allcountries %}
 <option value="{{ c.iso2 }}"{% if c.iso2 == DEFAULT_COUNTRY %} selected{% endif %}>{{ c.citizenship }}</option>
@@ -57,7 +71,7 @@
 	<td><input type="radio" name="ujf_student" value="1">oui 
 		<input type="radio" name="ujf_student" value="0">non</td></tr>
 <tr><th>Équipe&nbsp;<span class="must-have">⚫</span></th><td><select name="team">{% for team in allteams %}
-<option value="{{ team.gidnumbe }}">{{ team.name }}</option>{% endfor %}</select></td></tr>
+<option value="{{ team.gidnumber }}">{{ team.name }}</option>{% endfor %}</select></td></tr>
 <tr><th>Bureau&nbsp;<span class="must-have">⚫</span></th><td><select name="office">
 <option value="">Autre</option>{% for o in alloffices %}
 <option value="{{o.ref}}">{{o}}</option>{% endfor %}</select></td></tr>
