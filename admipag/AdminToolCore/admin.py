@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from django import forms
 from django.contrib import admin
 from django.utils.html import format_html
@@ -141,4 +142,17 @@ class CountryAdmin (admin.ModelAdmin) :
 admin.site.register(Country, CountryAdmin)
 admin.site.register(UserClass)
 admin.site.register(Office)
-admin.site.register(NewUser)
+
+class NewUserAdmin (admin.ModelAdmin) :
+	fieldsets = (
+		( None,                   { 'fields': ( 'manager', )}),
+		( 'État Civil',           { 'fields': ( 'last_name', 'first_name', 'birthdate', 'citizenship', )}),
+		( 'Contact',              { 'fields': ( 'external_email', )}),
+		( 'Au sein de l\'IPAG',   { 'fields': ( 'status', 'study_level', 'ujf_student', 'team', 'office', 'other_office', )}),
+		( 'Dates',                { 'fields': ( 'arrival', 'departure', )}),
+		( 'Moyens Informatiques', { 'fields': ( 'comp_account', 'os_type', 'specific_os', 'comp_purchase', )}),
+		( 'Autres Accès',         { 'fields': ( 'ir_lab', 'workshop', 'chem_lab', )}),
+		( 'Sécurité',             { 'fields': ( 'risky_activity', )}),
+		( None,                   { 'fields': ( 'comments', )}),)
+
+admin.site.register(NewUser, NewUserAdmin)
