@@ -23,3 +23,17 @@ def Dashboard (request) :
 		'users': users,
 	}
 	return render(request, 'dashboard.html', context)
+
+#==============================================================================
+# Dashboard bits
+# 
+
+from decorators import *
+
+@admin_login
+def DBNewArrivals (request) :
+	newusers = models.NewUser.objects.all()
+	context = {
+		'nu' : newusers,
+	}
+	return render(request, 'DBNewArrivals.html', context)
