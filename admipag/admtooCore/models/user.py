@@ -15,6 +15,7 @@ import ipag.ldaposug as lo
 
 class User (models.Model) :
 	uidnumber   = models.IntegerField(primary_key=True)
+	new         = models.BooleanField(default=False)
 	login       = models.CharField(max_length=64, unique=True, db_index=True)
 	login_shell = models.CharField(max_length=128, null=True, blank=True)
 	first_name	= models.CharField(max_length=128, null=True, blank=True)

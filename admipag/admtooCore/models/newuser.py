@@ -40,7 +40,8 @@ class NewUser (models.Model) :
 	)
 		
 	# manager
-	manager = models.ForeignKey ('User', null=True, blank=True)
+	manager = models.ForeignKey ('User', null=True, blank=True, related_name='Manager')
+	user = models.ForeignKey ('User', null=True, blank=True, related_name='User')
 	# basic information
 	last_name = models.CharField(max_length=128, null=True, blank=True)
 	first_name = models.CharField(max_length=128, null=True, blank=True)
