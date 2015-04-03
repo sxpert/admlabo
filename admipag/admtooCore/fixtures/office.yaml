@@ -1,0 +1,191 @@
+- model: admtooCore.Office
+  pk: 1
+  fields:
+    ref: A101a
+    desc: A 101 / A
+- model: admtooCore.Office
+  pk: 2
+  fields:
+    ref: A101b
+    desc: A 101 / B
+- model: admtooCore.Office
+  pk: 3
+  fields:
+    ref: A101c
+    desc: A 101 / C
+- model: admtooCore.Office
+  pk: 4
+  fields:
+    ref: A101d
+    desc: A 101 / D
+- model: admtooCore.Office
+  pk: 5
+  fields:
+    ref: A101e
+    desc: A 101 / E
+- model: admtooCore.Office
+  pk: 6
+  fields:
+    ref: A121a
+    desc: A 121 / A
+- model: admtooCore.Office
+  pk: 7
+  fields:
+    ref: A121b
+    desc: A 121 / B
+- model: admtooCore.Office
+  pk: 8
+  fields:
+    ref: A122a
+    desc: A 122 / A
+- model: admtooCore.Office
+  pk: 9
+  fields:
+    ref: A122b
+    desc: A 122 / B
+- model: admtooCore.Office
+  pk: 10
+  fields:
+    ref: A122c
+    desc: A 122 / C
+- model: admtooCore.Office
+  pk: 11
+  fields:
+    ref: A122d
+    desc: A 122 / D
+- model: admtooCore.Office
+  pk: 12
+  fields:
+    ref: A123a
+    desc: A 123 / A
+- model: admtooCore.Office
+  pk: 13
+  fields:
+    ref: A123b
+    desc: A 123 / B
+- model: admtooCore.Office
+  pk: 14
+  fields:
+    ref: A123c
+    desc: A 123 / C
+- model: admtooCore.Office
+  pk: 15
+  fields:
+    ref: A123d
+    desc: A 123 / D
+- model: admtooCore.Office
+  pk: 16
+  fields:
+    ref: A123e
+    desc: A 123 / E
+- model: admtooCore.Office
+  pk: 17
+  fields:
+    ref: A124a
+    desc: A 124 / A
+- model: admtooCore.Office
+  pk: 18
+  fields:
+    ref: A124b
+    desc: A 124 / B
+- model: admtooCore.Office
+  pk: 19
+  fields:
+    ref: A124c
+    desc: A 124 / C
+- model: admtooCore.Office
+  pk: 20
+  fields:
+    ref: ATDa
+    desc: A TD / A
+- model: admtooCore.Office
+  pk: 21
+  fields:
+    ref: ATDb
+    desc: A TD / B
+- model: admtooCore.Office
+  pk: 22
+  fields:
+    ref: ATDc
+    desc: A TD / C
+- model: admtooCore.Office
+  pk: 23
+  fields:
+    ref: ATDd
+    desc: A TD / D
+- model: admtooCore.Office
+  pk: 24
+  fields:
+    ref: ATDe
+    desc: A TD / E
+- model: admtooCore.Office
+  pk: 25
+  fields:
+    ref: ATDf
+    desc: A TD / F
+- model: admtooCore.Office
+  pk: 26
+  fields:
+    ref: ATDg
+    desc: A TD / G
+- model: admtooCore.Office
+  pk: 27
+  fields:
+    ref: ATDh
+    desc: A TD / H
+- model: admtooCore.Office
+  pk: 28
+  fields:
+    ref: D311a
+    desc: D 311 / A
+- model: admtooCore.Office
+  pk: 29
+  fields:
+    ref: D311b
+    desc: D 311 / B
+- model: admtooCore.Office
+  pk: 30
+  fields:
+    ref: D311c
+    desc: D 311 / C
+- model: admtooCore.Office
+  pk: 31
+  fields:
+    ref: D311d
+    desc: D 311 / D
+- model: admtooCore.Office
+  pk: 32
+  fields:
+    ref: D311e
+    desc: D 311 / E
+- model: admtooCore.Office
+  pk: 33
+  fields:
+    ref: D311f
+    desc: D 311 / F
+- model: admtooCore.Office
+  pk: 34
+  fields:
+    ref: D317a
+    desc: D 317 / A
+- model: admtooCore.Office
+  pk: 35
+  fields:
+    ref: D317b
+    desc: D 317 / B
+- model: admtooCore.Office
+  pk: 36
+  fields:
+    ref: D317c
+    desc: D 317 / C
+- model: admtooCore.Office
+  pk: 37
+  fields:
+    ref: D317e
+    desc: D 317 / E
+- model: admtooCore.Office
+  pk: 38
+  fields:
+    ref: D317d
+    desc: D 317 / D
+

@@ -1,9 +1,0 @@
-*.pyc
-.tox/
-MANIFEST
-build/
-dist/
-*.egg-info/
-.eric?project/
-.issues/
-*.e4p

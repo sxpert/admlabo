@@ -1,0 +1,21 @@
+{% extends "ipag-base.html" %}
+{% load staticfiles %}
+{% block title %} - groupe {{ group.name }}{% endblock %}
+{% block scripts %}<script src="{% static "js/base-forms.js" %}"></script>{% endblock %}
+{% block css %}<link rel="stylesheet" type="text/css" href="{% static "css/ipag.css" %}"/>{% endblock %}
+{% block content %}
+<p><a href="{% url 'groups' %}">retour à la liste des groupes</a></p>
+<p>group view</p>
+<form action="." method="post">{% csrf_token %}
+<table>
+<tbody>
+<tr><th>Nom de groupe</th><td data-field="name" data-type="text"></td><tr>
+<tr><th>Gid Number</th><td>{{ group.gidnumber }}</td></tr>
+<tr><th>Type de groupe</th><td data-field="group-type" data-type="select"></td></tr>
+<tr><th>Description</th><td data-field="description" data-type="text"></td></tr>
+<tr><th>Groupe parent</th><td data-field="parent" data-type="select"></td></tr>
+<tr><th>Membres</th><td data-field="members" data-type="multiselect"></td></tr>
+</tbody>
+</table>
+</form>
+{% endblock %}

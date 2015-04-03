@@ -37,7 +37,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
 #	'debug_toolbar',
 	'AdminTool',
-	'AdminToolCore',
+	'admtooCore',
 )
 
 MIDDLEWARE_CLASSES = (

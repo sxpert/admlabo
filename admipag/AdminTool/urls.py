@@ -4,7 +4,7 @@ import views
 
 urlpatterns = patterns('',
 	url(r'^$', views.MainIndex, name='main-index'), 
-    url(r'^AdminToolCore/', include('AdminToolCore.urls')),
+    url(r'^admtooCore/', include('admtooCore.urls')),
     url(r'^admin/', include(admin.site.urls)),
 )
 
