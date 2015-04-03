@@ -1,3 +1,6 @@
 old/*
 *.swp
 *.pyc
+**/ldapconfig/*
+!**/ldapconfig/__init__.py
+!**/ldapconfig/*.dist.py
