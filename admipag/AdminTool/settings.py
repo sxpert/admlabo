@@ -59,29 +59,28 @@ AUTHENTICATION_BACKENDS = (
 	'django_auth_ldap.backend.LDAPBackend',
 #	'django.contrib.auth.backends.ModelBackend',
 )
-import sys
-sys.path.append ('/srv/progs/ipag')
-import osugconfig
+
+
+from admtooLib.ldapconfig import osug
 import ldap
 from django_auth_ldap.config import LDAPSearch, PosixGroupType
-AUTH_LDAP_SERVER_URI = osugconfig.OSUG_LDAP_URI
+AUTH_LDAP_SERVER_URI = osug.OSUG_LDAP_URI
 
-##
-## wtf ?? how is this possible ?
-## tls appears not to work... mebbe the test server ?
-## 
-#AUTH_LDAP_START_TLS = True
+#AUTH_LDAP_BIND_DN = osug.OSUG_LDAP_ROOT
+#AUTH_LDAP_BIND_PASSWORD = osug.OSUG_LDAP_PASS
+AUTH_LDAP_BIND_DN = ""
+AUTH_LDAP_BIND_PASSWORD = ""
 
-AUTH_LDAP_BIND_DN = osugconfig.OSUG_LDAP_ROOT
-AUTH_LDAP_BIND_PASSWORD = osugconfig.OSUG_LDAP_PASS
-AUTH_LDAP_USER_SEARCH = LDAPSearch(osugconfig.OSUG_LDAP_IPAG_PEOPLE_OU+','+osugconfig.OSUG_LDAP_IPAG_BASE,
+AUTH_LDAP_USER_SEARCH = LDAPSearch(osug.OSUG_LDAP_IPAG_PEOPLE_OU+','+osug.OSUG_LDAP_IPAG_BASE,
 								   ldap.SCOPE_SUBTREE, "(uid=%(user)s)")
 
-AUTH_LDAP_GROUP_SEARCH = LDAPSearch(osugconfig.OSUG_LDAP_IPAG_GROUP_OU+','+osugconfig.OSUG_LDAP_IPAG_BASE,
+AUTH_LDAP_GROUP_SEARCH = LDAPSearch(osug.OSUG_LDAP_IPAG_GROUP_OU+','+osug.OSUG_LDAP_IPAG_BASE,
 									ldap.SCOPE_SUBTREE, "(objectClass=posixGroup)")
 AUTH_LDAP_GROUP_TYPE = PosixGroupType(name_attr='cn')
 AUTH_LDAP_USER_FLAGS_BY_GROUP = {
-	"is_staff" : osugconfig.OSUG_LDAP_IPAG_SERVICES_GROUP
+	"is_active" : osug.OSUG_LDAP_IPAG_SERVICES_GROUP,
+	"is_staff" : osug.OSUG_LDAP_IPAG_SERVICES_GROUP,
+	"is_superuser": osug.OSUG_LDAP_IPAG_SERVICES_GROUP
 }
 AUTH_LDAP_ALWAYS_UPDATE_USER = True
 AITH_LDAP_FIND_GROUP_PERMS = True

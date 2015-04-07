@@ -2,9 +2,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.core.exceptions import ObjectDoesNotExist
 from ...models import *
 import sys, hashlib
-sys.path.append ('/srv/progs/ipag')
-import ldaplaog as l
-import xmldb as x 
+from admtooLib import ldaplaog as l, xmldb as x
 
 class Command(BaseCommand) :
 	group_map = [

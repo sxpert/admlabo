@@ -4,11 +4,6 @@ import netfields
 import logging
 logger=logging.getLogger('django')
 
-# ldap access
-import sys
-sys.path.append ('/srv/progs')
-import ipag.ldaposug as lo
-
 class Group (models.Model) :
 	NORMAL_GROUP = 0
 	TEAM_GROUP = 1

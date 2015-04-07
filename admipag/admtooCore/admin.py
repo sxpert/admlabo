@@ -10,8 +10,9 @@ logger=logging.getLogger('django')
 # Register your models here.
 
 class UserAdmin (admin.ModelAdmin) :
-	fields = ('uidnumber', 'login', 'login_shell', 'first_name', 'last_name', 'room', 'telephone', 'mail', 'manager', 'arrival', 'departure', 'groups')
-	list_display = ('last_name', 'first_name', 'mail_link', 'login', 'uidnumber', 'manager_name') 
+	fields = (('uidnumber','user_state'), 
+			   'login', 'login_shell', 'first_name', 'last_name', 'room', 'telephone', 'mail', 'manager', 'arrival', 'departure', 'groups')
+	list_display = ('last_name', 'first_name', 'mail_link', 'login', 'uidnumber', 'manager_name', 'user_state') 
 	readonly_fields = ('uidnumber', 'login', 'first_name', 'last_name', 'mail')
 	filter_horizontal = ('groups',)
 
@@ -132,7 +133,7 @@ admin.site.register(Vlan)
 class CommandAdmin (admin.ModelAdmin) :
 	fields = ('created', 'modified', 'user', 'verb', 'data', 'done',)
 	readonly_fields = ('created', 'modified', 'user',)
-	list_display = ('user', 'verb', 'done', 'created',)
+	list_display = ('user', 'verb', 'done', 'created', 'subject')
 
 admin.site.register(Command, CommandAdmin)
 

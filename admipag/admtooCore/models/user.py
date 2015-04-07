@@ -8,14 +8,8 @@ logger=logging.getLogger('django')
 from group import Group
 from machine import Machine
 
-# ldap access
-import sys
-sys.path.append ('/srv/progs')
-import ipag.ldaposug as lo
-
 class User (models.Model) :
-	uidnumber   = models.IntegerField(primary_key=True)
-	new         = models.BooleanField(default=False)
+	uidnumber   = models.IntegerField(unique=True, default=None)
 	login       = models.CharField(max_length=64, unique=True, db_index=True)
 	login_shell = models.CharField(max_length=128, null=True, blank=True)
 	first_name	= models.CharField(max_length=128, null=True, blank=True)
@@ -27,6 +21,19 @@ class User (models.Model) :
 	groups		= models.ManyToManyField(Group, blank=True, related_name='users')
 	room		= models.CharField(max_length=32, null=True, blank=True)
 	telephone   = models.CharField(max_length=32, null=True, blank=True)
+	# state management
+	NORMAL_USER    = 0
+	NEWIMPORT_USER = 1
+	DELETED_USER   = 2
+
+	USER_STATE_CHOICES = (
+		( NORMAL_USER,    'utilisateur actif'),
+		( NEWIMPORT_USER, 'utilisateur nouvellement importé'),
+		( DELETED_USER,   'utilisateur supprimé'),
+	)
+	user_state	= models.IntegerField(choices = USER_STATE_CHOICES, default=NORMAL_USER)
+
+
 
 	class Meta :
 		app_label = 'admtooCore'
@@ -93,7 +100,7 @@ class User (models.Model) :
 	# the default save command syncs the user data to the ldap server
 	# as soon as the save command is launched
 	def save (self, *args, **kwargs) :
-		logger.error ('saving user '+self.login)
+		#logger.error ('saving user '+self.login)
 		super (User, self).save(*args, **kwargs)
 		self._update_ldap()
 

@@ -3,7 +3,8 @@
 
 import ldap, ldap.modlist
 import sys
-from osugconfig import *
+from ldapconfig.osug import *
+#from osugconfig import *
 
 class LdapOsug :
 	l = None
@@ -84,7 +85,7 @@ class LdapOsug :
 		return "uid="+uid+","+OSUG_LDAP_IPAG_PEOPLE_OU+","+OSUG_LDAP_IPAG_BASE
 
 	def user_get (self, uid) :
-		self.log ('looking up user '+uid)
+		#self.log ('looking up user '+uid)
 		f = '(&(objectClass=inetOrgPerson)(uid='+uid+'))'
 		v = self.l.search_s (OSUG_LDAP_IPAG_BASE, ldap.SCOPE_SUBTREE, f)
 		u = self.ldap_clean_record (v)
@@ -99,8 +100,9 @@ class LdapOsug :
 		# grab the old data
 		u = self.user_get (uid)
 		if u is None :
-			self.log ('unable to find user '+uid)
-			return False
+			self.log ('unable to find user '+uid) 
+			# NOTE: skip when this happens (user was removed from ldap) ?
+			return True # skip this entry, it's not going to work anyways
 		dn, odata = u
 		ok = odata.keys()
 		# compare the old data with whatever was passed, generating the update list
@@ -108,15 +110,15 @@ class LdapOsug :
 		for k in data.keys() :
 			if k in ok :
 				if odata[k] == data[k] :
-					self.log ('SKP '+k)
+					#self.log ('SKP '+k)
 					continue
-				self.log ("MOD "+k+" '"+str(odata[k])+"' '"+str(data[k])+"'")
+				#self.log ("MOD "+k+" '"+str(odata[k])+"' '"+str(data[k])+"'")
 				# modify
 				# TODO: is data an array or just a string ?
 				mode = ldap.MOD_REPLACE
 			else :
 				# create new key
-				self.log ("ADD "+k+" '"+str(data[k])+"'")
+				#self.log ("ADD "+k+" '"+str(data[k])+"'")
 				mode = ldap.MOD_ADD
 			d = data[k]
 			if type(d) is unicode :
@@ -127,18 +129,21 @@ class LdapOsug :
 		# update the user record
 		res, arr = self.l.modify_s (dn, ml)
 		if res == 103 :
-			self.log ('modifications all done')
 			return True
 		self.log ('problems while attempting to modify')
 		self.log (str(arr))
 		return False
 
 	def users_get (self) :
-		f='(objectClass=posixAccount)'
+		f='(&(objectClass=posixAccount)(objectClass=organizationalPerson))'
 		v = self.l.search_s(OSUG_LDAP_IPAG_BASE, ldap.SCOPE_SUBTREE, f)
+		users = {}
 		for u in v :
-			cn, d = u
-			print cn
+			cn, d = self.ldap_clean_record(u)
+			uidNumber = d['uidNumber']
+			users[uidNumber] = d
+		return users
+		
 
 	#==============================================================================================
 	#
@@ -384,5 +389,5 @@ class LdapOsug :
 if __name__ == '__main__' :
 	print ("LDAP OSUG TEST")
 	l = LdapOsug ()
-	u = l.user_get('jacquotr')
+	u = l.users_get ()
 	l.log (str(u))

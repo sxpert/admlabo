@@ -13,7 +13,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='User',
             fields=[
-                ('uidnumber', models.IntegerField(serialize=False, primary_key=True)),
+				('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('uidnumber', models.IntegerField(unique=True)),
                 ('login', models.CharField(unique=True, max_length=64)),
                 ('manager', models.ForeignKey(to='admtooCore.User')),
             ],

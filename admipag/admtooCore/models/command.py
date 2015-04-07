@@ -43,4 +43,11 @@ class Command (models.Model) :
 		from ..management.commands import LaunchUpdates as lu
 		ul = lu.UpdateLauncher (logger)
 		ul.doUpdates()
-		
+	
+	def subject(self) :
+		import json
+		d = json.loads(self.data)
+		if self.verb=='UpdateUser':
+			return d['uid']
+		else :
+			return ''

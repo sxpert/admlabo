@@ -4,8 +4,7 @@
 from django.core.exceptions import ObjectDoesNotExist
 
 import sys, json
-sys.path.append ('/srv/progs/ipag')
-import ldaposug as lo
+from admtooLib import ldaposug as lo
 
 
 class UpdateLauncher (object) :
@@ -23,10 +22,10 @@ class UpdateLauncher (object) :
 	# and to be sure that everything is working properly)
 	def doUpdates (self) :
 		from ...models.command import Command	
-		self.log ("do updates")
+		#self.log ("do updates")
 		commands = Command.objects.filter(done=False).order_by('created')
 		for c in commands :
-			self.log (str(c.created)+' '+c.verb)
+			#self.log (str(c.created)+' '+c.verb)
 			v = 'verb'+c.verb
 			try :
 				func = getattr (self, v)
@@ -35,9 +34,13 @@ class UpdateLauncher (object) :
 				return
 			else :
 				if (func (c)) :
-					self.log ('SUCCESS - marking command done')
+					#self.log ('SUCCESS - marking command done')
 					c.done = True
 					c.save ()
+				else :
+					self.log ('FATAL: error while running '+c.verb)
+					# something bad happened... stop right there !
+					return
 
 	#----------------------------------------------------------------------------------------------
 	#
@@ -92,7 +95,7 @@ class UpdateLauncher (object) :
 	def _UpdateUser_LDAP (self, command) :
 		l = lo.LdapOsug (self.logger)
 		c = json.loads (command.data)
-		self.log (str(c))
+		#self.log (str(c))
 		ck = c.keys()
 		uid = None
 		if 'uid' in ck :
@@ -112,8 +115,8 @@ class UpdateLauncher (object) :
 	#
 	# this updates when a user was modified
 	def verbUpdateUser (self, command) :
-		self.log ('updating user')
-		self.log (command.data)
+		#self.log ('updating user')
+		#self.log (command.data)
 		return self._UpdateUser_LDAP (command)
 	
 #
