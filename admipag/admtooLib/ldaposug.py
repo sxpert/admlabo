@@ -6,6 +6,9 @@ import sys
 from ldapconfig.osug import *
 #from osugconfig import *
 
+class UserGone (Exception) :
+	pass
+
 class LdapOsug :
 	l = None
 		
@@ -77,6 +80,18 @@ class LdapOsug :
 			self.log (str(d))
 			return None
 
+	def to_ia5(self, s) :
+		ns = ''
+		for c in s :
+			try :
+				p = u'ÁÀÂÄÃÉÈÊËẼÍÌÎÏĨÓÒÔÖÕÚÙÛÜŨÝỲŶŸỸáàâäãéèêëẽíìîïĩóòôöõúùûüũýỳŷÿỹçÇ'.index(c)
+			except ValueError as e :
+				pass
+			else :
+				c = u'AAAAAEEEEEIIIIIOOOOOUUUUUYYYYYaaaaaeeeeeiiiiiooooouuuuuyyyyycC'[p]
+			ns+=c
+		return ns
+
 	#==============================================================================================
 	#
 	# user management
@@ -102,6 +117,8 @@ class LdapOsug :
 		if u is None :
 			self.log ('unable to find user '+uid) 
 			# NOTE: skip when this happens (user was removed from ldap) ?
+			# raise exception
+			raise UserGone
 			return True # skip this entry, it's not going to work anyways
 		dn, odata = u
 		ok = odata.keys()
@@ -121,13 +138,23 @@ class LdapOsug :
 				#self.log ("ADD "+k+" '"+str(data[k])+"'")
 				mode = ldap.MOD_ADD
 			d = data[k]
-			if type(d) is unicode :
-				d = d.encode('utf8')
-			if type(d) is str :
-				d = [d]
+			if k=='gecos':
+				d = self.to_ia5(d).encode('ascii')
+			else :
+				if type(d) is unicode :
+					d = d.encode('utf8')
+				if type(d) is str :
+					d = [d]
 			ml.append ((mode,k,d))
 		# update the user record
-		res, arr = self.l.modify_s (dn, ml)
+		try :
+			res, arr = self.l.modify_s (dn, ml)
+		except ldap.INVALID_SYNTAX as e :
+			self.log (str(e))
+			self.log (str(dn))
+			self.log (str(ml))
+			import sys
+			sys.exit (1)
 		if res == 103 :
 			return True
 		self.log ('problems while attempting to modify')

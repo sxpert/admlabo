@@ -69,7 +69,7 @@ class User (models.Model) :
 	# this internal save command only saves the user to the database
 	# no sync to the ldap is done
 	def _save (self, *args, **kwargs) :
-		logger.error ('saving user '+self.login+' before assigning groups')
+		#logger.error ('saving user '+self.login+' before assigning groups')
 		super (User, self).save(*args, **kwargs)
 
 	def _update_ldap (self) :

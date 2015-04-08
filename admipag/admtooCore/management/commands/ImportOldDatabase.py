@@ -401,9 +401,9 @@ class Command(BaseCommand) :
 		# if create, user has to be saved before changing groups
 		# we don't want to update the ldap server just yet
 		if mode == 'create' :
-			self.log ('creating user'+u.login)
+			#self.log ('creating user'+u.login)
 			u._save ()
-		
+
 		# setup groups
 		# remove old groups
 		for g in u.groups.all() :
@@ -423,7 +423,7 @@ class Command(BaseCommand) :
 
 		# user has been modified, save
 		if changed :
-			self.log(mode+' user '+u.login+' '+str(changing))
+			#self.log(mode+' user '+u.login+' '+str(changing))
 			try :
 				u.save()
 			except :
@@ -497,6 +497,12 @@ class Command(BaseCommand) :
 						groups.append(gidnumber)
 			self.user (data, xu, groups)
 			self.dot()
+		self.log ('\n')
+
+	def update_groups (self) :
+		for g in Group.objects.all() :
+			self.log ("Updating group "+g.name+'\n')
+			g.save ()
 
 	def do_machine_classes (self, xclasses) :
 		for cls in xclasses :	
@@ -675,6 +681,7 @@ class Command(BaseCommand) :
 		self.do_groups (dgroups, xgroups)
 		self.do_mailinglists (xmls)
 		self.do_users (dusers, xusers, dgroups)
+		self.update_groups()
 		self.do_machine_classes(xclasses)	
 		self.do_vlans (xvlans)
 		self.do_machines (xmachines)

@@ -110,7 +110,12 @@ class UpdateLauncher (object) :
 			d['gecos'] = c['gecos']
 		if 'manager' in ck :
 			d['manager'] = l.user_dn(c['manager'])
-		return l.user_update (uid, d)
+		try :
+			res = l.user_update (uid, d)
+		except lo.UserGone as e :
+			print "USER GONE"
+			res = True
+		return res
 
 	#
 	# this updates when a user was modified
