@@ -1,0 +1,40 @@
+<div>
+<script type="text/javascript">
+$(function() {
+});
+</script>
+<style type="text/css" scoped>
+h1 {
+    margin: 0;
+    font-size: 12pt;
+    line-height: 18pt;
+    vertical-align: middle;
+    padding-left: 4pt;
+}
+.table-scroller {
+    position: relative;
+    overflow-y: auto;
+}
+table {
+    position: relative;
+    border-collapse: collapse;
+    width: 100%;
+}
+th {
+    background-color: #0066cc;
+    color: white;
+    text-align: center;
+}
+.found {
+    color: green;
+}
+.notfound {
+    color: red;
+}
+{% block specific_style %}{% endblock %}
+</style>
+<h1>{% block caption %}{% endblock %}</h1>
+<div class="table-scroller">
+{% block data_table %}{% endblock %}
+</div>
+</div>

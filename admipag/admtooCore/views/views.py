@@ -276,7 +276,12 @@ def group_view_members_field (request, group_id, action) :
 			opt[u.uidnumber] = u.full_name()
 		data['options'] = opt
 	if action=='value' :
-		# TODO: post action 
+		# TODO: post action
+		if request.method == 'POST': 
+			data = json.loads(request.body)
+			if 'values' in data.keys() :
+				values = data['values']
+				g.set_members (values)
 		# get current group members
 		members = []
 		for u in g.members() :

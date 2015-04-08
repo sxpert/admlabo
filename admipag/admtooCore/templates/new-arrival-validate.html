@@ -1,0 +1,14 @@
+{% extends "ipag-base.html" %}
+{% load staticfiles %}
+{% block title %} - Nouvelle arrivée{% endblock %}
+{% block scripts %}<script src="{% static "js/new-arrival-validate.js" %}"></script>{% endblock %}
+{% block css %}<link rel="stylesheet" type="text/css" href="{% static "css/new-arrival-validate.css" %}"/>{% endblock %}
+{% block content %}
+<p>New User key : {{ newuser_id }}</p>
+<div class="column">
+<h1>new user entry</h1>
+</div>
+<div class="column">
+<h1>LDAP entry</h1>
+</div>
+{% endblock %}

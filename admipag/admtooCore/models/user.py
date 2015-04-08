@@ -102,7 +102,8 @@ class User (models.Model) :
 	def save (self, *args, **kwargs) :
 		#logger.error ('saving user '+self.login)
 		super (User, self).save(*args, **kwargs)
-		self._update_ldap()
+		if self.user_state != self.DELETED_USER:
+			self._update_ldap()
 
 	def full_name (self) :
 		n = []
@@ -233,4 +234,9 @@ class User (models.Model) :
 	def machines (self) :
 		return Machine.objects.filter(owner = self)
 	
-	
+	def has_newuser (self) :
+		from newuser import NewUser
+		nu = NewUser.objects.get(user=self)
+		if nu is not None :
+			return True
+		return False	

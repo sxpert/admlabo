@@ -1,0 +1,38 @@
+{% extends "DBBlock.html" %}
+{% block specific_style %}
+[data-column="name"] {
+    width: 40%;
+}
+[data-column="mngr"] {
+    border-left: 1px solid #777;
+    width: 20%;
+    text-align: center;
+}
+[data-column="date"] {
+    border-left: 1px solid #777;
+    width: 25%;
+    text-align: center;
+}
+[data-column="prov"] {
+    border-left: 1px solid #777;
+    width: 15%;
+    text-align: center;
+}
+{% endblock %}
+{% block caption %}Derniers utilisateurs importés{% endblock %}
+{% block data_table %}
+<table>
+	<thead>
+		<tr><th data-column="name">Nom</th>
+			<th data-column="date">Arrivée</th>
+			<th data-column="prov">User decl</th></tr>
+	</thead>
+	<tbody>
+	{% for u in nu %}
+	<tr><td data-column="name"><a href="">{{u.first_name}} {{u.last_name}}</a></td>
+		<td data-column="date">{{u.arrival|date:"Y-m-d"}}</td>
+		<td data-column="prov"><span class="{% if u.has_newuser%}found{%else%}notfound{%endif%}">⚫</span></td></tr>
+	{%endfor%}
+	</tbody>
+</table>
+{% endblock %}

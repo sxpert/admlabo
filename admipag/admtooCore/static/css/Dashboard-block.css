@@ -1,0 +1,45 @@
+h1 {
+	margin: 0;
+	font-size: 12pt;
+	line-height: 18pt;
+	vertical-align: middle;
+	padding-left: 4pt;
+}
+.table-scroller {
+	position: relative;
+	overflow-y: auto;
+}
+table {
+	position: relative;
+	border-collapse: collapse;
+	width: 100%;
+}
+th {
+	background-color: #0066cc;
+	color: white;
+	text-align: center;
+}
+[data-column="name"] {
+	width: 40%;
+}
+[data-column="mngr"] {
+	border-left: 1px solid #777;
+	width: 20%;
+	text-align: center;
+}
+[data-column="date"] {
+	border-left: 1px solid #777;
+	width: 25%;
+	text-align: center;
+}
+[data-column="prov"] {
+	border-left: 1px solid #777;
+	width: 15%;
+	text-align: center;
+}
+.found {
+	color: green;
+}
+.notfound {
+	color: red;
+}

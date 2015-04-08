@@ -58,3 +58,32 @@ class Group (models.Model) :
 		for u in self.members() :
 			m.append (u.login)
 		return m
+	
+	def set_members (self, members) :
+		from user import User
+		m = []
+		for u in members :
+			m.append (int(u))
+		changed = False
+		# remove members not in list
+		for u in User.objects.filter(groups__name=self.name) :
+			if u.uidnumber not in m :
+				u.groups.remove (self)
+				changed = True
+		# add new members 
+		for uidnumber in m :
+			try :
+				u = User.objects.get(uidnumber=uidnumber,groups__name=self.name)
+			except User.DoesNotExist as e :
+				try :
+					u = User.objects.get(uidnumber=uidnumber)
+				except User.DoesNotExist as e :
+					# should not happen
+					pass
+				else :
+					u.groups.add(self)
+					changed = True
+		if changed :
+			self._update_ldap()
+		
+					

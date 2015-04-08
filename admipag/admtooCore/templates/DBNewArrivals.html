@@ -1,18 +1,5 @@
-<div>
-<style type="text/css" scoped>
-h1 {
-	margin: 0;
-	font-size: 14pt;
-}
-table {
-	border-collapse: collapse;
-	width: 100%
-}	
-th {
-	background-color: #0066cc;
-	color: white;
-	text-align: center;
-}
+{% extends "DBBlock.html" %}
+{% block specific_style %}
 [data-column="name"] {
 	width: 40%;
 }
@@ -31,14 +18,9 @@ th {
 	width: 15%;
 	text-align: center;
 }
-.found {
-	color: green;
-}
-.notfound {
-	color: red;
-}
-</style>
-<h1>Nouveaux utilisateurs</h1>
+{% endblock %}
+{% block caption %}Nouveaux utilisateurs{% endblock %}
+{% block data_table %}
 <table>
 	<thead>
 		<tr><th data-column="name">Nom</th>
@@ -48,11 +30,11 @@ th {
 	</thead>
 	<tbody>
 	{% for u in nu %}
-	<tr><td data-column="name"><a href="">{{u.first_name}} {{u.last_name}}</a></td>
+	<tr><td data-column="name"><a href="{% url 'new-arrival-validate' u.pk %}">{{u.first_name}} {{u.last_name}}</a></td>
 		<td data-column="mngr">{{u.manager.login}}</td>
 		<td data-column="date">{{u.arrival|date:"Y-m-d"}}</td>
 		<td data-column="prov"><span class="{% if u.user%}found{%else%}notfound{%endif%}">⚫</span></td></tr>
 	{%endfor%}
 	</tbody>
 </table>
-</div>
+{% endblock %}

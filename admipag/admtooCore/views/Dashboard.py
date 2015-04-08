@@ -37,3 +37,11 @@ def DBNewArrivals (request) :
 		'nu' : newusers,
 	}
 	return render(request, 'DBNewArrivals.html', context)
+
+@admin_login
+def DBUnknownUsers (request) :
+	users = models.User.objects.filter (user_state=models.User.NEWIMPORT_USER)
+	context = {
+		'nu' : users,
+	}
+	return render(request, 'DBUnknownUsers.html', context)

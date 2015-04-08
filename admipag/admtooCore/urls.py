@@ -8,8 +8,10 @@ urlpatterns = patterns( '',
 # Dashboard
 	url(r'^$', views.Dashboard, name='dashboard'),
 	url(r'^DBNewArrivals$', views.DBNewArrivals, name='DBNewArrivals'),
+	url(r'^DBUnknownUsers$', views.DBUnknownUsers, name='DBUnknownUsers'),
 # New Arrival form
-	url(r'^new-arrival$', views.NewArrivalForm, name='new-arrival-form'),
+	url(r'^new-arrival/form$', views.NewArrivalForm, name='new-arrival-form'),
+	url(r'^new-arrival/validate/(?P<newuser_id>\d+)$', views.NewArrivalValidate, name='new-arrival-validate'),
 # Users
 	url(r'^users/', views.users, name='users'),
 	url(r'^user/(?P<user_id>\d+)/view/$', views.user_view, name='user_view'),

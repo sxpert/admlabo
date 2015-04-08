@@ -14,6 +14,7 @@ class LdapSync (object) :
 		l = lo.LdapOsug (None)
 		users = l.users_get()
 		added_users = 0
+		deleted_users = 0
 		# add new users not yet in the database
 		for uidnumber in users.keys() :
 			lu = users[uidnumber]
@@ -39,11 +40,13 @@ class LdapSync (object) :
 						u.uidnumber = uidnumber
 						u.save ()
 			if create :
-				#print lu
+				print lu
 				u.login = lu['uid']
 				u.login_shell = lu['loginShell']
 				u.first_name = lu['givenName']
 				u.last_name = lu['sn']
+				if 'mail' in lu :
+					u.mail = lu['mail']
 				added_users+=1
 				u.save ()
 			# check if we have already matched that user
@@ -59,10 +62,18 @@ class LdapSync (object) :
 				else :
 					nu.user = u
 					nu.save()
+		#
 		# remove users that can't be found...
-
+		for u in User.objects.all() :
+			if u.user_state != User.DELETED_USER :
+				lu = l.user_get (u.login)
+				if lu is None :
+					u.user_state = User.DELETED_USER
+					u.save ()
+					deleted_users+=1
 		# stats
 		print 'ADD '+str(added_users)+' users'
+		print 'DEL '+str(deleted_users)+' users'
 #
 # base django command line tool object.
 #
