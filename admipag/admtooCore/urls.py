@@ -12,6 +12,7 @@ urlpatterns = patterns( '',
 # New Arrival form
 	url(r'^new-arrival/form$', views.NewArrivalForm, name='new-arrival-form'),
 	url(r'^new-arrival/validate/(?P<newuser_id>\d+)$', views.NewArrivalValidate, name='new-arrival-validate'),
+	url(r'^new-arrival/validate/userinfo/(?P<user_id>\d+)$', views.NewArrivalValidateUserInfo, name='new-arrival-validate-user-info'),
 # Users
 	url(r'^users/', views.users, name='users'),
 	url(r'^user/(?P<user_id>\d+)/view/$', views.user_view, name='user_view'),

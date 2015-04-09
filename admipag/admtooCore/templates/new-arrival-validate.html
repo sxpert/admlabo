@@ -7,8 +7,39 @@
 <p>New User key : {{ newuser_id }}</p>
 <div class="column">
 <h1>new user entry</h1>
+<table><tbody>
+<tr><th>Nom</th><td>{{nu.first_name}} {{nu.last_name}}</td></tr>
+<tr><th>Date de naissance</th><td>{{nu.birthdate}}</td></tr>
+<tr><th>Nationalité</th><td>{{nu.citizenship.citizenship}}</td></tr>
+<tr><th>Email</th><td>{{nu.external_email}}</td></tr>
+<tr><th>Statut</th><td>{{nu.status}}</td></tr>
+<tr><th>Team</th><td>{{nu.team}}</td></tr>
+<tr><th>Date d'arrivée</th><td>{{nu.arrival}}</td></tr>
+<tr><th>Date de départ</th><td>{{nu.departure}}</td></tr>
+</tbody></table>
 </div>
 <div class="column">
 <h1>LDAP entry</h1>
+<form method="post">{% csrf_token %}
+<table><thead>
+<tr><th>Nom</th><td><select name="ldap_user">{% for u in users %}
+<option value="{{u.uidnumber}}"{% if nu.user == u %} selected{%endif%}>{{u.full_name}}</option>
+{%endfor%}</select>
+</td></tr>
+</thead>
+<tbody>
+<tr><th>&nbsp;</th><td></td></tr>
+<tr><th>&nbsp;</th><td></td></tr>
+<tr><th>&nbsp;</th><td></td></tr>
+<tr><th>&nbsp;</th><td></td></tr>
+<tr><th>&nbsp;</th><td></td></tr>
+<tr><th>&nbsp;</th><td></td></tr>
+<tr><th>&nbsp;</th><td></td></tr>
+</tbody>
+<tfoot>
+<tr><th></th><td><button action="associate">Associer</button></td></tr>
+</tfoot>
+</table>
+</form>
 </div>
 {% endblock %}

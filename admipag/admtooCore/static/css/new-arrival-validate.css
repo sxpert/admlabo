@@ -6,3 +6,17 @@
 h1 {
 	font-size: 12pt;
 }
+table {
+	background-color: red;
+	width: 100%;
+	border-collapse: collapse;
+}
+th, td {
+	background-color: white;
+	line-height: 24pt;
+}
+th {
+	width: 15em;
+	padding-left: 4pt;
+	text-align: left;
+}

@@ -49,6 +49,8 @@ class LdapSync (object) :
 					u.mail = lu['mail']
 				added_users+=1
 				u.save ()
+				
+
 			# check if we have already matched that user
 			try : 
 				nu = NewUser.objects.get(user=u)
