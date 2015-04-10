@@ -88,7 +88,7 @@
 
 {% if errors.team %}<tr><td colspan="2" class="form-error">{{ errors.team }}</td></tr>{% endif %}
 <tr><th>Équipe&nbsp;<span class="must-have">⚫</span></th><td><select name="team">{% for team in allteams %}
-<option value="{{ team.gidnumber }}"{% if newuser.team == team.gidnumber%} selected{%endif%}>{{ team.name }}</option>{% endfor %}</select></td></tr>
+<option value="{{ team.gidnumber }}"{% if newuser.team == team.gidnumber%} selected{%endif%}>{{ team.description }}</option>{% endfor %}</select></td></tr>
 
 {% if errors.office %}<tr><td colspan="2" class="form-error">{{ errors.office }}</td></tr>{% endif %}
 <tr><th>Bureau&nbsp;<span class="must-have">⚫</span></th><td><select name="office">

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from django.db.models import Q
 from django.shortcuts import render, redirect
 from .. import models
 from django.contrib.auth.decorators import login_required
@@ -32,7 +33,7 @@ from decorators import *
 
 @admin_login
 def DBNewArrivals (request) :
-	newusers = models.NewUser.objects.all()
+	newusers = models.NewUser.objects.filter(Q(user__user_state=models.User.NEWIMPORT_USER)|Q(user__isnull=True))
 	context = {
 		'nu' : newusers,
 	}

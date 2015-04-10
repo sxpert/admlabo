@@ -36,6 +36,7 @@ class Command(BaseCommand) :
 		('jmmc',                'ipag-pos-jmmc'),
 		('marsis',              'ipag-pos-marsis'),
 		('neat',                'ipag-pos-neat'),
+		('nitrogen',			'ipag-pos-nitrogen'),
 		('odyssey',             'ipag-pos-odyssey'),
 		('pionier',             'ipag-pos-pionier'),
 		('radar',               'ipag-pos-radar'),
@@ -299,7 +300,7 @@ class Command(BaseCommand) :
 				# user has changed uid
 				u.uidnumber = ud['uidNumber'][0]
 				mode = 'update'
-				changed = true	
+				changed = True	
 		else:
 			mode = 'update'
 

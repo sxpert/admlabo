@@ -81,6 +81,8 @@ class LdapOsug :
 			return None
 
 	def to_ia5(self, s) :
+		if s is None:
+			return None
 		ns = ''
 		for c in s :
 			try :
@@ -90,7 +92,7 @@ class LdapOsug :
 			else :
 				c = u'AAAAAEEEEEIIIIIOOOOOUUUUUYYYYYaaaaaeeeeeiiiiiooooouuuuuyyyyycC'[p]
 			ns+=c
-		return ns
+		return ns.encode('ascii')
 
 	#==============================================================================================
 	#
@@ -128,27 +130,33 @@ class LdapOsug :
 		ml = []
 		for k in data.keys() :
 			d = data[k]
-			if k in ('gecos','roomNumber'):
-				d = self.to_ia5(d).encode('ascii')
+			if len(d) == 0 :
+				d = None
+			if d is not None :
+				if k in ('gecos','roomNumber'):
+					d = self.to_ia5(d)
+				else :
+					if type(d) is unicode :
+						d = d.encode('utf8')
+				if k in ok :
+					od = odata[k]
+					if od == d :
+						self.log ('SKP '+k)
+						continue
+					self.log ("MOD "+k+" '"+od+"' '"+d+"'")
+					# modify
+					# TODO: is data an array or just a string ?
+					mode = ldap.MOD_REPLACE
+				else :
+					# create new key
+					self.log ("ADD "+k+" '"+d+"'")
+					mode = ldap.MOD_ADD
+				# the data must be in a list form
+				if type(d) is str :
+					d = [d]
 			else :
-				if type(d) is unicode :
-					d = d.encode('utf8')
-			if k in ok :
-				od = odata[k]
-				if od == d :
-					self.log ('SKP '+k)
-					continue
-				self.log ("MOD "+k+" '"+od+"' '"+d+"'")
-				# modify
-				# TODO: is data an array or just a string ?
-				mode = ldap.MOD_REPLACE
-			else :
-				# create new key
-				self.log ("ADD "+k+" '"+d+"'")
-				mode = ldap.MOD_ADD
-			# the data must be in a list form
-			if type(d) is str :
-				d = [d]
+				self.log ("DEL "+k)
+				mode = ldap.MOD_DELETE
 			ml.append ((mode,k,d))
 		# update the user record
 		try :
