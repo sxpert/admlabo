@@ -108,11 +108,11 @@ class UpdateLauncher (object) :
 			d['loginShell'] = c['loginShell']
 		if 'gecos' in ck :
 			d['gecos'] = c['gecos']
-		if 'manager' in ck :
-			d['manager'] = l.user_dn(c['manager'])
+#		if 'manager' in ck :
+#			d['manager'] = l.user_dn(c['manager'])
 		# room and telephone
-		if 'roomNumber' in ck :
-			d['roomNumber'] = c['roomNumber']
+#		if 'roomNumber' in ck :
+#			d['roomNumber'] = c['roomNumber']
 	
 		try :
 			res = l.user_update (uid, d)
