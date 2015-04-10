@@ -64,7 +64,7 @@ def user_view_manager_field (request, userid, action) :
 				u.save()
 		m = u.manager
 		if m is not None :
-			data['url'] = reverse ('user_view', args=(m.uidnumber,))
+			data['url'] = reverse ('user-view', args=(m.uidnumber,))
 			data['value'] = m.first_name+' '+m.last_name
 		else :
 			data = {}
@@ -162,7 +162,7 @@ def user_view_managed_field (request, userid, action) :
 		managed = []
 		for user in u.manager_of () :
 			udata = {}
-			udata['url'] = reverse ('user_view', args=(user.uidnumber,))
+			udata['url'] = reverse ('user-view', args=(user.uidnumber,))
 			udata['value'] = user.first_name+' '+user.last_name
 			managed.append (udata)
 		data['values'] = managed

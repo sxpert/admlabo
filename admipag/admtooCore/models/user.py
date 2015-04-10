@@ -88,7 +88,7 @@ class User (models.Model) :
 			u['manager'] = self.manager.login
 		u['loginShell'] = self.login_shell
 		u['roomNumber'] = self.room
-		u['telephoneNumber'] = self.telephone		
+		u['telephoneNumber'] = self.telephone
 
 		import command, json
 		c = command.Command ()
@@ -233,6 +233,9 @@ class User (models.Model) :
 
 	def machines (self) :
 		return Machine.objects.filter(owner = self)
+
+	#==========================================================================
+	# User declaration related methods
 	
 	def has_newuser (self) :
 		from newuser import NewUser
@@ -240,3 +243,27 @@ class User (models.Model) :
 		if nu is not None :
 			return True
 		return False	
+
+	def associate_with (self, newuser_id) :
+		from newuser import NewUser 
+		
+		# associate nu and self
+		nu = NewUser.objects.get (pk = newuser_id)
+		nu.user = self
+		nu.save ()
+		
+		# modify self with infos from nu
+		if self.arrival is None :
+			self.arrival = nu.arrival
+		if self.departure is None and nu.departure is not None :
+			self.departure = nu.departure
+		
+		# set office if defined
+		if self.room is None or self.room.strip() == '' :
+			if nu.office is not None :
+				self.room = nu.office
+			elif nu.other_office is not None and nu.other_office.strip() != '' :
+				self.room = nu.other_office
+		# set self as an active user
+		self.user_state = self.NORMAL_USER
+		self.save ()

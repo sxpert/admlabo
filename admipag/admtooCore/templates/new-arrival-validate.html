@@ -4,7 +4,9 @@
 {% block scripts %}<script src="{% static "js/new-arrival-validate.js" %}"></script>{% endblock %}
 {% block css %}<link rel="stylesheet" type="text/css" href="{% static "css/new-arrival-validate.css" %}"/>{% endblock %}
 {% block content %}
-<p>New User key : {{ newuser_id }}</p>
+{% if error %}
+<p class="error">Erreur : {{ error }}</p>
+{% endif %}
 <div class="column">
 <h1>new user entry</h1>
 <table><tbody>
@@ -37,7 +39,7 @@
 <tr><th>&nbsp;</th><td></td></tr>
 </tbody>
 <tfoot>
-<tr><th></th><td><button action="associate">Associer</button></td></tr>
+<tr><th></th><td><button name="action" value="associate">Associer</button></td></tr>
 </tfoot>
 </table>
 </form>

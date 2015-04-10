@@ -122,32 +122,37 @@ class LdapOsug :
 			return True # skip this entry, it's not going to work anyways
 		dn, odata = u
 		ok = odata.keys()
+		#self.log (str(data))
+		#self.log (str(odata))
 		# compare the old data with whatever was passed, generating the update list
 		ml = []
 		for k in data.keys() :
+			d = data[k]
+			if k in ('gecos','roomNumber'):
+				d = self.to_ia5(d).encode('ascii')
+			else :
+				if type(d) is unicode :
+					d = d.encode('utf8')
 			if k in ok :
-				if odata[k] == data[k] :
-					#self.log ('SKP '+k)
+				od = odata[k]
+				if od == d :
+					self.log ('SKP '+k)
 					continue
-				#self.log ("MOD "+k+" '"+str(odata[k])+"' '"+str(data[k])+"'")
+				self.log ("MOD "+k+" '"+od+"' '"+d+"'")
 				# modify
 				# TODO: is data an array or just a string ?
 				mode = ldap.MOD_REPLACE
 			else :
 				# create new key
-				#self.log ("ADD "+k+" '"+str(data[k])+"'")
+				self.log ("ADD "+k+" '"+d+"'")
 				mode = ldap.MOD_ADD
-			d = data[k]
-			if k=='gecos':
-				d = self.to_ia5(d).encode('ascii')
-			else :
-				if type(d) is unicode :
-					d = d.encode('utf8')
-				if type(d) is str :
-					d = [d]
+			# the data must be in a list form
+			if type(d) is str :
+				d = [d]
 			ml.append ((mode,k,d))
 		# update the user record
 		try :
+			self.log (dn+" "+str(ml))
 			res, arr = self.l.modify_s (dn, ml)
 		except ldap.INVALID_SYNTAX as e :
 			self.log (str(e))

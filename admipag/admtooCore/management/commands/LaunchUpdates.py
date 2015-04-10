@@ -110,6 +110,10 @@ class UpdateLauncher (object) :
 			d['gecos'] = c['gecos']
 		if 'manager' in ck :
 			d['manager'] = l.user_dn(c['manager'])
+		# room and telephone
+		if 'roomNumber' in ck :
+			d['roomNumber'] = c['roomNumber']
+	
 		try :
 			res = l.user_update (uid, d)
 		except lo.UserGone as e :

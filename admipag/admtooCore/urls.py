@@ -15,7 +15,7 @@ urlpatterns = patterns( '',
 	url(r'^new-arrival/validate/userinfo/(?P<user_id>\d+)$', views.NewArrivalValidateUserInfo, name='new-arrival-validate-user-info'),
 # Users
 	url(r'^users/', views.users, name='users'),
-	url(r'^user/(?P<user_id>\d+)/view/$', views.user_view, name='user_view'),
+	url(r'^user/(?P<user_id>\d+)/view/$', views.user_view, name='user-view'),
 	url(r'^user/(?P<user_id>\d+)/view/(?P<action>[^/]*)/(?P<fieldtype>[^/]*)/(?P<fieldname>[^/]*)$', 
 		views.user_view_field, name='user_view_field'),
 # Groups
