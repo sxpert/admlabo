@@ -24,7 +24,7 @@ class UserDir (models.Model) :
 	def generate (self, user, request_user) :
 		import command, json
 		data = {}
-		data['machine'] = self.machine
+		data['machine'] = self.machine.default_name.fqdn
 		data['basedir'] = self.basedir
 		data['modes'] = self.modes
 		data['uid'] = user.login

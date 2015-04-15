@@ -51,6 +51,11 @@ class UpdateLauncher (object) :
 	# this allows restarting an update order at anytime.
 	#
 
+	#==============================================================================================
+	# 
+	# Updating groups 
+	#
+
 	#
 	# actual update of group in ldap
 	#
@@ -89,6 +94,11 @@ class UpdateLauncher (object) :
 	def verbUpdateGroup (self, command) :
 		return self._UpdateGroup_LDAP (command)
 	
+	#==============================================================================================
+	# 
+	# Updating users
+	#
+
 	#
 	# actual update of user in ldap
 	#
@@ -127,6 +137,34 @@ class UpdateLauncher (object) :
 		#self.log ('updating user')
 		#self.log (command.data)
 		return self._UpdateUser_LDAP (command)
+	
+	#==============================================================================================
+	# 
+	# Creating directories for users
+	#
+	
+	def verbCreateUserDir (self, command) :
+		from admtooLib import AnsibleFunctions as af
+		c = json.loads(command.data)
+		ck = c.keys()
+		if 'machine' not in ck :
+			return False
+		machine = c['machine']
+		if ('basedir' not in ck) and ('uid' not in ck) :
+			return False
+		dirname = c['basedir']+'/'+c['uid']
+		if 'uidNumber' not in ck :
+			return False
+		try :
+			uid = int(c['uidNumber'])
+		except ValueError as e :
+			return False
+		gid = ''
+		if 'modes' not in ck :
+			return False
+		modes = c['modes']
+		af.createDirectory (machine, dirname, uid, gid, modes)
+		return False
 	
 #
 # base django command line tool object.

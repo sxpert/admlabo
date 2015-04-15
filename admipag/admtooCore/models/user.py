@@ -102,7 +102,6 @@ class User (models.Model) :
 		if 'request_user' in kwargs.keys () :
 			user = kwargs['request_user']
 			del kwargs['request_user']
-		#logger.error ('saving user '+self.login)
 		super (User, self).save(*args, **kwargs)
 		if self.user_state != self.DELETED_USER:
 			self._update_ldap(user)
@@ -270,7 +269,7 @@ class User (models.Model) :
 				self.room = nu.other_office
 		# set self as an active user
 		self.user_state = self.NORMAL_USER
-		self.save ()
+		self.save (request_user=request_user)
 
 		# add command to create directories
 		import userdir
