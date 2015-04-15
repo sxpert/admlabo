@@ -10,7 +10,7 @@ logger=logging.getLogger('django')
 # Register your models here.
 
 class UserAdmin (admin.ModelAdmin) :
-	fields = (('uidnumber','user_state'), 
+	fields = (('uidnumber', 'group', 'user_state'), 
 			   'login', 'login_shell', 'first_name', 'last_name', 'room', 'telephone', 'mail', 'manager', 'arrival', 'departure', 'groups')
 	list_display = ('last_name', 'first_name', 'mail_link', 'login', 'uidnumber', 'manager_name', 'user_state') 
 	readonly_fields = ('uidnumber', 'login', 'first_name', 'last_name', 'mail')

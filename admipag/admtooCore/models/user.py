@@ -10,6 +10,7 @@ from machine import Machine
 
 class User (models.Model) :
 	uidnumber   = models.IntegerField(unique=True, default=None)
+	group       = models.ForeignKey('Group', null=True, blank=True)
 	login       = models.CharField(max_length=64, unique=True, db_index=True)
 	login_shell = models.CharField(max_length=128, null=True, blank=True)
 	first_name	= models.CharField(max_length=128, null=True, blank=True)
@@ -241,7 +242,7 @@ class User (models.Model) :
 			return True
 		return False	
 
-	def associate_with (self, newuser_id) :
+	def associate_with (self, newuser_id, request_user=None) :
 		from newuser import NewUser 
 		
 		# associate nu and self
@@ -270,3 +271,8 @@ class User (models.Model) :
 		# set self as an active user
 		self.user_state = self.NORMAL_USER
 		self.save ()
+
+		# add command to create directories
+		import userdir
+		userdir.generateDirs (self, request_user)
+		
