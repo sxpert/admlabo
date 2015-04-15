@@ -157,3 +157,4 @@ class NewUserAdmin (admin.ModelAdmin) :
 		( None,                   { 'fields': ( 'comments', )}),)
 
 admin.site.register(NewUser, NewUserAdmin)
+admin.site.register(UserDir)

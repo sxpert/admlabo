@@ -61,7 +61,7 @@ def user_view_manager_field (request, userid, action) :
 				else :	
 					m = None
 				u.manager = m
-				u.save()
+				u.save(request_user=request.user)
 		m = u.manager
 		if m is not None :
 			data['url'] = reverse ('user-view', args=(m.uidnumber,))
@@ -126,7 +126,7 @@ def user_view_group_field (request, userid, action) :
 				vs = []
 				for v in values :
 					vs.append(int(v))
-				u.change_groups (vs)
+				u.change_groups (vs, request.user)
 		# get current groups
 		groups = []
 		for g in u.all_groups() :
@@ -158,7 +158,7 @@ def user_view_managed_field (request, userid, action) :
 			data = json.loads(request.body)
 			if 'values' in data.keys () :
 				values = data['values']
-				u.change_managed (values)	
+				u.change_managed (values, request.user)	
 		managed = []
 		for user in u.manager_of () :
 			udata = {}
@@ -183,7 +183,7 @@ def user_view_loginshell_field (request, userid, action) :
 			if 'value' in data.keys() :
 				value = data['value']
 				u.login_shell = value
-				u.save()
+				u.save(request_user=request.user)
 		data['value'] = u.login_shell
 	return data
 
@@ -256,7 +256,7 @@ def group_view_name_field (request, group_id, action) :
 			if 'value' in data.keys() :
 				value = data['value']
 				g.name = value
-				g.save()
+				g.save(request_user=request.user)
 		d = g.name
 		if d is None : # should not happen
 			d = ''
@@ -281,12 +281,12 @@ def group_view_members_field (request, group_id, action) :
 			data = json.loads(request.body)
 			if 'values' in data.keys() :
 				values = data['values']
-				g.set_members (values)
+				g.set_members (values, request.user)
 		# get current group members
 		members = []
 		for u in g.members() :
 			udata = {}
-			udata['url'] = reverse ('user_view', args=(u.uidnumber,))
+			udata['url'] = reverse ('user-view', args=(u.uidnumber,))
 			udata['value'] = u.full_name()
 			members.append(udata)
 		data['values'] = members		
@@ -309,7 +309,7 @@ def group_view_type_field (request, group_id, action) :
 			if 'value' in data.keys() :
 				value = data['value']
 				g.group_type = int(value)
-				g.save()
+				g.save(request_user=request.user)
 		data['value'] = g.GROUP_TYPES_CHOICES[g.group_type][1]
 	return data
 
@@ -336,7 +336,7 @@ def group_view_parent_field (request, group_id, action) :
 				else :	
 					p = None
 				g.parent = p
-				g.save()
+				g.save(request_user=request.user)
 			pass
 		if g.parent is not None :
 			d = g.parent.name
@@ -362,7 +362,7 @@ def group_view_description_field (request, group_id, action) :
 			if 'value' in data.keys() :
 				value = data['value']
 				g.description = value
-				g.save()
+				g.save(request_user=request.user)
 		d = g.description
 		if d is None :
 			d = ''

@@ -28,7 +28,7 @@ class Group (models.Model) :
 		return self.name
 	
 	# update the group object to the ldap server
-	def _update_ldap (self) :
+	def _update_ldap (self, user=None) :
 		# get members list
 		members = self.member_logins()
 		logger.error ("saving group to ldap, members list : "+str(members))
@@ -41,13 +41,21 @@ class Group (models.Model) :
 
 		import command, json
 		c = command.Command ()
+		if user is None :
+			c.user = "(Unknown)"
+		else :
+			c.user = user
 		c.verb = 'UpdateGroup'
 		c.data = json.dumps(g)
 		c.save ()
 		
 	def save (self, *args, **kwargs) :
+		user = None
+		if 'request_user' in kwargs.keys () :
+			user = kwargs['request_user']
+			del kwargs['request_user']
 		super (Group, self).save (*args, **kwargs)
-		self._update_ldap ()
+		self._update_ldap (user)
 
 	def members (self) :
 		import user as usermodule
@@ -59,7 +67,7 @@ class Group (models.Model) :
 			m.append (u.login)
 		return m
 	
-	def set_members (self, members) :
+	def set_members (self, members, user=None) :
 		from user import User
 		m = []
 		for u in members :
@@ -84,6 +92,6 @@ class Group (models.Model) :
 					u.groups.add(self)
 					changed = True
 		if changed :
-			self._update_ldap()
+			self._update_ldap(user)
 		
 					

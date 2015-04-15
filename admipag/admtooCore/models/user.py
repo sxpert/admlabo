@@ -72,14 +72,7 @@ class User (models.Model) :
 		#logger.error ('saving user '+self.login+' before assigning groups')
 		super (User, self).save(*args, **kwargs)
 
-	def _update_ldap (self) :
-		# this fails to remove user from old groups
-		# change groups to which the person belongs
-#		gr = self.all_groups()
-		# grab just the group names
-#		for g in gr :
-#			g._update_ldap ()
-	
+	def _update_ldap (self, user=None) :
 		# modify attributes of the person that we can actually modify
 		u = {}
 		u['uid'] = self.login
@@ -88,10 +81,14 @@ class User (models.Model) :
 			u['manager'] = self.manager.login
 		u['loginShell'] = self.login_shell
 		u['roomNumber'] = self.room
-		u['telephoneNumber'] = self.telephone
+		u['telephoneNumber'] = self.telephone		
 
 		import command, json
 		c = command.Command ()
+		if user is None :
+			c.user = "(Unknown)"
+		else :
+			c.user = str(user)
 		c.verb = 'UpdateUser'
 		c.data = json.dumps (u)
 		c.save ()
@@ -100,10 +97,14 @@ class User (models.Model) :
 	# the default save command syncs the user data to the ldap server
 	# as soon as the save command is launched
 	def save (self, *args, **kwargs) :
+		user = None
+		if 'request_user' in kwargs.keys () :
+			user = kwargs['request_user']
+			del kwargs['request_user']
 		#logger.error ('saving user '+self.login)
 		super (User, self).save(*args, **kwargs)
 		if self.user_state != self.DELETED_USER:
-			self._update_ldap()
+			self._update_ldap(user)
 
 	def full_name (self) :
 		n = []
@@ -197,7 +198,7 @@ class User (models.Model) :
 		return groups
 
 	# la grouplist est un array de gidnumbers
-	def change_groups (self, grouplist) :
+	def change_groups (self, grouplist, user=None) :
 		changed = False
 		i=0
 		while i < len(grouplist) :
@@ -206,30 +207,26 @@ class User (models.Model) :
 		for g in self.groups.all() :
 			if g.gidnumber not in grouplist :
 				self.groups.remove(g)
-				g._update_ldap()
-#				changed = True
+				g._update_ldap(user)
 		for g in grouplist :
 			g = Group.objects.get(gidnumber=g)
 			if (g is not None) and (g not in self.groups.all()) :
 				self.groups.add (g)
-				g._update_ldap()
-#				changed = True
-#		if changed :
-#			self.save()
+				g._update_ldap(user)
 
 	def manager_of (self) :
 		return User.objects.filter(manager = self)
 
-	def change_managed (self, managed_list) :
+	def change_managed (self, managed_list, user=None) :
 		for u in User.objects.filter(manager = self) :
 			if u.uidnumber not in managed_list :
 				u.manager = None
-				u.save ()
+				u.save (request_user=user)
 		for un in managed_list :
 			u = User.objects.get(uidnumber = un)
 			if (u.manager != self) :
 				u.manager = self
-				u.save ()
+				u.save (request_user=user)
 
 	def machines (self) :
 		return Machine.objects.filter(owner = self)
@@ -250,6 +247,12 @@ class User (models.Model) :
 		# associate nu and self
 		nu = NewUser.objects.get (pk = newuser_id)
 		nu.user = self
+		
+		# modify nu's names to use the official ones
+		if nu.first_name != self.first_name :
+			nu.first_name = self.first_name
+		if nu.last_name != self.last_name :
+			nu.last_name = self.last_name
 		nu.save ()
 		
 		# modify self with infos from nu

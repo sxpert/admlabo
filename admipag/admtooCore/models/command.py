@@ -49,5 +49,7 @@ class Command (models.Model) :
 		d = json.loads(self.data)
 		if self.verb=='UpdateUser':
 			return d['uid']
+		elif self.verb=='UpdateGroup':
+			return d['cn']
 		else :
 			return ''
