@@ -75,10 +75,10 @@ class Ansible (object) :
 	def copy (self, fqdn, dirname, uid, gid, src, dest, modes) :
 		hostname = self.getHostname (fqdn)
 
-		self.log (settings.TEMPLATES_DIR)
+		self.log (settings.ADMIN_FILES_DIR)
 		self.log (dirname)
 		# assemble args
-		args = 'src='+os.path.join(settings.TEMPLATES_DIR,src)+' '
+		args = 'src='+os.path.join(settings.ADMIN_FILES_DIR,src)+' '
 		args+= 'dest='+os.path.join(dirname,dest)+' '
 		args+= 'owner='+str(uid)+' '
 		args+= 'group='+str(gid)+' '
