@@ -15,6 +15,8 @@ logger=logging.getLogger('django')
 # * a data block in json, that includes the relevant data
 # furthermore, 
 # * user information, so as to blame people ;)
+# * a boolean indicating that the command is intended to run within a cron
+#   process, as root
 # * a boolean indicating that the command has been passed already
 
 class Command (models.Model) :
@@ -23,6 +25,7 @@ class Command (models.Model) :
 	user      = models.CharField (max_length=64)
 	verb      = models.CharField (max_length=64)
 	data      = models.TextField () # could be some soft of json field
+	in_cron   = models.BooleanField (default=False)
 	done      = models.BooleanField (default=False)
 
 	class Meta:

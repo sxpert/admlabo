@@ -23,16 +23,23 @@ class UserDir (models.Model) :
 
 	def generate (self, user, request_user) :
 		import command, json
+		from django.conf import settings
+		from group import Group
 		data = {}
 		data['machine'] = self.machine.default_name.fqdn
 		data['basedir'] = self.basedir
 		data['modes'] = self.modes
 		data['uid'] = user.login
-#		data['gidNumber'] = user.gidnumber # default gid
+		if user.group is None : 
+			# should not happen
+			data['gidNumber'] = Group.objects.get(name=settings.DEFAULT_USER_GROUP).gidnumber
+		else :
+			data['gidNumber'] = user.group.gidnumber # default gid
 		data['uidNumber'] = user.uidnumber
 		c = command.Command ()
 		c.user = request_user
 		c.verb = "CreateUserDir"
+		logger.error (str(data))
 		c.data = json.dumps(data)
 		c.save ()
 

@@ -148,6 +148,7 @@ class UpdateLauncher (object) :
 		c = json.loads(command.data)
 		ck = c.keys()
 		if 'machine' not in ck :
+			self.log ('missing \'machine\' name')
 			return False
 		machine = c['machine']
 		if ('basedir' not in ck) and ('uid' not in ck) :
@@ -159,12 +160,26 @@ class UpdateLauncher (object) :
 			uid = int(c['uidNumber'])
 		except ValueError as e :
 			return False
-		gid = ''
+		if 'gidNumber' not in ck :
+			self.log ('missing \'gidNumber\' field')
+			return False
+		try :
+			gid = int(c['gidNumber'])
+		except ValueError as e :
+			return False
 		if 'modes' not in ck :
 			return False
 		modes = c['modes']
-		af.createDirectory (machine, dirname, uid, gid, modes)
-		return False
+		# NOTE: this is ok when the application server is running as root.
+		# the case when it's not needs to be analyzed
+		# also, this takes a long time, should be running in a separate
+		# process
+		created_ok = af.createDirectory (machine, dirname, uid, gid, modes)
+		if created_ok :
+			self.log ('success')
+		else :
+			self.log ('FAIL')
+		return created_ok
 	
 #
 # base django command line tool object.

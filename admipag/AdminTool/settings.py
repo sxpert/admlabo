@@ -97,6 +97,7 @@ logger.setLevel(logging.DEBUG)
 
 LOGIN_URL='login-form'
 DEFAULT_COUNTRY = 'FR'
+DEFAULT_USER_GROUP = 'ipag-pos-site'
 
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
