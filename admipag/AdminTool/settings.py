@@ -12,7 +12,6 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/
 
@@ -98,6 +97,8 @@ logger.setLevel(logging.DEBUG)
 LOGIN_URL='login-form'
 DEFAULT_COUNTRY = 'FR'
 DEFAULT_USER_GROUP = 'ipag-pos-site'
+ADMIN_DATA_DIR = 'admindata'
+ADMIN_FILES_DIR = os.path.join(BASE_DIR, ADMIN_DATA_DIR, 'files')
 
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
@@ -130,7 +131,5 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
 
-import os
-PROJECT_DIR = os.path.abspath(os.path.dirname(__name__))
-STATICFILES_DIRS = (os.path.join(PROJECT_DIR, 'static'),)
+STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
 STATIC_URL = '/static/'

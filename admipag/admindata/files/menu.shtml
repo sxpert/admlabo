@@ -1,0 +1,16 @@
+<!-- define path_level in caller pages located into one subdirectory.
+ add ../ each time you go one more step into one new directory from the root of your public_dir -->
+
+<!--#if expr="! $path_level" -->
+<!--#set var="path_level" value="./" -->
+<!--#endif -->
+
+<!-- Chemin -->
+<p id="chemin"><b>
+| <a href="<!--#echo var="path_level" -->">Accueil / <em>Welcome</em></a> |
+<!-- Cut and paste following line to add one new entry in your menu (the file name must be just before href's doublequote 
+| <a href="<!--#echo var="path_level/" -->page2.shtml">Seconde page / <em> Second page </em></a> |
+-->
+</b>
+</p>
+

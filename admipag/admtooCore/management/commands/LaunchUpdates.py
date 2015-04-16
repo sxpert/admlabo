@@ -184,11 +184,15 @@ class UpdateLauncher (object) :
 		if 'modes' not in ck :
 			return self.STATE_FAIL
 		modes = c['modes']
+		if 'files' not in ck :
+			files = None
+		else :
+			files = c['files']
 		# NOTE: this is ok when the application server is running as root.
 		# the case when it's not needs to be analyzed
 		# also, this takes a long time, should be running in a separate
 		# process
-		created_ok = af.createDirectory (machine, dirname, uid, gid, modes)
+		created_ok = af.createDirectory (machine, dirname, uid, gid, modes, files)
 		if created_ok :
 			self.log ('success')
 			return self.STATE_SUCCESS

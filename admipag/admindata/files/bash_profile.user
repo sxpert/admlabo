@@ -1,0 +1,18 @@
+# @(#) - User's .bash_profile File : 
+# @(#) - (C) 2005 CNRS/LAOG - Version 1.0 / FR.
+# @(#) - (C) 2011 CNRS/IPAG - Version 2.0 / FR.
+# @(#) - (C) 2012 CNRS/IPAG - Version 3.0 / FR. 
+# interactive bash case resolved
+# @(#) - Localization : $HOME
+
+# Do Not Remove
+# #############
+
+if [ ! -z $PS1 ] ; then 
+   source "/conflaog/conf/.bashrc"
+fi
+
+# Please, use this section below to meet your own needs
+# #############
+
+

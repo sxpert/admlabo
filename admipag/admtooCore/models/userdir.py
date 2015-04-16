@@ -10,11 +10,12 @@ logger=logging.getLogger('django')
 #
 
 class UserDir (models.Model) :
-	machine = models.ForeignKey ('Machine',     null=True, blank=True)
-	label   = models.CharField  (max_length=32, null=True, blank=True)
-	basedir = models.CharField  (max_length=128,null=True, blank=True)
-	modes   = models.CharField  (max_length=4,  null=True, blank=True)
-
+	machine   = models.ForeignKey ('Machine',     null=True, blank=True)
+	label     = models.CharField  (max_length=32, null=True, blank=True)
+	basedir   = models.CharField  (max_length=128,null=True, blank=True)
+	modes     = models.CharField  (max_length=4,  null=True, blank=True)
+	files     = models.TextField  (default='') # contains appropriate json
+	
 	class Meta:
 		app_label = 'admtooCore'
 
@@ -26,6 +27,8 @@ class UserDir (models.Model) :
 		from django.conf import settings
 		from group import Group
 		data = {}
+		
+		# data on directory
 		data['machine'] = self.machine.default_name.fqdn
 		data['basedir'] = self.basedir
 		data['modes'] = self.modes
@@ -36,6 +39,16 @@ class UserDir (models.Model) :
 		else :
 			data['gidNumber'] = user.group.gidnumber # default gid
 		data['uidNumber'] = user.uidnumber
+		
+		# templates information
+		try :
+			files = json.loads(self.files)
+		except ValueError as e:
+			# unable to decode any json data... there's nothing in "templates"
+			pass
+		else:
+			data['files'] = files	
+
 		c = command.Command ()
 		c.user = request_user
 		c.verb = "CreateUserDir"

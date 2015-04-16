@@ -1,0 +1,19 @@
+<!--#set var="page_title" value="IPAG - Page perso" -->
+<!--#include virtual="/~ssi/spip.header.shtml" -->
+<!--#include virtual="./menu.shtml" -->
+<div id="texte">
+<!-- MODIFIER CI-DESSOUS LE CONTENU DE CETTE PAGE / MODIFY THE PAGE CONTENT JUST BELOW-->
+
+
+<!-- Titre aere -->
+<div class="groupetitre"> <h2>Bienvenue sur ma page personnelle Ipag!<br /><em>Welcome onto my personnal homepage hosted at Ipag!</em></h2></div>
+
+<p>Pour l'instant elle est vide, repassez plus tard ...</p>
+<p><em>It is still empty, please come back later ...</em></p>
+
+<!-- STOPPER ICI L'EDITION / STOP HERE YOU CONTENT EDITING -->
+</div>
+<!--#include virtual="/~ssi/spip.footer.shtml" -->
+
+<!-- SSI V0 GM -->
+
