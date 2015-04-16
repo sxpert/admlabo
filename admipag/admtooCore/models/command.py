@@ -54,5 +54,11 @@ class Command (models.Model) :
 			return d['uid']
 		elif self.verb=='UpdateGroup':
 			return d['cn']
+		elif self.verb=='CreateUserDir' :
+			return d['basedir']+'/'+d['uid']
 		else :
 			return ''
+
+	def desc (self) :
+		return self.verb+' '+self.subject()
+

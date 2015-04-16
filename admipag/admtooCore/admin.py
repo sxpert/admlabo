@@ -131,9 +131,9 @@ admin.site.register(IPAddress)
 admin.site.register(Vlan)
 
 class CommandAdmin (admin.ModelAdmin) :
-	fields = ('created', 'modified', 'user', 'verb', 'data', 'done',)
+	fields = ('created', 'modified', 'user', 'verb', 'data', ('done', 'in_cron',),)
 	readonly_fields = ('created', 'modified', 'user',)
-	list_display = ('user', 'verb', 'done', 'created', 'subject')
+	list_display = ('user', 'verb', 'done', 'in_cron', 'created', 'subject')
 
 admin.site.register(Command, CommandAdmin)
 

@@ -8,7 +8,12 @@ from admtooLib import ldaposug as lo
 
 
 class UpdateLauncher (object) :
+	STATE_SUCCESS = 0
+	STATE_FAIL    = 1
+	STATE_SKIP    = 2	
+
 	def __init__ (self, logger = None) :
+		self.in_cron = False
 		self.logger = logger
 
 	def log (self, message) :
@@ -33,14 +38,17 @@ class UpdateLauncher (object) :
 				self.log ('FATAL: '+c.verb+' not found')
 				return
 			else :
-				if (func (c)) :
+				res = func(c)
+				if res == self.STATE_SUCCESS :
 					#self.log ('SUCCESS - marking command done')
 					c.done = True
 					c.save ()
-				else :
+				elif res == self.STATE_FAIL :
 					self.log ('FATAL: error while running '+c.verb)
 					# something bad happened... stop right there !
 					return
+				elif res == self.STATE_SKIP :
+					self.log ('SKIPPING COMMAND '+str(c.desc()))
 
 	#----------------------------------------------------------------------------------------------
 	#
@@ -92,7 +100,9 @@ class UpdateLauncher (object) :
 	# for now, only changes in the ldap
 	# would go around in other things later if needed
 	def verbUpdateGroup (self, command) :
-		return self._UpdateGroup_LDAP (command)
+		if self._UpdateGroup_LDAP (command) :
+			return self.STATE_SUCCESS
+		return self.STATE_FAIL
 	
 	#==============================================================================================
 	# 
@@ -134,9 +144,9 @@ class UpdateLauncher (object) :
 	#
 	# this updates when a user was modified
 	def verbUpdateUser (self, command) :
-		#self.log ('updating user')
-		#self.log (command.data)
-		return self._UpdateUser_LDAP (command)
+		if self._UpdateUser_LDAP (command) :
+			return self.STATE_SUCCESS
+		return self.STATE_FAIL
 	
 	#==============================================================================================
 	# 
@@ -144,31 +154,35 @@ class UpdateLauncher (object) :
 	#
 	
 	def verbCreateUserDir (self, command) :
+		# if we're not in cron
+		if command.in_cron and (not self.in_cron) :
+			return self.STATE_SKIP
+
 		from admtooLib import AnsibleFunctions as af
 		c = json.loads(command.data)
 		ck = c.keys()
 		if 'machine' not in ck :
 			self.log ('missing \'machine\' name')
-			return False
+			return self.STATE_FAIL
 		machine = c['machine']
 		if ('basedir' not in ck) and ('uid' not in ck) :
-			return False
+			return self.STATE_FAIL
 		dirname = c['basedir']+'/'+c['uid']
 		if 'uidNumber' not in ck :
-			return False
+			return self.STATE_FAIL
 		try :
 			uid = int(c['uidNumber'])
 		except ValueError as e :
-			return False
+			return self.STATE_FAIL
 		if 'gidNumber' not in ck :
 			self.log ('missing \'gidNumber\' field')
-			return False
+			return self.STATE_FAIL
 		try :
 			gid = int(c['gidNumber'])
 		except ValueError as e :
-			return False
+			return self.STATE_FAIL
 		if 'modes' not in ck :
-			return False
+			return self.STATE_FAIL
 		modes = c['modes']
 		# NOTE: this is ok when the application server is running as root.
 		# the case when it's not needs to be analyzed
@@ -177,9 +191,9 @@ class UpdateLauncher (object) :
 		created_ok = af.createDirectory (machine, dirname, uid, gid, modes)
 		if created_ok :
 			self.log ('success')
-		else :
-			self.log ('FAIL')
-		return created_ok
+			return self.STATE_SUCCESS
+		self.log ('FAIL')
+		return self.STATE_FAIL
 	
 #
 # base django command line tool object.
@@ -190,5 +204,6 @@ from django.core.management.base import BaseCommand, CommandError
 class Command (BaseCommand) :
 	def handle (self, *args, **options) :
 		ul = UpdateLauncher ()
+		ul.in_cron=True
 		ul.doUpdates ()
 

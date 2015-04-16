@@ -41,6 +41,9 @@ class UserDir (models.Model) :
 		c.verb = "CreateUserDir"
 		logger.error (str(data))
 		c.data = json.dumps(data)
+		# the directories should be created by the cron job, 
+		# as it takes forever and requires root access
+		c.in_cron = True
 		c.save ()
 
 def generateDirs (user, request_user=None) :
