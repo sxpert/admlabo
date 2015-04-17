@@ -158,3 +158,8 @@ class NewUserAdmin (admin.ModelAdmin) :
 
 admin.site.register(NewUser, NewUserAdmin)
 admin.site.register(UserDir)
+
+class EmailAlertAdmin (admin.ModelAdmin) :
+	list_display = ('cause', 'email')
+
+admin.site.register(EmailAlert, EmailAlertAdmin)
