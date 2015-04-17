@@ -158,7 +158,6 @@ class UpdateLauncher (object) :
 		if command.in_cron and (not self.in_cron) :
 			return self.STATE_SKIP
 
-		from admtooLib import AnsibleFunctions as af
 		c = json.loads(command.data)
 		ck = c.keys()
 		if 'machine' not in ck :
@@ -192,6 +191,7 @@ class UpdateLauncher (object) :
 		# the case when it's not needs to be analyzed
 		# also, this takes a long time, should be running in a separate
 		# process
+		from admtooLib import AdminFunctions as af
 		created_ok = af.createDirectory (machine, dirname, uid, gid, modes, files)
 		if created_ok :
 			self.log ('success')

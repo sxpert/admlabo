@@ -281,6 +281,10 @@ def NewArrivalForm (request) :
 			#
 			nu.comments =       comments
 			nu.save ()
+
+			# call send mail controller
+					
+	
 			return redirect ('dashboard')		
 
 	#
