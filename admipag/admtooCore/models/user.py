@@ -241,37 +241,3 @@ class User (models.Model) :
 			return True
 		return False	
 
-	def associate_with (self, newuser_id, request_user=None) :
-		from newuser import NewUser 
-		
-		# associate nu and self
-		nu = NewUser.objects.get (pk = newuser_id)
-		nu.user = self
-		
-		# modify nu's names to use the official ones
-		if nu.first_name != self.first_name :
-			nu.first_name = self.first_name
-		if nu.last_name != self.last_name :
-			nu.last_name = self.last_name
-		nu.save ()
-		
-		# modify self with infos from nu
-		if self.arrival is None :
-			self.arrival = nu.arrival
-		if self.departure is None and nu.departure is not None :
-			self.departure = nu.departure
-		
-		# set office if defined
-		if self.room is None or self.room.strip() == '' :
-			if nu.office is not None :
-				self.room = nu.office
-			elif nu.other_office is not None and nu.other_office.strip() != '' :
-				self.room = nu.other_office
-		# set self as an active user
-		self.user_state = self.NORMAL_USER
-		self.save (request_user=request_user)
-
-		# add command to create directories
-		import userdir
-		userdir.generateDirs (self, request_user)
-		

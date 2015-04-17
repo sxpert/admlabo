@@ -134,7 +134,7 @@ def createDirectory (fqdn, dirname, uid, gid, modes, files) :
 	a.log ('répertoire créé, création des fichiers')
 	ok = True
 	a.log (files)
-	if 'files' in files :
+	if (files is not None) and ('files' in files) :
 		fls = files['files']
 		a.log (fls)
 		for f in fls :
