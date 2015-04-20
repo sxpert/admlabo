@@ -94,11 +94,14 @@ logger.setLevel(logging.DEBUG)
 # Application specific configuration
 #
 
-LOGIN_URL='login-form'
-DEFAULT_COUNTRY = 'FR'
+LOGIN_URL          = 'login-form'
+DEFAULT_COUNTRY    = 'FR'
 DEFAULT_USER_GROUP = 'ipag-pos-site'
-ADMIN_DATA_DIR = 'admindata'
-ADMIN_FILES_DIR = os.path.join(BASE_DIR, ADMIN_DATA_DIR, 'files')
+ADMIN_DATA_DIR     = 'admindata'
+ADMIN_FILES_DIR    = os.path.join(BASE_DIR, ADMIN_DATA_DIR, 'files')
+BACKUPPC_SERVER    = 'midgard'
+BACKUPPC_USER      = 'backuppc'
+BACKUPPC_GROUP     = 'services' 
 
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases

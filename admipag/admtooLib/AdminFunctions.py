@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import os
+import os, sys
 from django.conf import settings
 
 from remote import Ansible as rem
@@ -48,5 +48,69 @@ def createDirectory (fqdn, dirname, uid, gid, modes, files) :
 	a.log (ok)
 	return ok
 
+# 
+# 
+#
+MTYPE_LINUX   = 0
+MTYPE_MACOS   = 1
+MTYPE_WINDOWS = 2
 
-
+def setupBackupPc (fqdn, user, mtype) :
+	a = rem()
+	# plusieurs facons de faire en fonction de l'os de la machine distante
+	if mtype == MTYPE_LINUX :
+		# TODO
+		return False
+	elif mtype == MTYPE_MACOS :
+		# TODO
+		return False
+	elif mtype == MTYPE_WINDOWS :
+		# 0. generate a complicated password
+		passwd = a.generatePassword (16)
+		if (type(passwd) is bool) :
+			if not passwd :
+				return False
+			else :
+				# should not happen
+				a.log ("setupBackupPc : generatePassword returned \'True\' should not happen")
+				return False
+		# 1. build the backuppc config file
+		import tempfile
+		fd, fname = tempfile.mkstemp()
+		f = os.fdopen(fd, "w")
+		f.write('$Conf{RsyncShareName} = [\n'+\
+				'  \'Users\'\n'+\
+				'];\n'+\
+				'$Conf{RsyncdPasswd} = \''+passwd+'\';\n'+\
+				'$Conf{RsyncdUserName} = \'backuppc\';\n'+\
+				'$Conf{XferMethod} = \'rsyncd\';\n');
+		f.flush ()
+		# 2. send the file to the backuppc server
+		machine = a.getHostname (fqdn)
+		dest = '/etc/BackupPC/pc/'+machine+'.pl'
+		if not a.copy ( settings.BACKUPPC_SERVER, 
+						settings.BACKUPPC_USER, 
+						settings.BACKUPPC_GROUP, 
+						fname, dest, '0640' ) :
+			return False
+		# 3. close the temp file
+		f.close ()
+		os.unlink(fname)
+		# 4. add a line in the backuppc hosts file for that machine and user
+		if not a.addLineInFile ( settings.BACKUPPC_SERVER, 
+								 '/etc/BackupPC/hosts',
+								 machine+'\t0\t'+user,
+								 '^'+machine+'.*' ) :
+			return False
+		# done
+		return passwd
+	# unknown OS
+	return False
+	
+if __name__ == '__main__' :
+	if __package__ is None :
+		from os import path
+		sys.path.append (path.dirname(path.dirname(path.abspath(__file__))))
+		from AdminTool import settings 
+	passwd = setupBackupPc ('gag8131.obs.ujf-grenoble.fr', 'jacquotr', MTYPE_WINDOWS)
+	sys.stderr.write (passwd+'\n')

@@ -5,6 +5,7 @@ import views
 
 urlpatterns = patterns('',
 	url(r'^$', views.MainIndex, name='main-index'), 
+	url(r'^API/SetupBackupPC', views.SetupBackupPC, name='setup-backup-pc'),
     url(r'^admtooCore/', include('admtooCore.urls')),
     url(r'^admin/', include(admin.site.urls)),
 )

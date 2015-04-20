@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
+import subprocess, sys
 import ansible 
 import ansible.runner as ar
 
@@ -12,6 +13,9 @@ class Ansible (object) :
 	def __init__ (self) :
 		ansible.utils.VERBOSITY=0
 		self.inventory = ansible.inventory.Inventory ()
+
+	#==============================================================================================
+	# utility functions
 
 	def log (self, message) :
 		if message is None :
@@ -28,6 +32,21 @@ class Ansible (object) :
 			return fqdn
 		else :
 			return fqdn[:p]
+
+
+	def generatePassword (self, length) :
+		l = str(length)
+		try :
+			password = subprocess.check_output(['pwgen', '-s', l, '1'])
+			if password[-1] == '\n' :
+				password=password[0:-1]
+		except OSError as e :
+			self.log("pwgen command not found")
+			return False
+		return password
+
+	#=================================================================================================
+	# actual ansible modules
 
 	def createDirectory (self, fqdn, dirname, uid, gid, modes) :
 		hostname = self.getHostname (fqdn)
@@ -78,8 +97,6 @@ class Ansible (object) :
 		args+= 'group='+str(gid)+' '
 		args+= 'mode='+modes+' '
 
-		self.log (args)	
-		
 		runner = ar.Runner (
 			pattern     = hostname,
 			forks       = 1,
@@ -90,7 +107,6 @@ class Ansible (object) :
 		)
 		results = runner.run ()
 
-		self.log (results)
 		if 'contacted' not in results :
 			self.log ('FATAL: no \'contacted\' in results')
 			return False
@@ -103,10 +119,43 @@ class Ansible (object) :
 			self.log ('FATAL: unable to find \'changed\' in results')
 			return False
 		if host['changed'] :
-			self.log ('File copied over')
+			#self.log ('File copied over')
+			pass
 		else :
 			self.log ('Destination file is identical to source')
 	
 		return True
 
+	def addLineInFile (self, fqdn, dest, line, regexp) :
+		hostname = self.getHostname (fqdn)
 
+		# assemble args
+		args = 'dest='+dest+' '
+		args+= 'line="'+line+'" '
+		args+= 'regexp="'+regexp+'" '
+		args+= 'state=present '
+
+		runner = ar.Runner (
+			pattern     = hostname,
+			forks       = 1,
+			sudo        = True,
+			module_name = 'lineinfile',
+			module_args = args,
+			inventory   = self.inventory
+		)
+		results = runner.run ()
+
+		if 'contacted' not in results :
+			self.log ('FATAL: no \'contacted\' in results')
+			return False
+		contacted = results['contacted']
+		if hostname not in contacted :
+			self.log ('FATAL: can\'t find '+hostname+' in results')
+			return False
+		host = contacted[hostname]
+		if 'changed' not in host :
+			self.log ('FATAL: unable to find \'changed\' in results')
+			return False
+		if not host['changed'] :
+			self.log ('line was already present')
+		return True
