@@ -4,3 +4,6 @@
 [submodule "admipag/static/material-design-icons"]
 	path = admipag/static/material-design-icons
 	url = https://github.com/google/material-design-icons.git
+[submodule "static/material-design-icons"]
+	path = static/material-design-icons
+	url = https://github.com/google/material-design-icons.git
