@@ -97,7 +97,7 @@ logger.setLevel(logging.DEBUG)
 LOGIN_URL          = 'login-form'
 DEFAULT_COUNTRY    = 'FR'
 DEFAULT_USER_GROUP = 'ipag-pos-site'
-ADMIN_DATA_DIR     = 'admindata'
+ADMIN_DATA_DIR     = 'admtooLibData'
 ADMIN_FILES_DIR    = os.path.join(BASE_DIR, ADMIN_DATA_DIR, 'files')
 BACKUPPC_SERVER    = 'midgard'
 BACKUPPC_USER      = 'backuppc'
