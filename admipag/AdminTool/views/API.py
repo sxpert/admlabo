@@ -73,7 +73,7 @@ def SetupBackupPC (request) :
 	
 	logger.error (os)
 
-	#passwd = af.setupBackupPc (name, user, os)
+	passwd = af.setupBackupPc (name, user, os)
 	
 	if type(passwd) is bool :
 		# problem 
