@@ -122,6 +122,9 @@ def NewArrivalForm (request) :
 	
 		#
 		ujf_student = request.POST.get('ujf_student', '').strip()
+		# default to false
+		if ujf_student == '' :
+			ujf_student = '0'
 		# should be "0" or "1"
 		newuser['ujf_student'] = ujf_student
 
