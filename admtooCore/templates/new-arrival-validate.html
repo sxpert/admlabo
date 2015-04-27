@@ -4,6 +4,7 @@
 {% block scripts %}<script src="{% static "js/new-arrival-validate.js" %}"></script>{% endblock %}
 {% block css %}<link rel="stylesheet" type="text/css" href="{% static "css/new-arrival-validate.css" %}"/>{% endblock %}
 {% block content %}
+<p><a href="{% url 'dashboard' %}">retour au dashboard</a></p>
 {% if error %}
 <p class="error">Erreur : {{ error }}</p>
 {% endif %}
