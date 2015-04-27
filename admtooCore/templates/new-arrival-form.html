@@ -4,6 +4,7 @@
 {% block scripts %}<script src="{% static "js/new-arrival-form.js" %}"></script>{% endblock %}
 {% block css %}<link rel="stylesheet" type="text/css" href="{% static "css/new-arrival-form.css" %}"/>{% endblock %}
 {% block content %}
+<p><a href="{% url 'dashboard' %}">retour au dashboard</a></p>
 <h1>Formulaire d'enregistrement du nouvel arrivant</h1>
 <div class="warning"><p>Afin d'accueillir la personne dans les <strong>meilleures conditions,</strong> vous devez remplir ce formulaire
 <strong>au plus tôt</strong> (15 jours minimum avant son arrivée).</p>
