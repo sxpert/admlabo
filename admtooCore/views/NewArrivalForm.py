@@ -111,11 +111,10 @@ def NewArrivalForm (request) :
 			pass
 		newuser['status'] = status
 	
-		# NOTE: 9 is status for "stagiaire"
-		
 		# 
 		study_level = request.POST.get('study_level', '').strip()
-		if status == 9 :
+		# check if status is probie
+		if models.UserClass.objects.get(pk=status).probie :
 			if len(study_level) == 0:
 				errors['study_level'] = 'Le niveau d\'étude ne peut être vide pour un stagiaire'
 		newuser['study_level'] = study_level

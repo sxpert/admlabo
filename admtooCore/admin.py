@@ -141,7 +141,11 @@ class CountryAdmin (admin.ModelAdmin) :
 	list_display = ('iso2', 'name', 'citizenship', 'eu_member')
 
 admin.site.register(Country, CountryAdmin)
-admin.site.register(UserClass)
+
+class UserClassAdmin (admin.ModelAdmin) :
+	list_display = ('ref', 'fr', 'en', 'probie')
+
+admin.site.register(UserClass, UserClassAdmin)
 admin.site.register(Office)
 
 class NewUserAdmin (admin.ModelAdmin) :

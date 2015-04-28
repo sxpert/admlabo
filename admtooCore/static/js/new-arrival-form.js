@@ -6,7 +6,7 @@ function toggle_statut () {
 	var tr1 = $($('[name=study_level]').parents('tr')[0]);
 	var er2 = $('#ujf_student_error');
 	var tr2 = $($('[name=ujf_student]').parents('tr')[0]);
-	if (sel == 9) {
+	if (statut.find('[value='+sel.toString()+']').attr('data-probie')=='true') {
 		er1.show(); 
 		tr1.show();
 		er2.show();

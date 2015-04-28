@@ -7,6 +7,7 @@ class UserClass (models.Model) :
 	ref = models.CharField (max_length=64, null=False)
 	fr  = models.CharField (max_length=128, null=True, blank=True)
 	en  = models.CharField (max_length=128, null=True, blank=True)
+	probie = models.BooleanField (default=False)
 
 	class Meta:
 		app_label = 'admtooCore'
