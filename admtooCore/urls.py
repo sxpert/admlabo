@@ -25,5 +25,9 @@ urlpatterns = patterns( '',
 		views.group_view_field, name='group_view_field'),
 # Mailing lists
 	url(r'^mailinglist/(?P<ml_id>[a-z0-9_]+)/view/$', views.mailinglist_view, name='mailinglist_view'),
+#
+#
+# test
+	url(r'^test$', views.Test, name='test'),
 )
 

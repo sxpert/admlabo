@@ -14,5 +14,6 @@ from office import Office
 from newuser import NewUser
 from userdir import UserDir
 from emailalert import EmailAlert
+from emailalertmessage import EmailAlertMessage
 
 

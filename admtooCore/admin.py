@@ -167,3 +167,4 @@ class EmailAlertAdmin (admin.ModelAdmin) :
 	list_display = ('cause', 'email')
 
 admin.site.register(EmailAlert, EmailAlertAdmin)
+admin.site.register(EmailAlertMessage)
