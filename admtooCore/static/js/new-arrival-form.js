@@ -33,11 +33,30 @@ function toggle_office () {
 	}
 }
 
+function toggle_comp_account () {
+	var comp_account = $('[name=comp_account]:checked');
+	var val = comp_account.val();
+    var os_type = $('[name=os_type]');
+    var specific_os = $('[name=specific_os]');
+    var comp_purchase = $('[name=comp_purchase]');
+	var tr1 = $(os_type.parents('tr')[0]);
+    var tr2 = $(specific_os.parents('tr')[0]);
+    var tr3 = $(comp_purchase.parents('tr')[0]);
+    if (val=='0') {
+        tr1.hide();
+        tr2.hide();
+        tr3.hide();
+	} else {
+        tr1.show();
+		toggle_os_type();
+		tr3.show();
+	}
+}
 function toggle_os_type () {
-	var os_type = $('[name=os_type]')
+	var os_type = $('[name=os_type]');
 	var sel = os_type.val();
-	var tr = $(os_type.parents('tr')[0]).next('tr')
-	if (sel=='0') 
+	var tr = $(os_type.parents('tr')[0]).next('tr');
+	if (sel=='0')
 		tr.show();
 	else
 		tr.hide();
@@ -79,4 +98,7 @@ $(function() {
 		toggle_os_type();
 	});
 	toggle_os_type();
+    $('[name=comp_account]').click(function(ev) {
+        toggle_comp_account();
+    });
 });
