@@ -167,4 +167,19 @@ class EmailAlertAdmin (admin.ModelAdmin) :
 	list_display = ('cause', 'email')
 
 admin.site.register(EmailAlert, EmailAlertAdmin)
-admin.site.register(EmailAlertMessage)
+
+class EmailAlertMessageForm (forms.ModelForm) :
+	class Meta:
+		model = EmailAlertMessage
+		fields = '__all__'
+
+	def __init__ (self, *args, **kwargs) :
+		super (EmailAlertMessageForm, self).__init__ (*args, **kwargs)
+		self.fields['subject'].widget.attrs.update({'style': 'font-family: monospace; width: 100em; height: 10ex;'}) 
+		self.fields['msgtext'].widget.attrs.update({'style': 'font-family: monospace; width: 100em; height: 45ex;'}) 
+		self.fields['msghtml'].widget.attrs.update({'style': 'font-family: monospace; width: 100em; height: 45ex;'}) 
+
+class EmailAlertMessageAdmin (admin.ModelAdmin) :
+	form = EmailAlertMessageForm
+
+admin.site.register(EmailAlertMessage, EmailAlertMessageAdmin)

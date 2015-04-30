@@ -71,13 +71,13 @@ class NewUser (models.Model) :
 	#
 	comments = models.TextField (null=True, blank=True)
 
-	# information services
-	os_type  = models.IntegerField(choices = NEWUSER_OS_CHOICES, default=OS_LINUX)
-
 	class Meta:
 		app_label = 'admtooCore'
 		ordering  = ['last_name']
 
 	def __str__ (self) :
 		return self.last_name.encode('utf-8')
+
+	def os_type_choice(self) :
+		return self.NEWUSER_OS_CHOICES[self.os_type][1]
 		
