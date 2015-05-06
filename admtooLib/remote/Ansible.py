@@ -10,9 +10,12 @@ import ansible.runner as ar
 #
 
 class Ansible (object) :
-	def __init__ (self) :
+	def __init__ (self, debug=False) :
+		self.debug = debug
 		ansible.utils.VERBOSITY=0
 		self.inventory = ansible.inventory.Inventory ()
+		if self.debug :
+			self.log ('Ansible initialized')
 
 	#==============================================================================================
 	# utility functions
@@ -159,3 +162,34 @@ class Ansible (object) :
 		if not host['changed'] :
 			self.log ('line was already present')
 		return True
+
+	def shell (self, fqdn, command) :
+		hostname = self.getHostname (fqdn)
+
+		args = command
+
+		runner = ar.Runner (
+			pattern     = hostname,
+			forks       = 1,
+			sudo        = True,
+			module_name = 'shell',
+			module_args = args,
+			inventory   = self.inventory
+		)
+		results = runner.run ()
+
+		if 'contacted' not in results :
+			self.log ('FATAL: no \'contacted\' in results')
+			return False
+		contacted = results['contacted']
+		if hostname not in contacted :
+			self.log ('FATAL: can\'t find '+hostname+' in results')
+			return False
+		host = contacted[hostname] 
+		res = {}
+		res['rc'] = host['rc']
+		res['stdout'] = host['stdout']
+		res['stderr'] = host['stderr']
+		return res
+
+
