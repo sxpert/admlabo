@@ -11,9 +11,7 @@ logger=logging.getLogger('django')
 
 def Test (request) :
 	logger.error('testing sendMail')
-	from ..controllers import SendMail
-	nu={}
-	nu['newuser'] = NewUser.objects.all()[0]
-	SendMail.sendMail ('NewArrival', nu)
+	nu = NewUser.objects.all()[0]
+	nu.send_arrival_mail()
 	return redirect('dashboard')
 

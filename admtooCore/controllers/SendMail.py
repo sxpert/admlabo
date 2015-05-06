@@ -3,34 +3,45 @@ import logging
 logger=logging.getLogger('django')
 
 from .. import models
-
+from django.conf import settings
 from django.template import Context, Template
 from django.core.mail import send_mail
 
 # send mails for one mailcond
 def sendMailForCondition (mailcond, data) :
 	if type(mailcond) is str :
+		logger.error ('DEBUG : '+str(settings.DEBUG))
 		# get mail message
-		m = models.EmailAlertMessage.objects.get(cause=mailcond)
+		try :
+			m = models.EmailAlertMessage.objects.get(cause=mailcond)
+		except models.EmailAlertMessage.DoesNotExist as e :
+			logger.error ('sendMailForCondition FATAL: unable to find email message data for mailcondition : \''+str(mailcond)+'\'')
+			return False
 		# generate subject and content from templates
-		logger.error (m.subject)
 		t = Template(m.subject)
 		c = Context(data)
 		subject = t.render(c)
+		if settings.DEBUG : 
+			subject = '[TESTING] '+subject
 		logger.error (subject)
 		t = Template(m.msgtext)
 		msgtext = t.render(c)
-		logger.error (msgtext)
+		#logger.error (msgtext)
 		t = Template(m.msghtml)
 		msghtml = t.render(c)
-		logger.error (msghtml)
+		#logger.error (msghtml)
 		# get list of people
+		dest = models.EmailAlert.objects.filter(cause=mailcond)
+		l = []
+		for u in dest :
+			l.append (u.email)
+		logger.error (str(l))
+		if settings.DEBUG :
+			l.append ('raphael.jacquot@obs.ujf-grenoble.fr')
 		# send one mail per email address found
+		# the email down there should be l
 		send_mail ( subject, msgtext, 'django@admipag.obs.ujf-grenoble.fr', 
-				    ['frederic.roussel@obs.ujf-grenoble.fr'], 
-				    fail_silently=False,
-					html_message=msghtml)
-		pass
+				    l, fail_silently=False, html_message=msghtml)
 	else :
 		logger.error ('sendMailForCondition FATAL: don\'t know what to do with mailcondition = \''+str(mailcond)+'\'')
 

@@ -201,6 +201,8 @@ def NewArrivalForm (request) :
 		#
 		comp_purchase = request.POST.get('comp_purchase', '').strip()
 		# should be "0" or "1"
+		if comp_account == '0' :
+			comp_purchase = '0'
 		if len(comp_purchase)==0 :
 			errors['comp_purchase'] = 'Une option doit être sélectionnée'
 		newuser['comp_purchase'] = comp_purchase
@@ -285,8 +287,7 @@ def NewArrivalForm (request) :
 			nu.save ()
 
 			# call send mail controller
-					
-	
+			nu.send_arrival_mail ()	
 			return redirect ('dashboard')		
 
 	#

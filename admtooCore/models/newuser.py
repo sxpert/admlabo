@@ -80,4 +80,13 @@ class NewUser (models.Model) :
 
 	def os_type_choice(self) :
 		return self.NEWUSER_OS_CHOICES[self.os_type][1]
-		
+
+	def send_arrival_mail (self) :
+		from ..controllers import SendMail
+		maildata = {}	
+		nu = NewUser.objects.get (pk=self.pk)
+		maildata['newuser'] = nu
+		causes = ['NewArrival']
+		if not self.citizenship.eu_member :
+			causes.append ('NewArrivalNotEUMember')
+		SendMail.sendMail (causes, maildata)
