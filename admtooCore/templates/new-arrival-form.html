@@ -51,28 +51,28 @@
 <table><tbody>
 
 {% if errors.last_name %}<tr><td colspan="2" class="form-error">{{ errors.last_name }}</td></tr>{% endif %}
-<tr><th>Nom&nbsp;<span class="must-have">⚫</span></th><td><input type="text" name="last_name" value="{{ newuser.last_name }}"/></td></tr>
+<tr><th>Nom&nbsp;<span class="must-have">●</span></th><td><input type="text" name="last_name" value="{{ newuser.last_name }}"/></td></tr>
 
 {% if errors.first_name %}<tr><td colspan="2" class="form-error">{{ errors.first_name }}</td></tr>{% endif %}
-<tr><th>Prénom&nbsp;<span class="must-have">⚫</span></th><td><input type="text" name="first_name" value="{{ newuser.first_name }}"/></td></tr>
+<tr><th>Prénom&nbsp;<span class="must-have">●</span></th><td><input type="text" name="first_name" value="{{ newuser.first_name }}"/></td></tr>
 
 {% if errors.birthdate %}<tr><td colspan="2" class="form-error">{{ errors.birthdate }}</td></tr>{% endif %}
-<tr><th>Date de naissance&nbsp;<span class="must-have">⚫</span></th>
+<tr><th>Date de naissance&nbsp;<span class="must-have">●</span></th>
 	<td><input type="text" name="birthdate" value="{{ newuser.birthdate }}"/></td></tr>
 
 {% if errors.external_email %}<tr><td colspan="2" class="form-error">{{ errors.external_email }}</td></tr>{% endif %}
-<tr><th>Adresse email externe&nbsp;<span class="must-have">⚫</span></th>
+<tr><th>Adresse email externe&nbsp;<span class="must-have">●</span></th>
 	<td><input type="text" name="external_email" value="{{ newuser.external_email }}"/></td></tr>
 
 {% if errors.citizenship %}<tr><td colspan="2" class="form-error">{{ errors.citizenship }}</td></tr>{% endif %}
-<tr><th>Nationalité&nbsp;<span class="must-have">⚫</span></th><td><select name="citizenship">{% for c in allcountries %}
+<tr><th>Nationalité&nbsp;<span class="must-have">●</span></th><td><select name="citizenship">{% for c in allcountries %}
 <option value="{{ c.iso2 }}"
 	{%if newuser.citizenship%}{%if c.iso2 == newuser.citizenship%}selected{%endif%}{%else%}{%if c.iso2 == DEFAULT_COUNTRY%}selected{%endif%}{%endif%}
 	>{{ c.citizenship }}</option>
 {% endfor %}</select></td></tr>
 
 {% if errors.status %}<tr><td colspan="2" class="form-error">{{ errors.status }}</td></tr>{% endif %}
-<tr><th>Statut au sein de l'IPAG&nbsp;<span class="must-have">⚫</span><br/>
+<tr><th>Statut au sein de l'IPAG&nbsp;<span class="must-have">●</span><br/>
 	<span class="note">Si le nouvel arrivant n'est <strong>PAS</strong> futur personnel IPAG, lui attribuer le statut <strong>Invité</strong>
 		ou <strong>Stagiaire</strong></span></th><td><select name="status">{% for uc in alluserclasses %}
 <option value="{{ uc.id }}" data-probie="{{ uc.probie|yesno:"true,false" }}" {% if newuser.status and newuser.status == uc.id %} selected{%endif%}>{% if uc.fr %}{{ uc.fr }}{% else %}{{ uc }}{% endif %}</option>{% endfor %}</select></td></tr>
@@ -87,11 +87,11 @@
 		<input type="radio" name="ujf_student" value="0"{%if newuser.ujf_student == "0" %} checked{%endif%}>non</td></tr>
 
 {% if errors.team %}<tr><td colspan="2" class="form-error">{{ errors.team }}</td></tr>{% endif %}
-<tr><th>Équipe&nbsp;<span class="must-have">⚫</span></th><td><select name="team">{% for team in allteams %}
+<tr><th>Équipe&nbsp;<span class="must-have">●</span></th><td><select name="team">{% for team in allteams %}
 <option value="{{ team.gidnumber }}"{% if newuser.team == team.gidnumber%} selected{%endif%}>{{ team.description }}</option>{% endfor %}</select></td></tr>
 
 {% if errors.office %}<tr><td colspan="2" class="form-error">{{ errors.office }}</td></tr>{% endif %}
-<tr><th>Bureau&nbsp;<span class="must-have">⚫</span></th><td><select name="office">
+<tr><th>Bureau&nbsp;<span class="must-have">●</span></th><td><select name="office">
 <option value=""{%if newuser.office == ""%} selected{%endif%}>Autre</option>{% for o in alloffices %}
 <option value="{{o.ref}}"{% if newuser.office == o.ref %} selected{%endif%}>{{o}}</option>{% endfor %}</select></td></tr>
 
@@ -104,7 +104,7 @@
 <table><tbody>
 
 {% if errors.arrival %}<tr><td colspan="2" class="form-error">{{ errors.arrival }}</td></tr>{% endif %}
-<tr><th>Date d'arrivée&nbsp;<span class="must-have">⚫</span></th>
+<tr><th>Date d'arrivée&nbsp;<span class="must-have">●</span></th>
 	<td><input type="text" name="arrival" value="{{ newuser.arrival }}"/></td></tr>
 
 {% if errors.departure %}<tr><td colspan="2" class="form-error">{{ errors.departure }}</td></tr>{% endif %}
@@ -124,12 +124,12 @@
 <table><tbody>
 
 {% if errors.comp_account %}<tr><td colspan="2" class="form-error">{{ errors.comp_account }}</td></tr>{% endif %}
-<tr><th>Compte informatique&nbsp;<span class="must-have">⚫</span></th>
+<tr><th>Compte informatique&nbsp;<span class="must-have">●</span></th>
 	<td><input type="radio" name="comp_account" value="1"{% if newuser.comp_account == "1" %} checked{%endif%}>oui
 		<input type="radio" name="comp_account" value="0"{% if newuser.comp_account == "0" %} checked{%endif%}>non</td></tr>
 
 {% if errors.os_type %}<tr><td colspan="2" class="form-error">{{ errors.os_type }}</td></tr>{% endif %}
-<tr><th>Type de station de travail&nbsp;<span class="must-have">⚫</span></th>
+<tr><th>Type de station de travail&nbsp;<span class="must-have">●</span></th>
 	<td><select name="os_type">{% for t in allostypes %}
 <option value="{{t.0}}"{% if newuser.os_type == t.0 %} selected{%endif%}>{{t.1}}</option>{% endfor %}</select></td></tr>
 
@@ -137,7 +137,7 @@
 	<td><input type="text" name="specific_os" value="{{ newuser.specific_os }}"/></td></tr>
 
 {% if errors.comp_purchase %}<tr><td colspan="2" class="form-error">{{ errors.comp_purchase }}</td></tr>{% endif %}
-<tr><th>Achat de matériel en cours&nbsp;<span class="must-have">⚫</span></th>
+<tr><th>Achat de matériel en cours&nbsp;<span class="must-have">●</span></th>
 	<td><input type="radio" name="comp_purchase" value="1"{% if newuser.comp_purchase == "1" %} checked{%endif%}>oui
         <input type="radio" name="comp_purchase" value="0"{% if newuser.comp_purchase == "0" %} checked{%endif%}>non</td></tr>
 </tbody></table>
@@ -146,17 +146,17 @@
 <table><tbody>
 
 {% if errors.ir_lab %}<tr><td colspan="2" class="form-error">{{ errors.ir_lab }}</td></tr>{% endif %}
-<tr><th>Accès laboratoires optique IR&nbsp;<span class="must-have">⚫</span></th>
+<tr><th>Accès laboratoires optique IR&nbsp;<span class="must-have">●</span></th>
 	<td><input type="radio" name="ir_lab" value="1"{% if newuser.ir_lab == "1" %} checked{%endif%}>oui
         <input type="radio" name="ir_lab" value="0"{% if newuser.ir_lab == "0" %} checked{%endif%}>non</td></tr>
 
 {% if errors.workshop %}<tr><td colspan="2" class="form-error">{{ errors.workshop }}</td></tr>{% endif %}
-<tr><th>Accès atelier mécanique&nbsp;<span class="must-have">⚫</span></th>
+<tr><th>Accès atelier mécanique&nbsp;<span class="must-have">●</span></th>
 	<td><input type="radio" name="workshop" value="1"{% if newuser.workshop == "1" %} checked{%endif%}>oui
         <input type="radio" name="workshop" value="0"{% if newuser.workshop == "0" %} checked{%endif%}>non</td></tr>
 
 {% if errors.chem_lab %}<tr><td colspan="2" class="form-error">{{ errors.chem_lab }}</td></tr>{% endif %}
-<tr><th>Accès laboratoires de chimie&nbsp;<span class="must-have">⚫</span></th>
+<tr><th>Accès laboratoires de chimie&nbsp;<span class="must-have">●</span></th>
 	<td><input type="radio" name="chem_lab" value="1"{% if newuser.chem_lab == "1" %} checked{%endif%}>oui
         <input type="radio" name="chem_lab" value="0"{% if newuser.chem_lab == "0" %} checked{%endif%}>non</td></tr>
 </tbody></table>
@@ -168,7 +168,7 @@ infrarouge, laboratoire de chimie, hall d'intégration, labo SWIFTS...), même p
 <table><tbody>
 
 {% if errors.risky_activity %}<tr><td colspan="2" class="form-error">{{ errors.risky_activity }}</td></tr>{% endif %}
-<tr><th>Activité à risques&nbsp;<span class="must-have">⚫</span></th>
+<tr><th>Activité à risques&nbsp;<span class="must-have">●</span></th>
 	<td><input type="radio" name="risky_activity" value="1"{% if newuser.risky_activity == "1" %} checked{%endif%}>oui
         <input type="radio" name="risky_activity" value="0"{% if newuser.risky_activity == "0" %} checked{%endif%}>non</td></tr>
 </tbody></table>
