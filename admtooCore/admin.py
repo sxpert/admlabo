@@ -42,9 +42,13 @@ class GroupForm (forms.ModelForm) :
 		model=Group
 		fields = ['users']
 
+	def __init__ (self, *args, **kwargs) :
+		super (GroupForm, self).__init__ (*args, **kwargs)
+		self.fields['appspecname'].widget.attrs.update({'style': 'font-family: monospace; width: 100em; height: 45ex;'}) 
+
 class GroupAdmin (admin.ModelAdmin) :
 	form = GroupForm
-	fields = ('gidnumber', 'name', 'group_type', 'description', 'parent', 'users', )
+	fields = ('gidnumber', 'name', 'group_type', 'description', 'parent', 'users', 'appspecname')
 	list_display = ('name', 'group_description')
 
 	def get_form (self, request, obj=None, **kwargs) :

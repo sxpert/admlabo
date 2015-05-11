@@ -20,6 +20,7 @@ class Group (models.Model) :
 	group_type	= models.IntegerField(choices = GROUP_TYPES_CHOICES, default=NORMAL_GROUP)
 	parent      = models.ForeignKey('self', null=True, blank=True)
 	description = models.CharField(max_length=256, null=True, blank=True)
+	appspecname = models.TextField(default='') 
 
 	class Meta:
 		app_label = 'admtooCore'
