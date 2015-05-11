@@ -2,6 +2,8 @@ from django.conf.urls import patterns, url
 import views
 
 urlpatterns = patterns( '',
+# API
+	url(r'^API/XmlDB$', views.XmlDB, name='xml-db'),
 # login forms
 	url(r'^login$', views.LoginForm, name='login-form'),
 	url(r'^logout$', views.LogoutView, name='logout-view'),
@@ -29,5 +31,6 @@ urlpatterns = patterns( '',
 #
 # test
 	url(r'^test$', views.Test, name='test'),
+
 )
 

@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<laogStatus>
+	<tmp/>
+	<revision>$Revision : 2.0000 $</revision>
+	<constants>
+	</constants>
+	<tagDefinitions>
+	</tagDefinitions>
+	<mailAliases>
+	</mailAliases>
+	<mailingLists>
+	</mailingLists>
+	<affiliations>
+	</affiliations>	
+	<groups>
+	</groups>
+	<users>{% for user in users %}	
+		<user>
+			<firstName>{{ user.first_name }}</firstName>
+			<lastName>{{ user.last_name }}</lastName>
+			<login>{{ user.login }}</login>
+			<agalanLogin>{{ user.login }}</agalanLogin>
+			<uid>{{ user.uidnumber }}</uid>
+			<birthDate>{{ user.birthdate|date:"c" }}</birthDate>
+			<affiliation idref="unknown ?"/>
+			<userClassRef idref=""/>
+			<groupRefs>{% for group in user.unique_groups %}
+				<groupRef name="{{ group.name }}"/>{% endfor %}
+			</groupRefs>
+		</user>{% endfor %}
+	</users>
+</laogStatus>
+

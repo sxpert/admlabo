@@ -6,3 +6,5 @@ from NewArrivalValidate import *
 from userlistview import *
 from views import *
 from Test import *
+
+from XmlDB import *
