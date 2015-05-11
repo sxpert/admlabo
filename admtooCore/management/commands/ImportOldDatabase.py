@@ -345,6 +345,16 @@ class Command(BaseCommand) :
 				changed = True
 	
 		if xud is not None :
+			# birthdate 
+			if 'birth_date'in xud.keys() :
+				bdate = None
+				if u.birthdate is not None :
+					bdate = u.birthdate.isoformat()
+				if bdate != xud['birth_date'] :
+					u.birthdate = xud['birth_date']
+					changing.append(('birthdate',u.birthdate))
+					changed = True	
+		
 			# manager
 			old_manager = None
 			if u.manager is not None :

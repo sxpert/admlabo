@@ -16,6 +16,8 @@ def associateUserWith (user, newuser_id, request_user=None) :
 	nu.save ()
 	
 	# modify self with infos from nu
+	if user.birthdate is None :
+		user.birthdate = nu.birthdate
 	if user.arrival is None :
 		user.arrival = nu.arrival
 	if user.departure is None and nu.departure is not None :
