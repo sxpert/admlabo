@@ -10,6 +10,7 @@ class MailingList (models.Model) :
 	description = models.CharField(max_length=256)
 	parent      = models.ForeignKey('self', null=True, blank=True)
 	group       = models.ForeignKey('Group', null=True, blank=True)
+	userclass   = models.ForeignKey('UserClass', null=True, blank=True)
 
 	class Meta:
 		app_label = 'admtooCore'
