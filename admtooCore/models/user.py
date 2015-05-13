@@ -28,6 +28,7 @@ class User (models.Model) :
 	groups		= models.ManyToManyField(Group, blank=True, related_name='users')
 	room		= models.CharField(max_length=32, null=True, blank=True)
 	telephone   = models.CharField(max_length=32, null=True, blank=True)
+	flags       = models.ManyToManyField('UserFlag', blank=True)
 	# state management
 	NORMAL_USER    = 0
 	NEWIMPORT_USER = 1
