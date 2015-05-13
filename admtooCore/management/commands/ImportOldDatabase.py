@@ -387,12 +387,13 @@ class Command(BaseCommand) :
 					print "FATAL: Unable to find mailing list "+uc_name
 				else :
 					uc = new_userclass.userclass
-					if u.userclass != uc :
-						u.userclass = uc
-						changing.append(('userclass', uc))
-						changed = True
 			else :
-				print "ERROR: no user class reference for user "+login
+				uc = None
+
+			if u.userclass != uc :
+				u.userclass = uc
+				changing.append(('userclass', uc))
+				changed = True
 
 			# arrival date
 			if 'arrival_date' in xud.keys() :

@@ -22,7 +22,7 @@ class User (models.Model) :
 	birthdate   = models.DateField(null=True, blank=True)
 	mail        = models.EmailField(null=True, blank=True)
 	manager     = models.ForeignKey('self', null=True, blank=True)
-	userclass   = models.ForeignKey ('UserClass', default=userclass_default, null=True, blank=True)
+	userclass   = models.ForeignKey ('UserClass', null=True, blank=True)
 	arrival		= models.DateField(null=True, blank=True)
 	departure	= models.DateField(null=True, blank=True)
 	groups		= models.ManyToManyField(Group, blank=True, related_name='users')
@@ -119,6 +119,12 @@ class User (models.Model) :
 		if self.last_name is not None :
 			n.append(self.last_name)
 		return ' '.join(n)
+
+	def userclassref (self) :
+		if self.userclass is None :
+			return ''
+		from mailinglist import MailingList
+		return MailingList.objects.get(userclass=self.userclass).ml_id
 
 	def all_mailinglists (self) :
 		from mailinglist import MailingList

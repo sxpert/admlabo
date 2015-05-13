@@ -23,7 +23,7 @@
 			<uid>{{ user.uidnumber }}</uid>
 			<birthDate>{{ user.birthdate|date:"c" }}</birthDate>
 			<affiliation idref="unknown ?"/>
-			<userClassRef idref=""/>
+			<userClassRef idref="{{ user.userclassref }}"/>
 			<groupRefs>{% for group in user.unique_groups %}
 				<groupRef name="{{ group.name }}"/>{% endfor %}
 			</groupRefs>
