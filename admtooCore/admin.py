@@ -187,3 +187,4 @@ class EmailAlertMessageAdmin (admin.ModelAdmin) :
 	form = EmailAlertMessageForm
 
 admin.site.register(EmailAlertMessage, EmailAlertMessageAdmin)
+admin.site.register(UserFlag)
