@@ -378,6 +378,22 @@ class Command(BaseCommand) :
 					changing.append(('manager',str(m)))
 					changed = True
 
+			# userclass
+			uc_name = xud['user_class']
+			if uc_name is not None :
+				try :
+					new_userclass = MailingList.objects.get(ml_id=uc_name)
+				except MailingList.DoesNotExist as e :
+					print "FATAL: Unable to find mailing list "+uc_name
+				else :
+					uc = new_userclass.userclass
+					if u.userclass != uc :
+						u.userclass = uc
+						changing.append(('userclass', uc))
+						changed = True
+			else :
+				print "ERROR: no user class reference for user "+login
+
 			# arrival date
 			if 'arrival_date' in xud.keys() :
 				arr = None

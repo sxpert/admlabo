@@ -22,6 +22,10 @@ def associateUserWith (user, newuser_id, request_user=None) :
 		user.arrival = nu.arrival
 	if user.departure is None and nu.departure is not None :
 		user.departure = nu.departure
+
+	# set the users's class
+	if user.userclass is None :
+		user.userclass = nu.status
 	
 	# set office if defined
 	if user.room is None or user.room.strip() == '' :
@@ -29,6 +33,7 @@ def associateUserWith (user, newuser_id, request_user=None) :
 			user.room = nu.office
 		elif nu.other_office is not None and nu.other_office.strip() != '' :
 			user.room = nu.other_office
+
 	# set self as an active user
 	user.user_state = user.NORMAL_USER
 	user.save (request_user=request_user)

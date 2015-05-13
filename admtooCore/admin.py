@@ -11,7 +11,7 @@ logger=logging.getLogger('django')
 
 class UserAdmin (admin.ModelAdmin) :
 	fields = (('uidnumber', 'group', 'user_state'), 
-			   'login', 'login_shell', 'first_name', 'last_name', 'room', 'telephone', 'mail', 'manager', 'arrival', 'departure', 'groups')
+			   'login', 'login_shell', 'first_name', 'last_name', 'room', 'telephone', 'mail', 'manager', 'userclass', 'arrival', 'departure', 'groups')
 	list_display = ('last_name', 'first_name', 'mail_link', 'login', 'uidnumber', 'manager_name', 'user_state') 
 	readonly_fields = ('uidnumber', 'login', 'first_name', 'last_name', 'mail')
 	filter_horizontal = ('groups',)

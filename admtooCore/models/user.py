@@ -8,6 +8,10 @@ logger=logging.getLogger('django')
 from group import Group
 from machine import Machine
 
+def userclass_default () :
+	from userclass import UserClass
+	return UserClass.objects.get(probie=True).pk
+
 class User (models.Model) :
 	uidnumber   = models.IntegerField(unique=True, default=None)
 	group       = models.ForeignKey('Group', null=True, blank=True)
@@ -18,6 +22,7 @@ class User (models.Model) :
 	birthdate   = models.DateField(null=True, blank=True)
 	mail        = models.EmailField(null=True, blank=True)
 	manager     = models.ForeignKey('self', null=True, blank=True)
+	userclass   = models.ForeignKey ('UserClass', default=userclass_default, null=True, blank=True)
 	arrival		= models.DateField(null=True, blank=True)
 	departure	= models.DateField(null=True, blank=True)
 	groups		= models.ManyToManyField(Group, blank=True, related_name='users')
