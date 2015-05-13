@@ -24,9 +24,15 @@
 			<birthDate>{{ user.birthdate|date:"c" }}</birthDate>
 			<affiliation idref="unknown ?"/>
 			<userClassRef idref="{{ user.userclassref }}"/>
-			<groupRefs>{% for group in user.unique_groups %}
+			{% if user.manager %}<responsibleRef name="{{ user.manager.login }}"/>
+			{% endif %}<groupRefs>{% for group in user.all_groups %}
 				<groupRef name="{{ group.name }}"/>{% endfor %}
-			</groupRefs>
+			</groupRefs>{% if user.room %}
+			<roomNumber>{{ user.room }}</roomNumber>{% endif %}{% if user.telephone %}
+			<telephoneNumber>{{ user.telephone }}</telephoneNumber>{% endif %}
+			{% if user.flags.count > 0 %}<tags>{% for tag in user.flags.all %}
+				<tag>{{ tag.name }}</tag>{% endfor %}
+			</tags>{% else %}<tags/>{% endif %}
 		</user>{% endfor %}
 	</users>
 </laogStatus>
