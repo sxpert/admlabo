@@ -449,6 +449,19 @@ class Command(BaseCommand) :
 			if len(ngr)>0 :
 				changing.append(('new_groups',repr(ngr)))
 
+		# handle tags
+		if xud is not None :
+			if 'tags' in xud.keys() :
+				tags = xud['tags']
+				if len(tags)>0 :
+					for t in tags :
+						try :
+							ti = UserFlag.objects.get(name=t)
+						except UserFlag.DoesNotExist as e :
+							ti = UserFlag (name = t)
+							ti.save ()
+						u.flags.add (ti)
+
 		# user has been modified, save
 		if changed :
 			#self.log(mode+' user '+u.login+' '+str(changing))
