@@ -81,9 +81,14 @@ class UpdateLauncher (object) :
 		if 'description' in ck :
 			description = c['description']
 		memberUid = None
-		if 'memberUid' in ck :
-			memberUid = c['memberUid']
-
+		if 'members' in ck :
+			# build an array of logins from the command
+			memberUid = []
+			for m in c['members'] :
+				if 'login' in m.keys() :
+					memberUid.append(m['login'])
+		self.log (memberUid)
+	
 		g = l.group_check_exists (cn, gidNumber)
 		if g is None :
 			# group not found. add the group as new
@@ -95,14 +100,21 @@ class UpdateLauncher (object) :
 				l.group_rename (oldcn, cn)
 			return l.group_update (cn, gidNumber, description, memberUid)
 
+	def _UpdateGroup_TWiki (self, command) :
+		# look if we have a twiki name for the group
+		
+		return True
+
 	#
 	# this update when a group was modified
 	# for now, only changes in the ldap
 	# would go around in other things later if needed
 	def verbUpdateGroup (self, command) :
-		if self._UpdateGroup_LDAP (command) :
-			return self.STATE_SUCCESS
-		return self.STATE_FAIL
+		if not self._UpdateGroup_LDAP (command) :
+			return self.STATE_FAIL
+		if not self._UpdateGroup_TWiki (command) :
+			return self.State_FAIL
+		return self.STATE_SUCCESS
 	
 	#==============================================================================================
 	# 

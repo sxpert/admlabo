@@ -38,7 +38,8 @@ class Group (models.Model) :
 		g['cn']          = self.name
 		g['gidNumber']   = self.gidnumber
 		g['description'] = self.description
-		g['memberUid']   = members
+		g['members']   = members
+		g['appSpecName'] = self.appspecname
 
 		import command, json
 		c = command.Command ()
@@ -65,7 +66,11 @@ class Group (models.Model) :
 	def member_logins (self) :
 		m = []
 		for u in self.members() :
-			m.append (u.login)
+			user = {}
+			user['login'] = u.login
+			user['first_name'] = u.first_name
+			user['last_name'] = u.last_name
+			m.append (user)
 		return m
 	
 	def set_members (self, members, user=None) :
