@@ -1,0 +1,7 @@
+{% for group in groups %}
+{{ spacer }}<group>
+{{ spacer }}    <gid>{{ group.gidnumber }}</gid>
+{{ spacer }}    <name>{{ group.name }}</name>{% if group.description %}
+{{ spacer }}    <description>{{ group.description }}</description>{% endif %}{% if group.is_team_group %}
+{{ spacer }}    <teamGroup/>{% endif %}{% if group.is_service_group %}
+{{ spacer }}    <serviceGroup/>{% endif %}{% with "    "|add:spacer as spacer %}{% with "xml-db-groups.xml" as filename %}{% with group.get_children.all as groups %}{% include filename %}{% endwith %}{% endwith %}{% endwith %}{{ spacer }}</group>{% endfor %}

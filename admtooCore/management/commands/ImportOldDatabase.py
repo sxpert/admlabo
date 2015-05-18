@@ -346,7 +346,7 @@ class Command(BaseCommand) :
 	
 		if xud is not None :
 			# birthdate 
-			if 'birth_date'in xud.keys() :
+			if 'birth_date' in xud.keys() :
 				bdate = None
 				if u.birthdate is not None :
 					bdate = u.birthdate.isoformat()
@@ -354,7 +354,21 @@ class Command(BaseCommand) :
 					u.birthdate = xud['birth_date']
 					changing.append(('birthdate',u.birthdate))
 					changed = True	
-		
+	
+			# effective group *name*
+			if 'gid' in xud.keys() :
+				ngroup = None
+				if xud['gid'] is not None :
+					# map old group name to new group name
+					ngroupname = self.map_group_name(xud['gid'])
+					try :
+						ngroup = Group.objects.get(name=ngroupname)
+					except Group.DoesNotExist as e :
+						print 'FATAL: unable to find group \''+ngroupname+'\''
+				if u.group != ngroup :
+					u.group = ngroup
+					changed = True
+	
 			# manager
 			old_manager = None
 			if u.manager is not None :

@@ -94,5 +94,14 @@ class Group (models.Model) :
 					changed = True
 		if changed :
 			self._update_ldap(user)
-		
+	
+	# helper functions used by the xml template
+	
+	def get_children (self) :
+		return Group.objects.filter(parent=self)	
 					
+	def is_team_group (self) :
+		return self.group_type == self.TEAM_GROUP
+	
+	def is_service_group (self) :
+		return self.group_type == self.SERVICE_GROUP

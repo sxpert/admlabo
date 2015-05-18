@@ -1,20 +1,19 @@
 <?xml version="1.0"?>
 <laogStatus>
-	<tmp/>
-	<revision>$Revision : 2.0000 $</revision>
-	<constants>
-	</constants>
-	<tagDefinitions>
-	</tagDefinitions>
-	<mailAliases>
-	</mailAliases>
-	<mailingLists>
-	</mailingLists>
-	<affiliations>
-	</affiliations>	
-	<groups>
-	</groups>
-	<users>{% for user in users %}	
+    <tmp/>
+    <revision>$Revision : 2.0000 $</revision>
+    <constants>
+    </constants>
+    <tagDefinitions>
+    </tagDefinitions>
+    <mailAliases>
+    </mailAliases>
+    <mailingLists>
+    </mailingLists>
+    <affiliations>
+    </affiliations>	
+    <groups>{% with "        " as spacer %}{% include "xml-db-groups.xml" %}{% endwith %}    </groups>
+    <users>{% for user in users %}	
 		<user>
 			<firstName>{{ user.first_name }}</firstName>
 			<lastName>{{ user.last_name }}</lastName>
@@ -26,7 +25,7 @@
 			<userClassRef idref="{{ user.userclassref }}"/>
 			{% if user.manager %}<responsibleRef name="{{ user.manager.login }}"/>
 			{% endif %}<groupRefs>{% for group in user.all_groups %}
-				<groupRef name="{{ group.name }}"/>{% endfor %}
+				<groupRef name="{{ group.name }}"{% if user.group and group.name == user.group.name %} type="effective"{% endif %}/>{% endfor %}
 			</groupRefs>{% if user.room %}
 			<roomNumber>{{ user.room }}</roomNumber>{% endif %}{% if user.telephone %}
 			<telephoneNumber>{{ user.telephone }}</telephoneNumber>{% endif %}
