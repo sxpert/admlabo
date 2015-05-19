@@ -9,10 +9,18 @@ logger=logging.getLogger('django')
 
 # Register your models here.
 
+class UserForm (forms.ModelForm) :
+	class Meta:
+		model=User
+	def __init__ (self, *args, **kwargs) :
+		super (UserForm, self).__init__ (*args, **kwargs)
+		self.fields['appspecname'].widget.attrs.update({'style':'font-family: monospace; width: 100em; height: 45ex;'})
+
+
 class UserAdmin (admin.ModelAdmin) :
 	fields = (('uidnumber', 'group', 'user_state'), 
 			   'login', 'login_shell', 'first_name', 'last_name', 'room', 'telephone', 'mail', 'manager', 
-			   'userclass', 'arrival', 'departure', 'groups', 'flags')
+			   'userclass', 'arrival', 'departure', 'groups', 'flags', 'appspecname')
 	list_display = ('last_name', 'first_name', 'mail_link', 'login', 'uidnumber', 'manager_name', 'user_state') 
 	readonly_fields = ('uidnumber', 'login', 'first_name', 'last_name', 'mail')
 	filter_horizontal = ('groups', 'flags')

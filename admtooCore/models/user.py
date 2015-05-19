@@ -40,6 +40,7 @@ class User (models.Model) :
 		( DELETED_USER,   'utilisateur supprimé'),
 	)
 	user_state	= models.IntegerField(choices = USER_STATE_CHOICES, default=NORMAL_USER)
+	appspecname = models.TextField(default='') 
 
 
 
@@ -253,4 +254,9 @@ class User (models.Model) :
 		if nu is not None :
 			return True
 		return False	
+	
+	def default_twiki_account (self) :
+		from admtooLib.twiki import TWiki
+		t = TWiki('','')
+		return t.gen_user_name (self.first_name, self.last_name)
 

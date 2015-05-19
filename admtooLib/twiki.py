@@ -20,15 +20,22 @@ class TWiki (object) :
 				if first :
 					c = c.upper()
 					first = False
+				else :
+					c = c.lower()
 				s += c
 		return s
 
-	def gen_wiki_name (self, fname, lname) :
+	def gen_user_name (self, fname, lname) :
 		fname = self._format_name (fname)
 		lname = self._format_name (lname)
 		return fname+lname
 
-if __name__ == '__main__' :
-	t = TWiki ('ipag.osug.fr', '/var/www/twiki/data')
-	twikiname = t.gen_wiki_name ('raphael', 'jacquot-total')
-	print twikiname
+	def gen_group_config (self, gdata) :
+		if 'appSpecName' in gdata.keys() and gdata['appSpecName'] is not None :
+			print gdata
+		pass
+	
+#if __name__ == '__main__' :
+#	t = TWiki ('ipag.osug.fr', '/var/www/twiki/data')
+#	twikiname = t.gen_wiki_name ('raphael', 'jacquot-total')
+#	print twikiname
