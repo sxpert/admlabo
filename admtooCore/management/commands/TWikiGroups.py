@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from admtooLib import ldaposug as lo
+from admtooLib.twiki import TWiki
 from django.core.exceptions import ObjectDoesNotExist
 import json
 from ...models.group import Group
@@ -21,6 +22,9 @@ class TWikiGroups (object) :
 			print g.name
 			if 'twiki' in j :
 				print "   "+j['twiki']
+		t = TWiki ('','')
+		for u in User.objects.filter(user_state=User.NORMAL_USER) :
+			print t.gen_wiki_name (u.first_name, u.last_name)
 #
 # base django command line tool object.
 #
