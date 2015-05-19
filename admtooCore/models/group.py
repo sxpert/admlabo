@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.db import models
+import json
 import netfields
 import logging
 logger=logging.getLogger('django')
@@ -27,19 +28,26 @@ class Group (models.Model) :
 
 	def __str__ (self) :
 		return self.name
-	
-	# update the group object to the ldap server
-	def _update_ldap (self, user=None) :
-		# get members list
-		members = self.member_logins()
-		logger.error ("saving group to ldap, members list : "+str(members))
 
+	def prepare_group_data (self) :
+		members = self.member_logins()
 		g = {}
 		g['cn']          = self.name
 		g['gidNumber']   = self.gidnumber
 		g['description'] = self.description
 		g['members']   = members
-		g['appSpecName'] = self.appspecname
+		try :
+			g['appSpecName'] = json.loads(self.appspecname)
+		except ValueError as e :
+			g['appSpecName'] = None
+		return g
+	
+	# update the group object to the ldap server
+	def _update_ldap (self, user=None) :
+		# get members list
+		logger.error ("saving group to ldap, members list : "+str(members))
+		
+		g = self.prepare_group_data()
 
 		import command, json
 		c = command.Command ()

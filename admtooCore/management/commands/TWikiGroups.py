@@ -24,7 +24,9 @@ class TWikiGroups (object) :
 				print "   "+j['twiki']
 		t = TWiki ('','')
 		for u in User.objects.filter(user_state=User.NORMAL_USER) :
-			print t.gen_wiki_name (u.first_name, u.last_name)
+			print t.gen_user_name (u.first_name, u.last_name)
+		for g in Group.objects.all () :
+			t.gen_group_config (g.prepare_group_data())
 #
 # base django command line tool object.
 #
@@ -35,5 +37,6 @@ class Command (BaseCommand) :
     def handle (self, *args, **options) :
         twg = TWikiGroups ()
         twg.run ()
+		
 
 
