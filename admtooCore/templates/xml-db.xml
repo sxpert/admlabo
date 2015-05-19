@@ -1,8 +1,13 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="utf-8"?>
 <laogStatus>
     <tmp/>
     <revision>$Revision : 2.0000 $</revision>
     <constants>
+		<constant>
+			<name>organizationName</name>
+			<value>Institut de Planétologie et d'Astrophysique de Grenoble</value>
+			<value lang="en">Institute for Planetology and Astrophysics of Grenoble</value>
+		</constant>
     </constants>
     <tagDefinitions>
     </tagDefinitions>
