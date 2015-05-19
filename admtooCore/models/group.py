@@ -78,6 +78,7 @@ class Group (models.Model) :
 			user['login'] = u.login
 			user['first_name'] = u.first_name
 			user['last_name'] = u.last_name
+			user['appSpecName'] = u.appspecname
 			m.append (user)
 		return m
 	
