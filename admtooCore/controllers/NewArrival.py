@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 from .. import models
+import json
 import logging
 logger=logging.getLogger('django')
 
-def associateUserWith (user, newuser_id, request_user=None) :
+def associateUserWith (user, newuser_id, request_user=None, logins=None) :
 	# associate nu and self
 	nu = models.NewUser.objects.get (pk = newuser_id)
 	nu.user = user
@@ -30,9 +31,27 @@ def associateUserWith (user, newuser_id, request_user=None) :
 	# set office if defined
 	if user.room is None or user.room.strip() == '' :
 		if nu.office is not None :
-			user.room = nu.office
+			user.room = nu.office.ref
 		elif nu.other_office is not None and nu.other_office.strip() != '' :
 			user.room = nu.other_office
+
+	# logins
+	try :
+		appSpecName = json.loads(user.appspecname)
+	except ValueError as e :
+		appSpecName = {}
+	
+	logger.error ('appSpecName (before) : '+str(appSpecName))
+	
+	logger.error ('logins : '+str(logins))
+	if logins is not None :
+		for k in logins.keys() :
+			if appSpecName is None :
+				appSpecName = {}
+			appSpecName[k] = logins[k]
+
+	user.appspecname = json.dumps(appSpecName)
+	logger.error ('appSpecName (after) : '+str(user.appspecname))
 
 	# set self as an active user
 	user.user_state = user.NORMAL_USER

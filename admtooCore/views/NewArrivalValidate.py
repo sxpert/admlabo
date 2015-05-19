@@ -30,8 +30,13 @@ def NewArrivalValidate (request, newuser_id) :
 			else :
 				# do stuff with user data
 				u = models.User.objects.get(uidnumber = ldap_user)
+				# handle the twiki login
+				logins = {}
+				twiki_account = request.POST.get('twiki-account',None)
+				if twiki_account is not None :
+					logins['twiki'] = twiki_account
 				from .. import controllers
-				controllers.associateUserWith(u, newuser_id, request.user)
+				controllers.associateUserWith(u, newuser_id, request.user, logins)
 				# everything went well, redirect to user.
 				logger.error ('redirecting to user view '+str(ldap_user))
 				return redirect('user-view', user_id=ldap_user)
