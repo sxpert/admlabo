@@ -5,6 +5,8 @@ from .. import models
 from decorators import admin_login
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.conf import settings
+from django.core.exceptions import ObjectDoesNotExist
+from .. import transforms
 
 import logging
 logger=logging.getLogger('django')
@@ -45,7 +47,33 @@ def NewArrivalValidate (request, newuser_id) :
 	if error is not None :
 		context['error'] = error
 	context['newuser_id'] = newuser_id
-	context['nu'] = models.NewUser.objects.get(pk=newuser_id)
+	nu = models.NewUser.objects.get(pk=newuser_id)
+	# can we find a corresponding user ?
+	logger.error ('looking for matching user')
+	if nu.user is None :
+		
+		try :
+			# bilateral transforms only work for django 1.8 or later
+			import django
+			if (django.VERSION[0] >= 1) and (django.VERSION[1]<8) :
+				fn = nu.first_name.upper()
+				ln = nu.last_name.upper()
+			else:
+				fn = nu.first_name
+				ln = nu.last_name
+			u = models.User.objects.get(first_name__upper=fn, last_name__upper=ln)
+		except models.User.DoesNotExist as e :
+			logger.error ('unable to find user matching '+str(nu))
+			pass
+		else :
+			nu.user = u
+			nu.save ()
+			# reload nu after save
+			logger.error ('found '+str(nu.user)+' matching '+str(nu))
+	else :
+		logger.error ('nu.user for '+str(nu)+' is not None')
+	# add the new user to the context
+	context['nu'] = nu
 	context['users'] = models.User.objects.filter(user_state=models.User.NEWIMPORT_USER)
 	return render(request, 'new-arrival-validate.html', context)
 
