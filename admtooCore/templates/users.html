@@ -8,7 +8,14 @@
 <table>
   <tbody>
 {% for user in users %}
-    <tr><td><a href="{% url 'user-view' user.uidnumber %}">{{ user.login }}</a></td><td>{{ user.first_name }} {{ user.last_name }}<tr>
+    <tr>
+		<td><a href="{% url 'user-view' user.uidnumber %}">{{ user.login }}</a></td>
+		<td>{{ user.last_name }}</td>
+		<td>{{ user.first_name }}</td>
+		<td>{{ user.mail }}</td>
+		<td>{{ user.uidnumber }}</td>
+		<td>{{ user.departure|date:"c" }}</td>
+	</tr>
 {% endfor %}
   </tbody>
 </table>
