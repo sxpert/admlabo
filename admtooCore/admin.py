@@ -12,6 +12,8 @@ logger=logging.getLogger('django')
 class UserForm (forms.ModelForm) :
 	class Meta:
 		model=User
+		fields = '__all__'
+
 	def __init__ (self, *args, **kwargs) :
 		super (UserForm, self).__init__ (*args, **kwargs)
 		self.fields['appspecname'].widget.attrs.update({'style':'font-family: monospace; width: 100em; height: 45ex;'})
