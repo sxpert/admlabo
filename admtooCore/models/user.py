@@ -255,6 +255,18 @@ class User (models.Model) :
 			return True
 		return False	
 	
+	def other_account_names (self) :
+		import json
+		try :
+			v = json.loads(self.appspecname)
+		except ValueError as e :
+			v = {}
+		an = []
+		for k in v.keys() :
+			an.append ((k, v[k],))
+		return an
+			
+	
 	def default_twiki_account (self) :
 		from admtooLib.twiki import TWiki
 		t = TWiki('','')

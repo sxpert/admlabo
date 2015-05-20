@@ -2,7 +2,7 @@
 {% load staticfiles %}
 {% block title %} - {% endblock %}
 {% block scripts %}<script src="{% static "js/base-forms.js" %}"></script>{% endblock %}
-{% block css %}<link rel="stylesheet" type="text/css" href="{% static "css/ipag.css" %}"/>{% endblock %}
+{% block css %}<link rel="stylesheet" type="text/css" href="{% static "css/user-view.css" %}"/>{% endblock %}
 {% block content %}
 <p><a href="{% url 'users' %}">retour à la liste des utilisateurs</a></p>
 <p>user view</p>
@@ -31,6 +31,8 @@
 <tr><th>User class</th><td></td></tr>
 <tr><th>Responsable</th><td data-field="manager" data-type="select"></td></tr>
 <tr><th>Responsable de</th><td data-field="managed" data-type="multiselect"></td></tr>
+<tr><th>Comptes applis</th><td>{% for k, v in edited_user.other_account_names %}
+<div><span class="application">{{k}}</span><span class="account">{{v}}</span></div>{% endfor %}</td></tr>
 </tbody>
 </table>
 </form>
