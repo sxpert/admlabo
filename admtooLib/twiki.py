@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import sys
+import sys, json
 
 class TWiki (object) :
 	def __init__ (self, twiki_server, twiki_data_path) :
@@ -31,9 +31,31 @@ class TWiki (object) :
 		return fname+lname
 
 	def gen_group_config (self, gdata) :
+		# generate list of users
+		members = []
 		if 'appSpecName' in gdata.keys() and gdata['appSpecName'] is not None :
-			print gdata
-		pass
+			asn = gdata['appSpecName']
+			if ('twiki' in asn.keys()) and ('members' in gdata.keys()) :
+				gdm = gdata['members']
+				for m in gdm :
+					n = None
+					if 'appSpecName' in m.keys() :
+						asn=m['appSpecName']
+						try :
+							asn = json.loads(asn)
+						except ValueError as e :
+							pass
+						else :
+							if 'twiki' in asn :
+								n = asn['twiki']
+					if (n is None) and ('first_name' in m.keys()) and ('last_name' in m.keys()) :
+						n = self.gen_user_name (m['first_name'], m['last_name'])
+					if n is None :
+						continue
+					members.append(n)
+			# sort members
+			members.sort()
+			print members
 	
 #if __name__ == '__main__' :
 #	t = TWiki ('ipag.osug.fr', '/var/www/twiki/data')

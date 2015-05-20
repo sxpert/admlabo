@@ -23,8 +23,8 @@ class TWikiGroups (object) :
 			if 'twiki' in j :
 				print "   "+j['twiki']
 		t = TWiki ('','')
-		for u in User.objects.filter(user_state=User.NORMAL_USER) :
-			print t.gen_user_name (u.first_name, u.last_name)
+#		for u in User.objects.filter(user_state=User.NORMAL_USER) :
+#			print t.gen_user_name (u.first_name, u.last_name)
 		for g in Group.objects.all () :
 			t.gen_group_config (g.prepare_group_data())
 #
