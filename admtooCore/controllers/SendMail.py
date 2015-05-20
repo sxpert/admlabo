@@ -5,7 +5,17 @@ logger=logging.getLogger('django')
 from .. import models
 from django.conf import settings
 from django.template import Context, Template
-from django.core.mail import send_mail
+from django.core.mail import get_connection, send_mail
+
+def _send_mail (subject, message, from_email, recipient_list, 
+				fail_silently=False, auth_user=None, auth_password=None,
+				connection=None, html_message=None) :
+	connection = connection or get_connection(username=auth_user, password=auth_password, fail_silently=fail_silently)
+	mail = EmailMultiAlternatives(subject, message, from_email, recipient_list, connection=connection,
+								  headers={'Return-Path': 'support-info.ipag@obs.ujf-grenoble.fr'})
+	if html_message :
+		mail.attach_alternative (html_message, 'text/html')
+	return mail.send()
 
 # send mails for one mailcond
 def sendMailForCondition (mailcond, data) :
@@ -40,8 +50,8 @@ def sendMailForCondition (mailcond, data) :
 			l.append ('raphael.jacquot@obs.ujf-grenoble.fr')
 		# send one mail per email address found
 		# the email down there should be l
-		send_mail ( subject, msgtext, 'django@admipag.obs.ujf-grenoble.fr', 
-				    l, fail_silently=False, html_message=msghtml)
+		_send_mail ( subject, msgtext, 'django@admipag.obs.ujf-grenoble.fr', 
+				     l, fail_silently=False, html_message=msghtml)
 	else :
 		logger.error ('sendMailForCondition FATAL: don\'t know what to do with mailcondition = \''+str(mailcond)+'\'')
 
