@@ -45,9 +45,8 @@ class Group (models.Model) :
 	# update the group object to the ldap server
 	def _update_ldap (self, user=None) :
 		# get members list
-		logger.error ("saving group to ldap, members list : "+str(members))
-		
 		g = self.prepare_group_data()
+		logger.error ("saving group to ldap, members list : "+str(g['members']))
 
 		import command, json
 		c = command.Command ()

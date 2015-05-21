@@ -36,6 +36,7 @@ class TWiki (object) :
 		if 'appSpecName' in gdata.keys() and gdata['appSpecName'] is not None :
 			asn = gdata['appSpecName']
 			if ('twiki' in asn.keys()) and ('members' in gdata.keys()) :
+				twiki_group_name = asn['twiki']
 				gdm = gdata['members']
 				for m in gdm :
 					n = None
@@ -53,10 +54,36 @@ class TWiki (object) :
 					if n is None :
 						continue
 					members.append(n)
-			# sort members
-			members.sort()
-			print members
-	
+				# sort members
+				members.sort()
+				# generate members list
+				members = ['Main.'+s for s in members]
+				twiki_group_members = ', '.join(members)
+
+				import time
+				# generate file
+				s = u'%META:TOPICINFO{author="adminToolCore-Twiki-module" date="'+str(int(time.time()))+u'"}%\n'
+				s+= u'%META:TOPICPARENT{name="TWikiGroups"}%\n'
+				s+= u'---+!! <nop>'+twiki_group_name+u'\n'
+				s+= u'\n'
+				s+= u'   * Member list:\n'
+				s+= u'      * Set GROUP = '+twiki_group_members+u'\n'
+				s+= u'\n'
+				s+= u'   * Persons/group who can change the list:\n'
+				s+= u'      * Set ALLOWTOPICCHANGE = '+twiki_group_name+u'\n'
+				s+= u'\n'
+				s+= u'__%MAKETEXT{"Related Topics:"}%__ %WIKIUSERSTOPIC%, TWikiGroups, %TWIKIWEB%.TWikiAccessControl\n'
+				s+= u'---\n'
+				s+= u'<small> <font color="#808080">\n'
+				s+= u'_Dernière mise à jour : '+time.strftime('%d %B %Y')+u'_\n'
+				s+= u'</small>\n'
+				s+= u'\n'
+				s+= u'<!--\n'
+				s+= u'   * Set CACHEABLE = off\n'
+				s+= u'-->\n'
+				print s
+			else :
+				print 'FATAL: missing bits in group data'
 #if __name__ == '__main__' :
 #	t = TWiki ('ipag.osug.fr', '/var/www/twiki/data')
 #	twikiname = t.gen_wiki_name ('raphael', 'jacquot-total')
