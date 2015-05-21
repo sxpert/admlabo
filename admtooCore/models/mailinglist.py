@@ -18,3 +18,6 @@ class MailingList (models.Model) :
 
 	def __str__ (self) :
 		return self.name
+
+	def get_children (self) :
+		return MailingList.objects.filter(parent=self)	

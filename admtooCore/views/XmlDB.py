@@ -9,6 +9,7 @@ logger=logging.getLogger('django')
 def XmlDB (request) :
 	logger.error('generating XML view')
 	context = {}
+	context['mailinglists'] = MailingList.objects.filter(parent=None)
 	context['groups'] = Group.objects.filter(parent=None)
 	context['users'] = User.objects.all()
 	

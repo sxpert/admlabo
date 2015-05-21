@@ -1,0 +1,9 @@
+{% for ml in mailinglists %}
+{{ spacer }}<mailingList id="{{ ml.ml_id}}"{% if ml.userclass %} userClass="{{ ml.userclass }}"{% endif %}>
+{{ spacer }}    <name>{{ ml.name }}</name>
+{{ spacer }}    <description>{{ ml.description }}</description>{% if ml.group %}
+{{ spacer }}    <groupRef name="{{ ml.group.name }}"/>{% endif %}{% if ml.userclass %}
+{{ spacer }}    <userClassLabel lang="fr">{{ ml.userclass.fr }}</userClassLabel>
+{{ spacer }}    <userClassLabel lang="en">{{ ml.userclass.en }}</userClassLabel>{% endif %}
+{% with "    "|add:spacer as spacer %}{% with "xml-db-mailinglists.xml" as filename %}{% with ml.get_children.all as mailinglists %}{% include filename %}{% endwith %}{% endwith %}{% endwith %}{{ spacer }}</mailingList>{% endfor %}
+

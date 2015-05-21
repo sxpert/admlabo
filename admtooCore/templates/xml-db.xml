@@ -13,8 +13,7 @@
     </tagDefinitions>
     <mailAliases>
     </mailAliases>
-    <mailingLists>
-    </mailingLists>
+    <mailingLists>{% with "        " as spacer %}{% include "xml-db-mailinglists.xml" %}{% endwith %}    </mailingLists>
     <affiliations>
     </affiliations>	
     <groups>{% with "        " as spacer %}{% include "xml-db-groups.xml" %}{% endwith %}    </groups>
