@@ -33,7 +33,7 @@ from decorators import *
 
 @admin_login
 def DBNewArrivals (request) :
-	newusers = models.NewUser.objects.filter(Q(user__user_state=models.User.NEWIMPORT_USER)|Q(user__isnull=True))
+	newusers = models.NewUser.objects.filter(Q(user__user_state=models.User.NEWIMPORT_USER)|Q(user__isnull=True)).order_by('arrival')
 	context = {
 		'nu' : newusers,
 	}
@@ -42,7 +42,14 @@ def DBNewArrivals (request) :
 @admin_login
 def DBUnknownUsers (request) :
 	users = models.User.objects.filter (user_state=models.User.NEWIMPORT_USER)
-	context = {
-		'nu' : users,
-	}
+	sort = request.GET.get('sort', None)
+
+	context = {}
+
+	if sort is not None :
+		if (sort=='arrival') :
+			users = users.order_by('arrival')
+			context['sort'] = sort
+
+	context['nu'] = users
 	return render(request, 'DBUnknownUsers.html', context)
