@@ -2,6 +2,9 @@
 # -*- coding: utf-8 -*-
 
 import sys, json
+import AdminFunctions as af
+from django.conf import settings
+
 
 class TWiki (object) :
 	def __init__ (self, twiki_server, twiki_data_path) :
@@ -82,7 +85,24 @@ class TWiki (object) :
 				s+= u'   * Set CACHEABLE = off\n'
 				s+= u'-->\n'
 				print s
+			
+				# copy the contents of s to the twiki system, so as to update the contents of the group
+				a = af.rem()
+				# save to a temporary file
+				import tempfile
+				f = tempfile.NamedTemporaryFile ()
+				f.write (s.encode('utf-8'))
+				f.flush ()
+				import os
+				# call the remote access file copy
+				res = a.copy (settings.TWIKI_SERVER, settings.TWIKI_FILE_OWNER, settings.TWIKI_FILE_GROUP,
+				              f.name, os.path.join(settings.TWIKI_MAIN, twiki_group_name+'.txt'), '0664')
+				# destroy the temporary file		
+				f.close()
+				if not res : 
+					a.log ('FATAL: unable to copy file to it\'s destination')
 			else :
+				# need to log this better
 				print 'FATAL: missing bits in group data'
 #if __name__ == '__main__' :
 #	t = TWiki ('ipag.osug.fr', '/var/www/twiki/data')
