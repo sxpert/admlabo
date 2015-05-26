@@ -14,7 +14,9 @@
     text-align: center;
 }
 [data-column="date"] a {
+	float: right;
 	color: white;
+	text-decoration: none;
 }
 [data-column="prov"] {
     border-left: 1px solid #777;
@@ -27,7 +29,8 @@
 <table>
 	<thead>
 		<tr><th data-column="name">Nom</th>
-			<th data-column="date"><a href="javascript:load_block('DBUnknownUsers'{% if sort != 'arrival' %},'arrival'{% endif %});">Arrivée</a>{% if sort == 'arrival' %} ▲{% endif %}</th>
+			<th data-column="date">Arrivée
+				<a href="javascript:load_block('DBUnknownUsers'{% if not sort %},'arrival');">◇{%else%}{%if sort == 'arrival' %},'-arrival');">▲{%else%},null);">▼{% endif %}{%endif%}</a></th>
 			<th data-column="prov">Déclaré</th></tr>
 	</thead>
 	<tbody>

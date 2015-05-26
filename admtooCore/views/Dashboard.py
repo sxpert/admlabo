@@ -47,9 +47,12 @@ def DBUnknownUsers (request) :
 	context = {}
 
 	if sort is not None :
-		if (sort=='arrival') :
+		if sort=='arrival' :
 			users = users.order_by('arrival')
 			context['sort'] = sort
+		if sort=='-arrival' :
+			users = users.order_by('-arrival')
+			context['sort'] = sort 
 
 	context['nu'] = users
 	return render(request, 'DBUnknownUsers.html', context)

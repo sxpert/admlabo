@@ -1,7 +1,14 @@
 function load_block (block, sort=undefined) {
 	// attempt to get block data
 	var url = window.location.pathname+block;
-	if (sort !== undefined) {
+	if (sort === undefined) {
+		var b = $('#'+block);
+		var a = b.attr('data-sort-default');
+		if (a !== undefined) {
+			sort = a;
+		}
+	}
+	if ((sort !== undefined)&&(sort !== null)) {
 		url+='?sort='+sort
 	}
 	$.ajax ({
