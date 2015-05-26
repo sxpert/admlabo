@@ -19,14 +19,14 @@
 	text-align: center;
 }
 {% endblock %}
-{% block caption %}Nouveaux utilisateurs{% endblock %}
+{% block caption %}Nouveaux utilisateurs déclarés à l'IPAG{% endblock %}
 {% block data_table %}
 <table>
 	<thead>
 		<tr><th data-column="name">Nom</th>
-			<th data-column="mngr">Manager</th>
+			<th data-column="mngr">Déclarant</th>
 			<th data-column="date">Arrivée</th>
-			<th data-column="prov">LDAP</th></tr>
+			<th data-column="prov">Importé</th></tr>
 	</thead>
 	<tbody>
 	{% for u in nu %}

@@ -4,7 +4,7 @@
 {% block scripts %}<script src="{% static "js/base-forms.js" %}"></script>{% endblock %}
 {% block css %}<link rel="stylesheet" type="text/css" href="{% static "css/user-view.css" %}"/>{% endblock %}
 {% block content %}
-<p><a href="{% url 'users' %}">retour à la liste des utilisateurs</a></p>
+<p>&lt; <a href="{% url 'dashboard' %}">retour au dashboard</a> &lt; <a href="{% url 'users' %}">retour à la liste des utilisateurs</a></p>
 <p>user view</p>
 <form action="." method="post">{% csrf_token %}
 <table>
