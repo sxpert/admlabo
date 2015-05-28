@@ -186,6 +186,8 @@ class UpdateLauncher (object) :
 				# skip...
 				pass
 			else :
+				self.log ('DEBUG MODE :\ndirectories should normally be created on \''+machine+
+					'\'\nwill be created on \''+settings.STORAGE_SERVER+'\' instead')
 				machine = settings.STORAGE_SERVER
 
 		if ('basedir' not in ck) and ('uid' not in ck) :
