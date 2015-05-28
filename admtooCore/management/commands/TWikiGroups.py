@@ -8,6 +8,7 @@ import json
 from ...models.group import Group
 from ...models.user import User
 from ...models.newuser import NewUser
+from ... import plugins
 
 class TWikiGroups (object) :
 	def __init__ (self) :
