@@ -184,7 +184,8 @@ class UpdateLauncher (object) :
 				settings.STORAGE_SERVER 
 			except NameError as e :
 				# skip...
-				pass
+				self.log ('FATAL: we are in DEBUG mode and settings.STORAGE_SERVER is not defined')
+				return self.STATE_FAIL
 			else :
 				self.log ('DEBUG MODE :\ndirectories should normally be created on \''+machine+
 					'\'\nwill be created on \''+settings.STORAGE_SERVER+'\' instead')
