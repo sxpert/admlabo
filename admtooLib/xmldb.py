@@ -58,6 +58,9 @@ def find_user_for_machine (machine_name) :
 # récupères la liste des utilisateurs
 
 def get_users () :
+	global xmlroot
+	if xmlroot is None :
+		refresh_database ()
 	users = {}
 	for user in xmlroot.iter('user') :
 		first_name = user.find ('firstName').text
@@ -332,6 +335,9 @@ def get_vlans_machines () :
 	vlans = []
 	machines = []
 
+	global xmlroot
+	if xmlroot is None :
+		refresh_database ()
 	vlans_item = xmlroot.find('vlans')
 	for vlan in vlans_item.iter('vlan'):
 		# vlans
@@ -444,6 +450,8 @@ def get_vlans_machines () :
 if __name__ == '__main__' :
 	users = get_users ()
 	print users
+	vlm = get_vlans_machines ()
+	print vlm
 else :
 	print "loading database"
 	check_and_get_database ()
