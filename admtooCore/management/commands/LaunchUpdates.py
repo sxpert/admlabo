@@ -176,6 +176,18 @@ class UpdateLauncher (object) :
 			self.log ('missing \'machine\' name')
 			return self.STATE_FAIL
 		machine = c['machine']
+
+		# in debug mode, force the storage server from the settings
+		from django.conf import settings
+		if settings.DEBUG :
+			try :
+				settings.STORAGE_SERVER 
+			except NameError as e :
+				# skip...
+				pass
+			else :
+				machine = settings.STORAGE_SERVER
+
 		if ('basedir' not in ck) and ('uid' not in ck) :
 			return self.STATE_FAIL
 		dirname = c['basedir']+'/'+c['uid']
