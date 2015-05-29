@@ -3,7 +3,7 @@
 from django.conf import settings
 import sys, os, stat, errno
 from types import MethodType
-import copy
+import inspect
 import imp
 
 class Plugins (object) :
@@ -33,39 +33,50 @@ class Plugins (object) :
 				try :
 					m = imp.load_module (p, f, fname, desc)
 					if 'admtooPlugin' in dir(m) :
-						self.plugins.append (m.admtooPlugin)
+						# instanciate object
+						self.plugins.append (m.admtooPlugin())
 				finally:
 					if f:
 						f.close ()
-		for p in self.plugins :
-			p ()
 
 	def __dynamic_call (self, *args, **kwargs) :
-		print "dynamic call"
-		print self
-		print args
-		print kwargs
+		plugins = kwargs['__dynamic_call_plugins']
+		method = kwargs['__dynamic_call_method_name']
+		del kwargs['__dynamic_call_plugins']
+		del kwargs['__dynamic_call_method_name']
+		ret = {}
+		for p in plugins :
+			m = p.__getattribute__(method)
+			ret[p.__class__.__name__] =  m (p, *args, **kwargs)
+		return ret
 
 	def __getattribute__ (self, name) :
 		if not ( name.startswith('__') and name.endswith('__') and len(name)>=5) :
 			if name not in dir(self) :
-				print "Plugins.__getattribute__ ", name
-				print dir(self)
-				call = []
-				print "looking for plugins"
+				plugins = []
 				for p in self.plugins :
-					print p
-					print dir(p)
 					if name in dir(p) :
-						call.append (p)
-				print "checking if we have any valid plugins"
-				print call
-				if len(call) == 0 :
-					raise AttributeError
-				def closure () :
-					called = name
-					return self.__dynamic_call(method_name = called)
-				return closure
+						plugins.append (p)
+						
+				if len(plugins) == 0 :
+					raise AttributeError ("None of the plugins have methods or attributes called '"+name+"'")
+				# check if all are functions
+				variables = {}
+				method = True
+				for p in plugins :
+					v = p.__getattribute__(name)
+					variables[p.__class__.__name__] = v
+					if not inspect.ismethod(v) :
+						method = False
+				if method :
+					def closure (*args, **kwargs) :
+						kwargs['__dynamic_call_method_name'] = name
+						kwargs['__dynamic_call_plugins'] = plugins
+						return self.__dynamic_call(*args, **kwargs)
+					return closure
+				else :
+					# suppose they're all variables
+					return variables
 		try:
 			return object.__getattribute__ (self, name)
 		except :

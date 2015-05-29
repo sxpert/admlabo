@@ -2,15 +2,19 @@
 # -*- coding: utf-8 -*-
 
 from django.core.exceptions import ObjectDoesNotExist
-from ... import plugins
+from ...plugins import plugins
 
 class PluginTest (object) :
 	def __init__ (self) :
 		pass
 
 	def run (self) :
-		plugins.plugins.test()
-		pass
+		try :
+			ret = plugins.runcommand("command",{"data":["test","data"]})
+		except AttributeError as e:
+			print e
+		else: 
+			print ret
 #
 # base django command line tool object.
 #
