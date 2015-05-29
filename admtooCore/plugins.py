@@ -2,6 +2,8 @@
 
 from django.conf import settings
 import sys, os, stat, errno
+from types import MethodType
+import copy
 import imp
 
 class Plugins (object) :
@@ -31,12 +33,42 @@ class Plugins (object) :
 				try :
 					m = imp.load_module (p, f, fname, desc)
 					if 'admtooPlugin' in dir(m) :
-						self.plugins.append (m)
+						self.plugins.append (m.admtooPlugin)
 				finally:
 					if f:
 						f.close ()
 		for p in self.plugins :
-			p.admtooPlugin ()
-				
+			p ()
+
+	def __dynamic_call (self, *args, **kwargs) :
+		print "dynamic call"
+		print self
+		print args
+		print kwargs
+
+	def __getattribute__ (self, name) :
+		if not ( name.startswith('__') and name.endswith('__') and len(name)>=5) :
+			if name not in dir(self) :
+				print "Plugins.__getattribute__ ", name
+				print dir(self)
+				call = []
+				print "looking for plugins"
+				for p in self.plugins :
+					print p
+					print dir(p)
+					if name in dir(p) :
+						call.append (p)
+				print "checking if we have any valid plugins"
+				print call
+				if len(call) == 0 :
+					raise AttributeError
+				def closure () :
+					called = name
+					return self.__dynamic_call(method_name = called)
+				return closure
+		try:
+			return object.__getattribute__ (self, name)
+		except :
+			return "Value of %s"% name
 
 plugins = Plugins()

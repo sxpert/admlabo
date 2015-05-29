@@ -9,6 +9,7 @@ class PluginTest (object) :
 		pass
 
 	def run (self) :
+		plugins.plugins.test()
 		pass
 #
 # base django command line tool object.
