@@ -1,10 +1,9 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from django.core.exceptions import ObjectDoesNotExist
-
 import sys, json
-from admtooLib import ldaposug as lo
+
+from django.core.exceptions import ObjectDoesNotExist
 from ...plugins import plugins
 
 class UpdateLauncher (object) :
@@ -60,6 +59,26 @@ class UpdateLauncher (object) :
 	#
 
 	#==============================================================================================
+	#
+	# check if one of the plugins failed
+	# 
+
+	def _CheckFail (self, ret, command) :
+		# check if one or more failed 
+		fails = []
+		for k in  ret.keys() :
+			if ret[k] != True :
+				fails.append(k)
+		if len(fails) >0 :
+			self.log ('ERROR while executing')
+			self.log (str(command)) 
+			for p in fails :
+				self.log ('plugin '+str(p)+' failed to execute')
+			return self.STATE_FAIL
+		return self.STATE_SUCCESS
+	
+
+	#==============================================================================================
 	# 
 	# Updating groups 
 	#
@@ -79,17 +98,7 @@ class UpdateLauncher (object) :
 		else :
 			self.log(str(ret))
 		# check if one or more failed 
-		fails = []
-		for k in  ret.keys() :
-			if ret[k] != True :
-				fails.append(k)
-		if len(fails) >0 :
-			self.log ('ERROR while executing')
-			self.log (str(command)) 
-			for p in fails :
-				self.log ('plugin '+str(p)+' failed to execute')
-			return self.STATE_FAIL
-		return self.STATE_SUCCESS
+		return self._CheckFail (ret, command)
 	
 	#==============================================================================================
 	# 
@@ -97,43 +106,18 @@ class UpdateLauncher (object) :
 	#
 
 	#
-	# actual update of user in ldap
-	#
-	def _UpdateUser_LDAP (self, command) :
-		l = lo.LdapOsug (self.logger)
-		c = json.loads (command.data)
-		#self.log (str(c))
-		ck = c.keys()
-		uid = None
-		if 'uid' in ck :
-			uid = c['uid']
-		else :
-			self.log ('FATAL: _UpdateUser_LDAP unable to find uid in UpdateUser command data')
-			return False
-		d = {}
-		if 'loginShell' in ck :
-			d['loginShell'] = c['loginShell']
-		if 'gecos' in ck :
-			d['gecos'] = c['gecos']
-#		if 'manager' in ck :
-#			d['manager'] = l.user_dn(c['manager'])
-		# room and telephone
-#		if 'roomNumber' in ck :
-#			d['roomNumber'] = c['roomNumber']
-	
-		try :
-			res = l.user_update (uid, d)
-		except lo.UserGone as e :
-			print "USER GONE"
-			res = True
-		return res
-
-	#
 	# this updates when a user was modified
 	def verbUpdateUser (self, command) :
-		if self._UpdateUser_LDAP (command) :
-			return self.STATE_SUCCESS
-		return self.STATE_FAIL
+		try :
+			ret = plugins.UpdateUser(command, logger=self.logger)
+		except AttributeError as e:	
+			self.log (str(e))
+			self.log ('No plugin available to run the UpdateUser command')
+			return self.STATE_FAIL
+		else :
+			self.log(str(ret))
+		# check if one or more failed 
+		return self._CheckFail (ret, command)
 	
 	#==============================================================================================
 	# 

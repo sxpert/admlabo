@@ -479,7 +479,47 @@ class LdapOsug (object) :
 			if (cn is not None) and (oldcn != cn) :
 				self.group_rename (oldcn, cn)
 			return self.group_update (cn, gidNumber, description, memberUid)
-		
+	
+	def UpdateUser (self, *args, **kwargs) :
+		self.log ('LdapOsug UpdateUser command')
+		self.log ('args    : '+str(args))
+		self.log ('kwargs  : '+str(kwargs))
+		_, command = args
+		self.log ('command : '+str(command)) 
+		self.log ('verb    : '+str(command.verb))
+		self.log ('data    : '+str(command.data))
+		if 'logger' in kwargs.keys() :
+			logger = kwargs['logger']
+			if logger is not None :
+				self.log ('setting logger to '+str(logger))
+				self.logger = logger
+		import json
+		c = json.loads (command.data)
+		ck = c.keys ()
+		uid = None
+		if 'uid' in ck :
+			uid = c['uid']
+		else :
+			self.log ('FATAL: LdapOsug.UpdateUser unable to find uid in UpdateUser command data')
+			return False
+		d = {}
+		if 'loginShell' in ck :
+			d['loginShell'] = c['loginShell']
+		if 'gecos' in ck :
+			d['gecos'] = c['gecos']
+#		if 'manager' in ck :
+#			d['manager'] = l.user_dn(c['manager'])
+		# room and telephone
+#		if 'roomNumber' in ck :
+#			d['roomNumber'] = c['roomNumber']
+
+		try :
+			res = self.user_update (uid, d)
+		except UserGone as e :
+			self.log ("USER GONE")
+			res = True
+		return res
+
 if __name__ == '__main__' :
 	print ("LDAP OSUG TEST")
 	l = LdapOsug ()
