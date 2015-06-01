@@ -2,6 +2,6 @@ AdminTool/settings.py
 old/*
 *.swp
 *.pyc
-**/ldapconfig/*
-!**/ldapconfig/__init__.py
-!**/ldapconfig/*.dist.py
+**/config/*
+!**/config/__init__.py
+!**/config/*.dist.py

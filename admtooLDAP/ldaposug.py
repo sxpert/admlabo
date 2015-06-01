@@ -3,7 +3,7 @@
 
 import ldap, ldap.modlist
 import sys
-from .ldapconfig.osug import *
+from .config.osug import *
 #from osugconfig import *
 
 class UserGone (Exception) :

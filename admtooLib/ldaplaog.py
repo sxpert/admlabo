@@ -4,7 +4,7 @@
 import ldap
 import sys
 
-from ldapconfig.laog import *
+from config.laog import *
 
 #DEBUG = False
 #LDAP_URI = 'ldap://masterldaplaog.obs.ujf-grenoble.fr'

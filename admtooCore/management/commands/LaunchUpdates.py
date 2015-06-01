@@ -65,9 +65,10 @@ class UpdateLauncher (object) :
 	#
 
 	#
-	# this update when a group was modified
-	# for now, only changes in the ldap
-	# would go around in other things later if needed
+	# calls the UpdateGroup function in all plugins at the same time.
+	# complains if at least one plugins fails.
+	# the failure check code should be refactored I guess
+	#
 	def verbUpdateGroup (self, command) :
 		try :
 			ret = plugins.UpdateGroup(command, logger=self.logger)
