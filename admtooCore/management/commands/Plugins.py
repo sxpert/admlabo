@@ -9,6 +9,8 @@ class PluginTest (object) :
 		pass
 
 	def run (self) :
+		ret = plugins.path
+		print ret
 		try :
 			ret = plugins.runcommand("command",{"data":["test","data"]})
 		except AttributeError as e:
