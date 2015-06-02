@@ -4,6 +4,7 @@
 import sys, json
 
 from django.core.exceptions import ObjectDoesNotExist
+from django.db import transaction, DatabaseError
 from ...plugins import plugins
 
 class UpdateLauncher (object) :
@@ -30,27 +31,33 @@ class UpdateLauncher (object) :
 	def doUpdates (self) :
 		from ...models.command import Command	
 		#self.log ("do updates")
-		commands = Command.objects.filter(done=False).order_by('created')
-		for c in commands :
-			#self.log (str(c.created)+' '+c.verb)
-			v = 'verb'+c.verb
+		with transaction.atomic() :
 			try :
-				func = getattr (self, v)
-			except AttributeError :
-				self.log ('FATAL: '+c.verb+' not found')
-				return
-			else :
-				res = func(c)
-				if res == self.STATE_SUCCESS :
-					#self.log ('SUCCESS - marking command done')
-					c.done = True
-					c.save ()
-				elif res == self.STATE_FAIL :
-					self.log ('FATAL: error while running '+c.verb)
-					# something bad happened... stop right there !
+				commands = Command.objects.select_for_update(nowait=True).filter(done=False).order_by('created')
+			except DatabaseError as e:
+				self.log ('FATAL: unable to lock rows, exiting')
+				self.log (str(e))
+				return 
+			for c in commands :
+				#self.log (str(c.created)+' '+c.verb)
+				v = 'verb'+c.verb
+				try :
+					func = getattr (self, v)
+				except AttributeError :
+					self.log ('FATAL: '+c.verb+' not found')
 					return
-				elif res == self.STATE_SKIP :
-					self.log ('SKIPPING COMMAND '+str(c.desc()))
+				else :
+					res = func(c)
+					if res == self.STATE_SUCCESS :
+						#self.log ('SUCCESS - marking command done')
+						c.done = True
+						c.save ()
+					elif res == self.STATE_FAIL :
+						self.log ('FATAL: error while running '+c.verb)
+						# something bad happened... stop right there !
+						return
+					elif res == self.STATE_SKIP :
+						self.log ('SKIPPING COMMAND '+str(c.desc()))
 
 	#----------------------------------------------------------------------------------------------
 	#
