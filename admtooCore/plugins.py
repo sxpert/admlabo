@@ -55,6 +55,11 @@ class Plugins (object) :
 			if name not in dir(self) :
 				plugins = []
 				for p in self.plugins :
+					# is it the name of a plugin ?
+					pluginclass = p.__class__.__name__
+					if name == pluginclass :
+						return p
+					# is the name within the plugin ?
 					if name in dir(p) :
 						plugins.append (p)
 						
@@ -64,6 +69,7 @@ class Plugins (object) :
 				variables = {}
 				method = True
 				for p in plugins :
+					# no, maybe a variable name within one of the plugins ?
 					v = p.__getattribute__(name)
 					variables[p.__class__.__name__] = v
 					if not inspect.ismethod(v) :

@@ -1,8 +1,9 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from admtooLib import ldaposug as lo
 from django.core.exceptions import ObjectDoesNotExist
+from ...plugins import plugins
+
 from ...models.user import User
 from ...models.newuser import NewUser
 
@@ -11,7 +12,7 @@ class LdapSync (object) :
 		pass
 
 	def run (self) :
-		l = lo.LdapOsug (None)
+		l = plugins.LdapOsug
 		users = l.users_get()
 		added_users = 0
 		deleted_users = 0

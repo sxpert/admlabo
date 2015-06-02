@@ -40,7 +40,7 @@ class LdapOsug (object) :
 
 	def __init__ (self, logger = None) :
 		self.logger = logger
-		self.log ('initializing LdapOsug plugin')
+		#self.log ('initializing LdapOsug plugin')
 		self._connect ()
 
 	def log (self, message) :

@@ -1,7 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from admtooLib import ldaposug as lo
 from admtooLib.twiki import TWiki
 from django.core.exceptions import ObjectDoesNotExist
 import json

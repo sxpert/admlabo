@@ -2,6 +2,7 @@
 
 import sys, json
 import admtooLib.AdminFunctions as af
+# twiki config should be in config sub module...
 from django.conf import settings
 
 class TWiki (object) :
@@ -10,12 +11,6 @@ class TWiki (object) :
 		print "initializing TWiki plugin" 
 		self.srv = settings.TWIKI_SERVER
 		self.path = settings.TWIKI_DATA
-	
-	def runcommand (self, *args, **kwargs) :
-		_, verb, data = args
-		print verb
-		print data
-		return "twiki return"
 	
 	def _format_name (self, name) :
 		s = ''
