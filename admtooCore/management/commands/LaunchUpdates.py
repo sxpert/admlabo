@@ -24,6 +24,9 @@ class UpdateLauncher (object) :
 	# launches updates that are not done yet in order.
 	# stops at the first problematic update (to allow debugging,
 	# and to be sure that everything is working properly)
+	# TODO :
+	# this should be using a systemwide lock as it can be run from 
+	# multiple locations at the same time (web and cron)
 	def doUpdates (self) :
 		from ...models.command import Command	
 		#self.log ("do updates")

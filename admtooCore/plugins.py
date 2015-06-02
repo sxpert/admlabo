@@ -60,7 +60,17 @@ class Plugins (object) :
 					if name == pluginclass :
 						return p
 					# is the name within the plugin ?
-					if name in dir(p) :
+					members = dir(p)
+					# remove all members starting with _
+					m = []
+					for a in members :
+						if not a.startswith('_') :	
+							m.append (a)
+				
+					members = m
+					print "filtered members :\n"+str(members)
+					# 
+					if name in members :
 						plugins.append (p)
 						
 				if len(plugins) == 0 :

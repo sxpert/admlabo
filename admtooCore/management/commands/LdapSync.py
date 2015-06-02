@@ -13,7 +13,7 @@ class LdapSync (object) :
 
 	def run (self) :
 		l = plugins.LdapOsug
-		users = l.users_get()
+		users = l.GetUsers()
 		added_users = 0
 		deleted_users = 0
 		# add new users not yet in the database
@@ -69,7 +69,7 @@ class LdapSync (object) :
 		# remove users that can't be found...
 		for u in User.objects.all() :
 			if u.user_state != User.DELETED_USER :
-				lu = l.user_get (u.login)
+				lu = l.GetUser (u.login)
 				if lu is None :
 					u.user_state = User.DELETED_USER
 					u.save ()
