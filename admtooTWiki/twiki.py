@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# -*- coding: utf8 -*-
 
 import os, sys, json
 import admtooLib.AdminFunctions as af
@@ -15,7 +15,8 @@ class TWiki (object) :
 		if self._logger is not None :
 			self._logger.error (message)
 		else:
-			sys.stdout.write (unicode(message)+'\n')
+			msg = unicode(message)
+			sys.stdout.write (msg+'\n')
 			sys.stdout.flush ()
 
 	def _format_name (self, name) :
