@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import sys, json
+import os, sys, json
 import admtooLib.AdminFunctions as af
 # twiki config should be in config sub module...
 from .config.twiki import *
@@ -10,8 +10,6 @@ class TWiki (object) :
 	def __init__ (self) :
 		print "initializing TWiki plugin" 
 		self._logger = None
-		self.srv = settings.TWIKI_SERVER
-		self.path = settings.TWIKI_DATA
 	
 	def _log (self, message) :
 		if self._logger is not None :
@@ -42,13 +40,21 @@ class TWiki (object) :
 		lname = self._format_name (lname)
 		return fname+lname
 
-	def gen_group_config (self, gdata) :
+	def _gen_group_config (self, gdata) :
 		# generate list of users
+		self._log ("_gen_group_config")
 		members = []
-		if 'appSpecName' in gdata.keys() and gdata['appSpecName'] is not None :
+		self._log (gdata.keys())
+		if 'appSpecName' in gdata.keys() :
+			if gdata['appSpecName'] is None :
+				self._log ('appSpecName is None, this groups is not a twiki group')
+				# tell the caller that everything is fine, even if we didn't do anything
+				return True
 			asn = gdata['appSpecName']
+			self._log ("asn : "+str(asn))
 			if ('twiki' in asn.keys()) and ('members' in gdata.keys()) :
 				twiki_group_name = asn['twiki']
+				self._log (twiki_group_name)
 				gdm = gdata['members']
 				for m in gdm :
 					n = None
@@ -72,6 +78,7 @@ class TWiki (object) :
 				members = ['Main.'+s for s in members]
 				twiki_group_members = ', '.join(members)
 
+				
 				import time
 				# generate file
 				s = u'%META:TOPICINFO{author="adminToolCore-Twiki-module" date="'+str(int(time.time()))+u'"}%\n'
@@ -104,28 +111,49 @@ class TWiki (object) :
 				f.flush ()
 				import os
 				# call the remote access file copy
-				res = a.copy (settings.TWIKI_SERVER, settings.TWIKI_FILE_OWNER, settings.TWIKI_FILE_GROUP,
-				              f.name, os.path.join(settings.TWIKI_MAIN, twiki_group_name+'.txt'), '0664')
+				res = a.copy (TWIKI_SERVER, TWIKI_FILE_OWNER, TWIKI_FILE_GROUP, f.name, 
+							  os.path.join(TWIKI_MAIN, twiki_group_name+'.txt'), '0664')
 				# destroy the temporary file		
 				f.close()
 				if not res : 
 					a.log ('FATAL: unable to copy file to it\'s destination')
+				# everything is fine
+				return True
 			else :
 				# need to log this better
-				print 'FATAL: missing bits in group data'
+				self._log('FATAL: missing bits in group data')
+				return False
+		else :
+			self._log('no appSpecName defined')
+			return False
 
-	def UpdateGroup (self, *args, **kwargs) :
-		self._log ("TWiki plugin UpdateGroup")
-		self._log ("args    : "+str(args))
-		self._log ("kwargs  : "+str(kwargs))
+	def UpdateTWikiGroup (self, *args, **kwargs) :
+		self._log ("TWiki plugin UpdateTWikiGroup")
+#		self._log ("args    : "+str(args))
+#		self._log ("kwargs  : "+str(kwargs))
 		_, command = args
-		self._log ("command : "+str(command))
+#		self._log ("command : "+str(command))
 		self._log ("verb    : "+str(command.verb))
-		self._log ("data    : "+str(command.data))
+#		self._log ("data    : "+str(command.data))
 		if "logger" in kwargs.keys() :
 			logger = kwargs['logger']
 			if logger is not None :
 				self._log ('setting logger to '+str(logger))
 				self._logger = logger
+		c = json.loads (command.data)
+		return self._gen_group_config (c)
+	
+	def UpdateGroup (self, *args, **kwargs) :
+		from admtooCore.models import command
+		_, cmd = args
+	
+		c = command.Command ()
+		c.user = cmd.user
+		c.verb = 'UpdateTWikiGroup'
+		c.data = cmd.data
+		c.in_cron = True
+		self._log ('post UpdateTWikiGroup command')
+		c.post ()
 		
-		
+		return True
+			

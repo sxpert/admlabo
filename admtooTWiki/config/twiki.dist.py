@@ -1,3 +1,5 @@
+import os
+
 TWIKI_SERVER       = ''
 TWIKI_FILE_OWNER   = ''
 TWIKI_FILE_GROUP   = ''
