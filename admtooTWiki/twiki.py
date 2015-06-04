@@ -15,7 +15,7 @@ class TWiki (object) :
 		if self._logger is not None :
 			self._logger.error (message)
 		else:
-			sys.stdout.write (str(message)+'\n')
+			sys.stdout.write (unicode(message)+'\n')
 			sys.stdout.flush ()
 
 	def _format_name (self, name) :
@@ -77,7 +77,6 @@ class TWiki (object) :
 				# generate members list
 				members = ['Main.'+s for s in members]
 				twiki_group_members = ', '.join(members)
-
 				
 				import time
 				# generate file
@@ -100,7 +99,7 @@ class TWiki (object) :
 				s+= u'<!--\n'
 				s+= u'   * Set CACHEABLE = off\n'
 				s+= u'-->\n'
-				print s
+				self._log (s)
 			
 				# copy the contents of s to the twiki system, so as to update the contents of the group
 				a = af.rem()
