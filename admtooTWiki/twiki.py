@@ -9,9 +9,17 @@ class TWiki (object) :
 	
 	def __init__ (self) :
 		print "initializing TWiki plugin" 
+		self._logger = None
 		self.srv = settings.TWIKI_SERVER
 		self.path = settings.TWIKI_DATA
 	
+	def _log (self, message) :
+		if self._logger is not None :
+			self._logger.error (message)
+		else:
+			sys.stdout.write (str(message)+'\n')
+			sys.stdout.flush ()
+
 	def _format_name (self, name) :
 		s = ''
 		first = True
@@ -105,3 +113,19 @@ class TWiki (object) :
 			else :
 				# need to log this better
 				print 'FATAL: missing bits in group data'
+
+	def UpdateGroup (self, *args, **kwargs) :
+		self._log ("TWiki plugin UpdateGroup")
+		self._log ("args    : "+str(args))
+		self._log ("kwargs  : "+str(kwargs))
+		_, command = args
+		self._log ("command : "+str(command))
+		self._log ("verb    : "+str(command.verb))
+		self._log ("data    : "+str(command.data))
+		if "logger" in kwargs.keys() :
+			logger = kwargs['logger']
+			if logger is not None :
+				self._log ('setting logger to '+str(logger))
+				self._logger = logger
+		
+		
