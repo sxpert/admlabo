@@ -437,7 +437,6 @@ class LdapOsug (object) :
 	def GetUser (self, uid) :
 		return self._user_get(uid)
 		
-
 	def UpdateGroup (self, *args, **kwargs) :
 		self._log ('LdapOsug UpdateGroup command')
 		self._log ('args    : '+str(args))
