@@ -9,7 +9,7 @@ from .config.osug import *
 class UserGone (Exception) :
 	pass
 
-class LdapOsug (object) :
+class Core_LdapOsug (object) :
 	_l = None
 		
 	def _connect (self) :
@@ -444,7 +444,7 @@ class LdapOsug (object) :
 		_, command = args
 		self._log ('command : '+str(command)) 
 		self._log ('verb    : '+str(command.verb))
-		self._log ('data    : '+str(command.data))
+#		self._log ('data    : '+str(command.data))
 		if 'logger' in kwargs.keys() :
 			logger = kwargs['logger']
 			if logger is not None :
@@ -486,7 +486,7 @@ class LdapOsug (object) :
 		_, command = args
 		self._log ('command : '+str(command)) 
 		self._log ('verb    : '+str(command.verb))
-		self._log ('data    : '+str(command.data))
+	#	self._log ('data    : '+str(command.data))
 		if 'logger' in kwargs.keys() :
 			logger = kwargs['logger']
 			if logger is not None :
