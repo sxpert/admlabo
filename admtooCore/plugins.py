@@ -10,6 +10,10 @@ class Plugins (object) :
 	def __init__ (self) :
 		self.plugins = []
 		self.find_plugins ()
+	
+	def _log (self, message) :
+		sys.stdout.write (str(message)+'\n')
+		sys.stdout.flush ()
 
 	def find_plugins (self) :
 		base = settings.BASE_DIR	
@@ -33,8 +37,18 @@ class Plugins (object) :
 				try :
 					m = imp.load_module (p, f, fname, desc)
 					if 'admtooPlugin' in dir(m) :
-						# instanciate object
-						self.plugins.append (m.admtooPlugin())
+						plugin = m.admtooPlugin
+						# check if we have an actual object class
+						if type(plugin) is type :
+							# instanciate object		
+							self.plugins.append (plugin())
+						else:	
+							self._log ('we should have had a type here')
+					elif 'admtooPlugins' in dir(m) :
+						pluginlist = m.admtooPlugins
+						for plugin in pluginlist :
+							if type(plugin) is type :
+								self.plugins.append (plugin())
 				finally:
 					if f:
 						f.close ()
@@ -51,7 +65,8 @@ class Plugins (object) :
 		return ret
 
 	def __getattribute__ (self, name) :
-		if not ( name.startswith('__') and name.endswith('__') and len(name)>=5) :
+		if not ((name.startswith('__') and name.endswith('__') and len(name)>=5)
+				or (name.startswith('_') and len(name)>=2)) :
 			if name not in dir(self) :
 				plugins = []
 				for p in self.plugins :
@@ -68,7 +83,7 @@ class Plugins (object) :
 							m.append (a)
 				
 					members = m
-					print "filtered members :\n"+str(members)
+					print pluginclass+" filtered members :\n"+str(members)
 					# 
 					if name in members :
 						plugins.append (p)

@@ -22,53 +22,6 @@ class UpdateLauncher (object) :
 		else :
 			print message	
 
-	# launches updates that are not done yet in order.
-	# stops at the first problematic update (to allow debugging,
-	# and to be sure that everything is working properly)
-	#
-	# NOTE :
-	# this uses a transaction. if anything goes wrong, the 
-	# transaction is reversed
-	def doUpdates (self) :
-		from ...models.command import Command	
-		#self.log ("do updates")
-		with transaction.atomic() :
-			try :
-				commands = Command.objects.select_for_update(nowait=True).filter(done=False).order_by('created')
-			except DatabaseError as e:
-				self.log ('FATAL: unable to lock rows, exiting')
-				self.log (str(e))
-				return 
-			for c in commands :
-				#self.log (str(c.created)+' '+c.verb)
-				v = 'verb'+c.verb
-				try :
-					func = getattr (self, v)
-				except AttributeError :
-					self.log ('FATAL: '+c.verb+' not found')
-					return
-				else :
-					res = func(c)
-					if res == self.STATE_SUCCESS :
-						#self.log ('SUCCESS - marking command done')
-						c.done = True
-						c.save ()
-					elif res == self.STATE_FAIL :
-						self.log ('FATAL: error while running '+c.verb)
-						# something bad happened... stop right there !
-						return
-					elif res == self.STATE_SKIP :
-						self.log ('SKIPPING COMMAND '+str(c.desc()))
-
-	#----------------------------------------------------------------------------------------------
-	#
-	# update scripts
-	#
-	# these update scripts are designed so that they leave things in a known state.
-	# also, they are designed so that they don't change anything if nothing needs be changed
-	# this allows restarting an update order at anytime.
-	#
-
 	#==============================================================================================
 	#
 	# check if one of the plugins failed
@@ -88,48 +41,52 @@ class UpdateLauncher (object) :
 			return self.STATE_FAIL
 		return self.STATE_SUCCESS
 	
+	# launches updates that are not done yet in order.
+	# stops at the first problematic update (to allow debugging,
+	# and to be sure that everything is working properly)
+	#
+	# NOTE :
+	# this uses a transaction. if anything goes wrong, the 
+	# transaction is reversed
+	def doUpdates (self) :
+		from ...models.command import Command	
+		self.log ("do updates")
+		with transaction.atomic() :
+			try :
+				commands = Command.objects.select_for_update(nowait=True).filter(done=False).order_by('created')
+			except DatabaseError as e:
+				self.log ('FATAL: unable to lock rows, exiting')
+				self.log (str(e))
+				return
+			self.log ("found "+str(len(commands))+" to execute")
+			for c in commands :
+				try :					
+					func = getattr (plugins, c.verb) 
+				except AttributeError :				
+					self.log ('FATAL: '+c.verb+' not found')
+					self.log ('UNABLE TO FIND COMMAND')
+					# stop right there !!
+					return
+				# we should have a plugins closure here
+				self.log ('command '+c.verb+' was found in plugins :')
+				self.log (func)
+				# if the command requires being run while in crontab,
+				# and we're not running from cron, skip it
+				if c.in_cron and (not self.in_cron) :
+					res = self.STATE_SKIP
+				else :
+					res = self._CheckFail (func(c, logger=self.logger), c)
+				if res == self.STATE_SUCCESS :
+					#self.log ('SUCCESS - marking command done')
+					c.done = True
+					c.save ()
+				elif res == self.STATE_FAIL :
+					self.log ('FATAL: error while running '+c.verb)
+					# something bad happened... stop right there !
+					return
+				elif res == self.STATE_SKIP :
+					self.log ('SKIPPING COMMAND '+str(c.desc()))
 
-	#==============================================================================================
-	# 
-	# Updating groups 
-	#
-
-	#
-	# calls the UpdateGroup function in all plugins at the same time.
-	# complains if at least one plugins fails.
-	# the failure check code should be refactored I guess
-	#
-	def verbUpdateGroup (self, command) :
-		try :
-			ret = plugins.UpdateGroup(command, logger=self.logger)
-		except AttributeError as e:	
-			self.log (str(e))
-			self.log ('No plugin available to run the UpdateGroup command')
-			return self.STATE_FAIL
-		else :
-			self.log(str(ret))
-		# check if one or more failed 
-		return self._CheckFail (ret, command)
-	
-	#==============================================================================================
-	# 
-	# Updating users
-	#
-
-	#
-	# this updates when a user was modified
-	def verbUpdateUser (self, command) :
-		try :
-			ret = plugins.UpdateUser(command, logger=self.logger)
-		except AttributeError as e:	
-			self.log (str(e))
-			self.log ('No plugin available to run the UpdateUser command')
-			return self.STATE_FAIL
-		else :
-			self.log(str(ret))
-		# check if one or more failed 
-		return self._CheckFail (ret, command)
-	
 	#==============================================================================================
 	# 
 	# Creating directories for users

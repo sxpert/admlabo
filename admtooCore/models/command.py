@@ -42,6 +42,11 @@ class Command (models.Model) :
 		if not self.done :
 			self.execute ()
 
+	# post a new command, don't try to execute more commands, as
+	# we are already busy executing commands
+	def post (self) :
+		super(Command, self).save()
+
 	def execute(self) :
 		from ..management.commands import LaunchUpdates as lu
 		ul = lu.UpdateLauncher (logger)
@@ -56,6 +61,8 @@ class Command (models.Model) :
 			return d['cn']
 		elif self.verb=='CreateUserDir' :
 			return d['basedir']+'/'+d['uid']
+		elif self.verb=='UpdateTWikiGroup' :
+			return d['appSpecName']['twiki']
 		else :
 			return ''
 
