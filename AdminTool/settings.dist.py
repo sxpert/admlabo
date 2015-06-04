@@ -107,13 +107,6 @@ BACKUPPC_SERVER    = 'midgard'
 BACKUPPC_USER      = 'backuppc'
 BACKUPPC_GROUP     = 'services' 
 
-TWIKI_SERVER       = 'ipag'
-TWIKI_FILE_OWNER   = 'apache'
-TWIKI_FILE_GROUP   = 'apache'
-TWIKI_BASE         = '/var/www/twiki'
-TWIKI_DATA         = os.path.join(TWIKI_BASE, 'data')
-TWIKI_MAIN         = os.path.join(TWIKI_DATA, 'Main')
-
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
 
