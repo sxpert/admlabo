@@ -3,7 +3,7 @@
 import sys, json
 import admtooLib.AdminFunctions as af
 # twiki config should be in config sub module...
-from django.conf import settings
+from .config.twiki import *
 
 class TWiki (object) :
 	
