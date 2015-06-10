@@ -1,0 +1,132 @@
+<html >
+<head>
+<meta charset="utf-8"/>
+<style type="text/css">
+body {
+	font-family: sans-serif;
+	counter-reset: h2counter;
+}
+h1 {
+ 	counter-reset: h2counter;
+}
+h2:before {
+	content: counter(h2counter) ".\0000a0\0000a0";
+}
+h2 {
+	counter-increment: h2counter;
+	counter-reset: h3counter;
+}
+h3:before {
+	content: counter(h2counter) "." counter(h3counter) ".\0000a0\0000a0";
+}
+h3 {
+	counter-increment: h3counter;
+	counter-reset: h4counter;
+}
+h4:before {
+	content: counter(h2counter) "." counter(h3counter) "." counter(h4counter) ".\0000a0\0000a0";
+}
+h4 {
+    counter-increment: h4counter;
+    counter-reset: h5counter;
+}
+h5:before {
+    content: counter(h2counter) "." counter(h3counter) "." counter(h4counter) "." counter(h5counter) ".\0000a0\0000a0";
+}
+h5 {
+    counter-increment: h5counter;
+    counter-reset: h6counter;
+} 
+img {
+	width: 80em;
+}
+</style>
+</head>
+<body>
+<a href="">format texte</a>
+<h1>Documentation admtooCore</h1>
+
+	<h2>Documentation technique</h2>
+
+<p>L'application admtooCore est écrite à partir du framework python Django</p>
+
+		<h3>Modele de données</h3>
+
+<p>La base de données est gérée par l'ORM (Object Relational Manager) intégré de Django. Les tables sont donc
+construites à partir d'objets python automatiquement. L'intégralité du SQL est généré par le code de l'ORM de
+manière transparente.</p>
+<p>le modele de données pour l'application core est le suivant.</p>
+<p><a href="img/admtooCore-database-2015-06-10.png"><img src="img/admtooCore-database-2015-06-10.png"/></a></p>
+
+		<h3>Système de plugins</h3>
+
+<p>Les applications du Core n'ont aucun effet sur le monde extérieur. Un système de plugins existe pour réaliser 
+ces tâches de manière totalement indépendante.</p>
+
+<p>La manipulation des plugins est dévolue a l'objet <strong>Plugins</strong>, dans le fichier <tt>admtooCore/plugins.py</tt>.</p>
+
+			<h4>Fonctionnement du système de plugins</h4>
+
+<p>L'objet <strong>Plugins</strong> liste a son initialisation les plugins qu'il peut découvrir dans les sous répertoires parents
+de admtooCore. La découverte des plugins se fait à l'importation des modules python correspondants a chaque répertoire.</p>
+
+<p>Un module définit la présence en son sein d'un ou plusieurs plugins par la structure suivante :<br/>
+à l'intérieur du fichier <tt>__init__.py</tt> du module, on trouve une ligne</p>
+ 
+<ul>
+	<li><tt>admtooPlugin = sous_module.classe_plugin</tt></li>
+	<li><tt>admtooPlugins =  [sous_module_1.classe_plugin_1, sous_module_2.classe_plugin_2 ]</tt></li>
+</ul>
+
+<p>Un sous système ayant besoin d'accéder aux fonctionnalités des plugins instancie le module gestionnaire de plugins :</p>
+
+<pre>import plugins
+plugins = plugins.Plugins ()</pre>
+
+<p>Le gestionnaire cherche alors tous les plugins, instancie un objet de chaque classe plugin, et enregistre chaque objet dans une liste.</p>
+
+<p>L'appel aux méthodes de plugins se fait de plusieurs manieres :</p>
+
+<ul>
+	<li>soit directement, par <tt>plugins.[nom_du_plugin].[méthode] ([parametres])</tt></li>
+	<li>soit indirectement par <tt>plugins.[méthode] ([paramètres])</tt><br/>
+		dans ce cas précis, le gestionnaire de plugins appelle successivement la totalité des plugins possédant une méthode a ce nom
+		avec les paramètres fournis.<br/>
+		est renvoyé un dictionnaire contenant les réponses de chaque plugin</li>
+</ul>
+
+<p>Il est possible aussi d'obtenir les valeurs des attributs de chaque plugins par les mêmes mécanismes.<br/>
+L'affectation de valeurs aux attributs des plugins n'est pas (encore?) testée car cette fonctionnalité n'est pas utilisée</p>
+		
+<p>Il existe des plugins intégrés au core car leur fonctionnalité est essentielle a celui ci, et d'autres a l'extérieur</p>
+
+			<h4>Plugins intégrés au core</h4>
+
+				<h5>Core_LdapOsug</h5>
+
+<p>Le plugin Core_LdapOsug gere l'accès au LDAP de l'osug, pour sa mise a jour notamment. Il sert aussi pour l'importation de nouveaux
+utilisateurs en provenance de cette source de données LDAP.</p>
+
+				<h5>Core_Storage</h5>
+
+<p>Le plugin Core_Storage s'occupe, lui, de la création des répertoires utilisateurs sur le serveur de stockage, lors de la création 
+d'un utilisateur</p>
+
+			<h4>Plugins extérieurs</h4>
+	
+				<h5>TWiki</h5>
+
+<p>Le plugin TWiki s'occupe de la création de multiples fichiers de configuration du TWiki, notamment ceux liés aux groupes d'utilisateurs</p>
+
+				<h5>(... more plugins to come ...)</h5>
+
+		<h3>Import des données depuis le LDAP osug</h3>
+
+<p>L'import des nouveaux comptes dans le LDAP est effectué par un script appelé par cron de manière récurrente</p>
+<p>Ce script utilise les fonctionnalités du plugin Core_LdapOsug pour se connecter au serveur LDAP concerné.</p>
+
+		<h3>Système de plugins</h3>
+
+<h2>other test</h2>
+</body>
+</html>
