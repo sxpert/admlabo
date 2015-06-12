@@ -177,7 +177,7 @@ def user_view_loginshell_field (request, userid, action) :
 	data = {}
 	if action == 'options':
 		data['value'] = u.login_shell
-	if action == 'value':
+	elif action == 'value':
 		if request.method == 'POST' :
 			data = json.loads(request.body)
 			if 'value' in data.keys() :
@@ -185,6 +185,34 @@ def user_view_loginshell_field (request, userid, action) :
 				u.login_shell = value
 				u.save(request_user=request.user)
 		data['value'] = u.login_shell
+	return data
+
+#----
+# user_state
+#
+
+def user_view_user_state_field (request, userid, action) :
+	u = models.User.objects.get(uidnumber = userid)
+	data = {}
+	if action == 'options' :
+		states = {}
+		for v, d in models.User.USER_STATE_CHOICES :	
+			states[v] = d			
+		data['options'] = states
+		if u.user_state is not None :
+			data['noblank'] = True
+			data['selected'] = u.user_state
+		else :
+			# should not happen !
+			data['selected'] = None
+	elif action == 'value' :
+		if request.method == 'POST' :
+			data = json.loads(request.body)
+			if 'value' in data.keys() :
+				user_state = data['value']
+				u.user_state = user_state
+				u.save(request_user=request.user)
+		data['value'] = models.User.USER_STATE_CHOICES[u.user_state][1]
 	return data
 
 #----
@@ -197,14 +225,19 @@ def user_view_field (request, user_id, action, fieldtype, fieldname) :
 	if fieldtype == 'multiselect' :
 		if fieldname == 'mailinglists' : 
 			data = user_view_mailinglist_field (request, user_id, action)
-		if fieldname == 'groups' :
+		elif fieldname == 'groups' :
 			data = user_view_group_field (request, user_id, action)
-		if fieldname == 'managed' :
+		elif fieldname == 'managed' :
 			data = user_view_managed_field (request, user_id, action)
-	if fieldtype == 'select' :
+	elif fieldtype == 'select' :
 		if fieldname == 'manager' :
 			data = user_view_manager_field (request, user_id, action)
-	if fieldtype == 'text' :
+		elif fieldname == 'user_state' :
+			data = user_view_user_state_field (request, user_id, action)
+			import sys
+			sys.stdout.write (str(data)+'\n')
+			sys.stdout.flush ()
+	elif fieldtype == 'text' :
 		if fieldname == 'loginshell' :
 			data = user_view_loginshell_field (request, user_id, action) 
 	jsdata = json.dumps(data)
