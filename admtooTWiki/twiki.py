@@ -8,7 +8,6 @@ from .config.twiki import *
 class TWiki (object) :
 	
 	def __init__ (self) :
-		print "initializing TWiki plugin" 
 		self._logger = None
 	
 	def _log (self, message) :
@@ -128,13 +127,7 @@ class TWiki (object) :
 			return False
 
 	def UpdateTWikiGroup (self, *args, **kwargs) :
-		self._log ("TWiki plugin UpdateTWikiGroup")
-#		self._log ("args    : "+str(args))
-#		self._log ("kwargs  : "+str(kwargs))
 		_, command = args
-#		self._log ("command : "+str(command))
-		self._log ("verb    : "+str(command.verb))
-#		self._log ("data    : "+str(command.data))
 		if "logger" in kwargs.keys() :
 			logger = kwargs['logger']
 			if logger is not None :

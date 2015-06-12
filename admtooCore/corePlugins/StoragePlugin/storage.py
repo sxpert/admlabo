@@ -5,7 +5,6 @@ import sys, json
 class Core_Storage (object) :
 	def __init__ (self) :
 		self._logger = None
-		print "initialize storage plugin"
 
 	def _log (self, message) :
 		if self._logger is not None :
@@ -15,7 +14,6 @@ class Core_Storage (object) :
 			sys.stdout.flush ()
 
 	def CreateUserDir (self, *args, **kwargs) :
-
 		_, command = args
 		if 'logger' in kwargs.keys() :
 			logger = kwargs['logger']
