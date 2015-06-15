@@ -31,6 +31,9 @@ def Dashboard (request) :
 
 from decorators import *
 
+#
+# list of newly declared users not yet taken care of
+#
 @admin_login
 def DBNewArrivals (request) :
 	newusers = models.NewUser.objects.filter(Q(user__user_state=models.User.NEWIMPORT_USER)|Q(user__isnull=True)).order_by('arrival')
@@ -39,6 +42,9 @@ def DBNewArrivals (request) :
 	}
 	return render(request, 'DBNewArrivals.html', context)
 
+#
+# list of users newly imported from Agalan LDAP
+#
 @admin_login
 def DBUnknownUsers (request) :
 	users = models.User.objects.filter (user_state=models.User.NEWIMPORT_USER)
@@ -56,3 +62,19 @@ def DBUnknownUsers (request) :
 
 	context['nu'] = users
 	return render(request, 'DBUnknownUsers.html', context)
+
+#
+# List of machines that have to be reclaimed from users that are gone
+# 
+@admin_login
+def DBReclaimMachines (request) :
+	import datetime
+	machines = models.Machine.objects.filter(
+		Q(owner__user_state=models.User.DELETED_USER)|
+		Q(owner__departure__lte=datetime.datetime.today()),
+		owner__departure__isnull=False)
+	machines = machines.order_by('owner__departure')
+
+	context = {}
+	context['m'] = machines
+	return render(request, 'DBReclaimMachines.html', context)

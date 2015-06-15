@@ -4,6 +4,7 @@ from Dashboard import *
 from NewArrivalForm import *
 from NewArrivalValidate import *
 from userlistview import *
+from MachineView import *
 from views import *
 from Test import *
 

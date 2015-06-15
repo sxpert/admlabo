@@ -11,6 +11,7 @@ urlpatterns = patterns( '',
 	url(r'^$', views.Dashboard, name='dashboard'),
 	url(r'^DBNewArrivals$', views.DBNewArrivals, name='DBNewArrivals'),
 	url(r'^DBUnknownUsers$', views.DBUnknownUsers, name='DBUnknownUsers'),
+	url(r'^DBReclaimMachines$', views.DBReclaimMachines, name='DBReclaimMachines'),
 # New Arrival form
 	url(r'^new-arrival/form$', views.NewArrivalForm, name='new-arrival-form'),
 	url(r'^new-arrival/validate/(?P<newuser_id>\d+)$', views.NewArrivalValidate, name='new-arrival-validate'),
@@ -25,6 +26,8 @@ urlpatterns = patterns( '',
 	url(r'^group/(?P<group_id>\d+)/view/$', views.group_view, name='group_view'),
 	url(r'^group/(?P<group_id>\d+)/view/(?P<action>[^/]*)/(?P<fieldtype>[^/]*)/(?P<fieldname>[^/]*)$', 
 		views.group_view_field, name='group_view_field'),
+# Machines
+	url(r'^machine/(?P<machine_id>\d+)/view/$', views.machine_view, name='machine-view'),
 # Mailing lists
 	url(r'^mailinglist/(?P<ml_id>[a-z0-9_]+)/view/$', views.mailinglist_view, name='mailinglist_view'),
 #

@@ -1,0 +1,43 @@
+{% extends "DBBlock.html" %}
+{% block specific_style %}
+[data-column="name"] {
+    width: 40%;
+}
+[data-column="mngr"] {
+    border-left: 1px solid #777;
+    width: 20%;
+    text-align: center;
+}
+[data-column="date"] {
+    border-left: 1px solid #777;
+    width: 25%;
+    text-align: center;
+}
+[data-column="date"] a {
+	float: right;
+	color: white;
+	text-decoration: none;
+}
+[data-column="prov"] {
+    border-left: 1px solid #777;
+    width: 15%;
+    text-align: center;
+}
+{% endblock %}
+{% block caption %}Machines à réclamer aux utilisateurs{% endblock %}
+{% block data_table %}
+<table>
+	<thead>
+		<tr><th data-column="user">Utilisateur</th>
+			<th data-column="machine">Machine</th>
+			<th data-column="date">Départ</th>
+	</thead>
+	<tbody>
+	{% for mch in m %}
+	<tr><td data-column="user"><a href="{% url 'user-view' mch.owner.uidnumber %}">{{mch.owner}}</a></td>
+		<td data-column="machine"><a href="{% url 'machine-view' mch.id %}">{{mch.default_name}}</a></td>
+		<td data-column="date">{{mch.owner.departure}}</td></tr>
+	{%endfor%}
+	</tbody>
+</table>
+{% endblock %}

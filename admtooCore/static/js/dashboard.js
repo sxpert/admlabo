@@ -36,5 +36,5 @@ function load_blocks (blocks) {
 }
 
 $(function () {
-	load_blocks (['DBNewArrivals','DBUnknownUsers']);
+	load_blocks (['DBNewArrivals','DBUnknownUsers','DBReclaimMachines']);
 });
