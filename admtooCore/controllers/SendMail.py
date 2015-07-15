@@ -5,7 +5,7 @@ logger=logging.getLogger('django')
 from .. import models
 from django.conf import settings
 from django.template import Context, Template
-from django.core.mail import get_connection, send_mail
+from django.core.mail import get_connection, send_mail, EmailMultiAlternatives
 
 def _send_mail (subject, message, from_email, recipient_list, 
 				fail_silently=False, auth_user=None, auth_password=None,
