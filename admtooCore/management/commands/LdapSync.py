@@ -50,6 +50,12 @@ class LdapSync (object) :
 					u.mail = lu['mail']
 				added_users+=1
 				u.save ()
+			else :
+				# user may have to be modified
+				expire = l._get_expire_date (lu)
+				if expire is not None :
+					#print u.login, u.departure, expire
+					pass
 				
 
 			# check if we have already matched that user

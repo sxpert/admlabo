@@ -426,6 +426,19 @@ class Core_LdapOsug (object) :
 	def _test (self) :
 		self._log ('error message from LdapOsug object')
 
+	#
+	# obtain expiration date
+	#
+	def _get_expire_date (self, user) :
+		if 'shadowExpire' in user.keys() :
+			expire = int(user['shadowExpire'])
+			# expire is number of days since epoch, in utc 
+			import datetime
+			expire_delta = datetime.timedelta(expire)
+			expire_date = datetime.date.fromtimestamp(0) + expire_delta
+			return expire_date
+		return None
+	
 	#==============================================================================================
 	# 
 	# admtoo plugin interface
