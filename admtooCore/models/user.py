@@ -268,7 +268,8 @@ class User (models.Model) :
 			
 	
 	def default_twiki_account (self) :
-		from admtooLib.twiki import TWiki
-		t = TWiki('','')
+		#from admtooLib.twiki import TWiki
+		from ..plugins import plugins
+		t = plugins.TWiki
 		return t.gen_user_name (self.first_name, self.last_name)
 

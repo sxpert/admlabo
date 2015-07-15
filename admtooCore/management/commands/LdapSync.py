@@ -69,6 +69,7 @@ class LdapSync (object) :
 					# can't find corresponding new user...
 					pass
 				else :
+					# apply automatic matching to the new user
 					nu.user = u
 					nu.save()
 		#
