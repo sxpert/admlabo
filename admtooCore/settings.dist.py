@@ -12,6 +12,12 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
+MAIN_APP_DIR= os.path.dirname(__file__)
+TEMPLATE_DIRS = (
+	os.path.join(MAIN_APP_DIR,'templates'),
+	os.path.join(MAIN_APP_DIR,'root_templates')
+)
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/
 
@@ -35,7 +41,6 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
 #	'debug_toolbar',
-	'AdminTool',
 	'admtooCore',
 )
 
@@ -49,9 +54,9 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-ROOT_URLCONF = 'AdminTool.urls'
+ROOT_URLCONF = 'admtooCore.urls'
 
-WSGI_APPLICATION = 'AdminTool.wsgi.application'
+WSGI_APPLICATION = 'admtooCore.wsgi.application'
 
 # Authentication 
 AUTHENTICATION_BACKENDS = (
@@ -59,8 +64,7 @@ AUTHENTICATION_BACKENDS = (
 #	'django.contrib.auth.backends.ModelBackend',
 )
 
-
-from admtooLib.ldapconfig import osug
+from admtooCore.corePlugins.LdapOsugPlugin.config import osug
 import ldap
 from django_auth_ldap.config import LDAPSearch, PosixGroupType
 AUTH_LDAP_SERVER_URI = osug.OSUG_LDAP_URI
