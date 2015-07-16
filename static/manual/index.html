@@ -58,6 +58,34 @@ manière transparente.</p>
 <p>le modele de données pour l'application core est le suivant.</p>
 <p><a href="img/admtooCore-database-2015-06-10.png"><img src="img/admtooCore-database-2015-06-10.png"/></a></p>
 
+		<h3>Procédure d'installation</h3>
+
+			<h4>pré-requis</h4>
+
+<p>Afin d'installer la solution dans les meilleures conditions, similaires aux conditions de développement il est préférable de 
+disposer d'une machine exécutant une distribution Debian, version Stable à la date de l'écriture de cette documentation (2015-07-16). 
+Une version ultérieure est probablement utilisable tout autant, a condition de s'assurer de la compatibilité des frameworks utilisés.</p>
+
+<p>Les paquets nécessaires sont :</p>
+
+<ul>
+	<li>postgresql (la version de la distribution est 9.4, mais toute version ultérieure fait l'affaire)</li>
+	<li>postgresql-client</li>
+	<li>python (2.7, la version fournie par le système est appropriée. la version 3 n'est pas encore compatible)</li>
+	<li>python-psycopg2 (pour accéder a la base de données)</li>
+	<li>python-django (actuellement version 1.7.x)</li>
+	<li>python-django-common</li>
+	<li>python-django-auth-ldap</li>
+	<li>python-django-filters</li>
+	<li>python-django-guardian</li>
+	<li>apache2 (la version 2.4.x offre des fonctionnalités intéressantes)</li>
+	<li>libapache2-mod-wsgi</li>
+	<li>ansible (la distribution vient avec une version 1.7.x qui est suffisante pour nos besoins)</li>
+</ul>
+
+			<h4>installation du systeme</h4>
+
+
 		<h3>Système de plugins</h3>
 
 <p>Les applications du Core n'ont aucun effet sur le monde extérieur. Un système de plugins existe pour réaliser 
