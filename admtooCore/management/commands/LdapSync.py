@@ -69,10 +69,9 @@ class LdapSync (object) :
 					# can't find corresponding new user...
 					pass
 				else :
-					# apply automatic matching to the new user
-					# this does not work and need more thought
-					#nu.user = u
-					#nu.save()
+					# apply automatic matching to the new user 
+					nu.user = u
+					nu.save()
 		#
 		# remove users that can't be found...
 		for u in User.objects.all() :
