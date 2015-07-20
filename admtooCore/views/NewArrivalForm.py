@@ -165,6 +165,7 @@ def NewArrivalForm (request) :
 		#
 		departure = request.POST.get('departure', '').strip()
 		if len(departure)==0 :
+			departure = None
 			pass
 		# check date format
 		elif DATE_RE.match(departure) is None :
@@ -286,16 +287,16 @@ def NewArrivalForm (request) :
 			nu.comments =       comments
 
 			try :
-				u = User.objects.get(first_name=nu.first_name, last_name=nu.last_name)
-			except User.DoesNotExist as e :
+				user = models.User.objects.get(first_name=first_name, last_name=last_name)
+			except models.User.DoesNotExist as e :
 				# can't find corresponding new user...
 				pass
-			except User.MultipleObjectsReturned as e:
+			except models.User.MultipleObjectsReturned as e:
 				# too many answers
 				pass
 			else :
 				# apply automatic matching to the new user 
-				nu.user = u
+				nu.user = user
 
 			nu.save ()
 
