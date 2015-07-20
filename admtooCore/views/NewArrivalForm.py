@@ -284,6 +284,19 @@ def NewArrivalForm (request) :
 			nu.risky_activity = analyze_radio(risky_activity)
 			#
 			nu.comments =       comments
+
+			try :
+				u = User.objects.get(first_name=nu.first_name, last_name=nu.last_name)
+			except User.DoesNotExist as e :
+				# can't find corresponding new user...
+				pass
+			except User.MultipleObjectsReturned as e:
+				# too many answers
+				pass
+			else :
+				# apply automatic matching to the new user 
+				nu.user = u
+
 			nu.save ()
 
 			# call send mail controller
