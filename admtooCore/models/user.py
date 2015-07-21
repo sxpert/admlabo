@@ -26,6 +26,7 @@ class User (models.Model) :
 	arrival		= models.DateField(null=True, blank=True)
 	departure	= models.DateField(null=True, blank=True)
 	groups		= models.ManyToManyField(Group, blank=True, related_name='users')
+	main_team   = models.ForeignKey ('Group', null=True, blank=True, related_name='team_member')
 	room		= models.CharField(max_length=32, null=True, blank=True)
 	telephone   = models.CharField(max_length=32, null=True, blank=True)
 	flags       = models.ManyToManyField('UserFlag', blank=True)

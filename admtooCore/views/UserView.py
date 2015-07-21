@@ -220,6 +220,7 @@ def user_view_user_state_field (request, userid, action) :
 #
 
 def user_view_main_team_field (request, userid, action) :
+	
 	pass
 
 #----
