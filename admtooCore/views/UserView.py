@@ -110,7 +110,10 @@ def user_view_group_field (request, userid, action) :
 	if action == 'options' :
 		groups = {}
 		for g in models.Group.objects.all() :
-			groups[g.gidnumber] = g.name
+			n = g.name
+			if g.is_team_group() :
+				n = '[T] '+n
+			groups[g.gidnumber] = n
 		data['options'] = groups
 		selected = []
 		for g in u.all_groups() :
@@ -132,7 +135,11 @@ def user_view_group_field (request, userid, action) :
 		for g in u.all_groups() :
 			gdata = {}
 			gdata['url'] = reverse ('group_view', args=(g.gidnumber,))
-			gdata['value'] = g.name
+			n = g.name
+			if g.is_team_group() :
+				n = '[T] '+n
+			gdata['value'] = n
+			
 			groups.append(gdata)
 		data['values'] = groups
 	return data
@@ -227,7 +234,10 @@ def user_view_main_team_field (request, userid, action) :
 		for g in u.all_teams() :
 			teams[g.gidnumber] = g.description
 		data['options'] = teams
-		data['selected'] = None
+		if u.main_team is not None :
+			data['selected'] = u.main_team.gidnumber
+		else:
+			data['selected'] = None
 	elif action == 'value' :
 		if request.method == 'POST' :
 			data = json.loads(request.body)
