@@ -62,7 +62,16 @@ class Command (models.Model) :
 		elif self.verb=='CreateUserDir' :
 			return d['basedir']+'/'+d['uid']
 		elif self.verb=='UpdateTWikiGroup' :
-			return d['appSpecName']['twiki']
+			if 'appSpecName' in d.keys() :
+				sp = d['appSpecName']
+				if sp is None :
+					return "appSpecName undefined"
+				if 'twiki' in sp.keys() :
+					return sp['twiki']
+				else :
+					return "can't find twiki group name"
+			else:
+				return "no appSpecName variable"
 		else :
 			return ''
 

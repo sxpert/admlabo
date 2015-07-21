@@ -138,15 +138,34 @@ class TWiki (object) :
 	
 	def UpdateGroup (self, *args, **kwargs) :
 		from admtooCore.models import command
+		import json
 		_, cmd = args
-	
-		c = command.Command ()
-		c.user = cmd.user
-		c.verb = 'UpdateTWikiGroup'
-		c.data = cmd.data
-		c.in_cron = True
-		self._log ('post UpdateTWikiGroup command')
-		c.post ()
-		
+
+		# check if we actually have a twiki information 
+		d = json.loads(cmd.data)
+		msg = ''
+		if 'appSpecName' in d.keys() :
+			asn = d['appSpecName']
+			if asn is not None :
+				if 'twiki' in asn.keys() :
+					twiki_name = asn['twiki']
+					if twiki_nane is not None :
+						c = command.Command ()
+						c.user = cmd.user
+						c.verb = 'UpdateTWikiGroup'
+						c.data = cmd.data
+						c.in_cron = True
+						msg = 'SUCCES: post UpdateTWikiGroup command'
+						c.post ()
+					else: 
+						msg = 'ERROR: twiki_name is present but None'
+				else :
+					msg = 'ERROR: twiki_name is absent'
+			else :
+				msg = 'ERROR: appSpecName is None'
+		else :
+			msg = 'ERROR: appSpecName is absent'
+		self._log ('TWiki.UpdateGroup : '+msg)
+			
 		return True
 			
