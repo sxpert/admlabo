@@ -237,7 +237,7 @@ class User (models.Model) :
 	def all_teams (self) :
 		t = []
 		for g in self.all_groups() :
-			if g.group_type == g.TEAM_GROUP :
+			if g.is_team_group() :
 				t.append (g)
 		return t
 

@@ -17,12 +17,14 @@ form > table > tbody > tr > th {
 [data-type=multiselect] {
 	width          : 25em;
 }
-[data-type=multiselect] > ul {
+[data-type=multiselect] > ul,
+[data-type=display] > span > ul {
 	margin         : 0;
     padding        : 0;
 	width          : 20em;
 }
-[data-type=multiselect] > ul > li {
+[data-type=multiselect] > ul > li,
+[data-type=display] > span > ul > li {
 	line-height    : 16pt;
 	margin-left    : 1em;
 }

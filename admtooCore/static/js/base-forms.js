@@ -70,13 +70,15 @@ function df_ajax (method, url, data, callback) {
 	});	
 }
 
-function df_get_data (field) {
+function df_get_data (field, callback=undefined) {
 	var f_type = field.attr('data-type');
 	var f_name = field.attr('data-field');
 	var url = window.location.pathname;
 	url += 'options/'+f_type+'/'+f_name;
 	df_ajax ('GET', url, null, 
 		function (result) {
+			if (callback!==undefined) 
+				return callback(field, result);
 			switch (f_type) {
 				case 'multiselect': df_multiselect_initialize (field, result); break;
 				case 'select': df_select_initialize (field, result); break;
@@ -120,6 +122,7 @@ function df_set_value (field) {
 			switch (f_type) {
 				case 'multiselect' : df_multiselect_set_value (field, result); break;
 				case 'select': df_select_set_value (field, result); break;
+				case 'display': 
 				case 'text': df_text_set_value (field, result); break;
 			}
 		});
@@ -130,13 +133,16 @@ function df_set_value (field) {
  * fields is a string containing comma separated field names.
  */ 
 function df_update_fields (fields) {
-	console.log ('updating fields :');
+	if (fields===undefined) return;
 	fields = fields.split(',');
 	fields.forEach (function (element, index, array) {
 		var e = $('[data-field='+element+']');
-		console.log (e);
-		e.children().not('[data-control]').remove();	
-		df_set_value(e);
+		e.children().not('[data-control]').remove();
+		var f_type = e.attr('data-type');
+		switch (f_type) {
+			case 'select' : df_select_refresh (e); break;
+			case 'display' : df_set_value(e); break;
+		}
 	});
 }
 
@@ -315,6 +321,37 @@ function df_select_get_value (field) {
 	if (sel !== null) data = { 'value': sel };
 	else data= {};
 	return data;
+}
+
+function df_select_refresh (field) {
+	// step 1 : identify display mode
+	var select = field.find('[data-control=select]');
+	if (select.length == 0) {
+		df_set_value (field);
+	} else {
+		df_get_data (field, function (field, data) {
+			var opt = data.options;
+			var noblank = data.noblank
+			var topt = []
+			for (var key in opt) topt.push([key, opt[key]]);
+			topt.sort(function(a,b) { return a[1] > b[1]; });
+			var sel = $(select[0].selectedOptions[0]).val();
+			select.empty();
+		    if (!((noblank !== undefined) && (noblank===true)))
+		        topt.unshift(['','']);
+		    for (opt in topt) {
+				var key = topt[opt][0];
+				var val = topt[opt][1];
+				var o = $('<option>');
+				o.val(key);
+				o.text(val);
+				if (key==sel) 
+					o.attr('selected','');
+				select.append(o);		
+			}
+
+		});
+	}
 }
 
 /* 

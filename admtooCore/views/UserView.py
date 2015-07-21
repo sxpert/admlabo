@@ -223,7 +223,7 @@ def user_view_user_state_field (request, userid, action) :
 	return data
 
 #----
-# 
+# main team field 
 #
 
 def user_view_main_team_field (request, userid, action) :
@@ -255,6 +255,22 @@ def user_view_main_team_field (request, userid, action) :
 	return data
 
 #----
+# secondary teams field
+#
+ 
+def user_view_secondary_teams_field (request, userid, action) :
+	u = models.User.objects.get (uidnumber = userid)
+	data = {}
+	if action == 'value' :
+		t = []
+		for g in u.all_teams() :
+			if (u.main_team is not None) and (u.main_team.gidnumber != g.gidnumber) :
+				t.append ('<li>'+g.description+'</li>')
+		s = '<ul>'+''.join(t)+'</ul>\n'
+		data['value'] = s
+	return data
+
+#----
 # main function
 #
 @admin_login
@@ -264,17 +280,20 @@ def user_view_field (request, user_id, action, fieldtype, fieldname) :
 
 	mapping = {
 		"multiselect" : {
-			"mailinglists" : user_view_mailinglist_field,
-			"groups"       : user_view_group_field,
-			"managed"      : user_view_managed_field
+			"mailinglists"    : user_view_mailinglist_field,
+			"groups"          : user_view_group_field,
+			"managed"         : user_view_managed_field
 		},
 		"select" : {
-			"manager"      : user_view_manager_field,
-			"user_state"   : user_view_user_state_field,
-			"main-team"    : user_view_main_team_field
+			"manager"         : user_view_manager_field,
+			"user_state"      : user_view_user_state_field,
+			"main-team"       : user_view_main_team_field
 		},
 		"text" : {
-			"loginshell"   : user_view_loginshell_field
+			"loginshell"      : user_view_loginshell_field
+		},
+		"display" : {
+			"secondary-teams" : user_view_secondary_teams_field
 		}
 	}
 
