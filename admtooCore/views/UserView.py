@@ -220,8 +220,29 @@ def user_view_user_state_field (request, userid, action) :
 #
 
 def user_view_main_team_field (request, userid, action) :
-	
-	pass
+	u = models.User.objects.get(uidnumber = userid)
+	data = {}
+	if action == 'options' :
+		teams = {} 
+		for g in u.all_teams() :
+			teams[g.gidnumber] = g.description
+		data['options'] = teams
+		data['selected'] = None
+	elif action == 'value' :
+		if request.method == 'POST' :
+			data = json.loads(request.body)
+			if 'value' in data.keys() :
+				main_team = data['value']
+				if main_team is not None :
+					u.main_team = models.Group.objects.get(gidnumber = main_team)
+				else :
+					u.main_team = None
+				u.save()
+		if u.main_team is None :
+			data['value'] = '<i>No main team</i>';
+		else :
+			data['value'] = u.main_team.description
+	return data
 
 #----
 # main function
@@ -239,7 +260,8 @@ def user_view_field (request, user_id, action, fieldtype, fieldname) :
 		},
 		"select" : {
 			"manager"      : user_view_manager_field,
-			"user_state"   : user_view_user_state_field
+			"user_state"   : user_view_user_state_field,
+			"main-team"    : user_view_main_team_field
 		},
 		"text" : {
 			"loginshell"   : user_view_loginshell_field

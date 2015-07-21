@@ -228,6 +228,18 @@ class User (models.Model) :
 			if (g is not None) and (g not in self.groups.all()) :
 				self.groups.add (g)
 				g._update_ldap(user)
+		# remove the main team if not in grouplist anymore
+		if self.main_team is not None:
+			if self.main_team.gidnumber not in grouplist :
+				self.main_team = None
+				self.save()
+
+	def all_teams (self) :
+		t = []
+		for g in self.all_groups() :
+			if g.group_type == g.TEAM_GROUP :
+				t.append (g)
+		return t
 
 	def manager_of (self) :
 		return User.objects.filter(manager = self)
@@ -245,6 +257,7 @@ class User (models.Model) :
 
 	def machines (self) :
 		return Machine.objects.filter(owner = self)
+
 
 	#==========================================================================
 	# User declaration related methods

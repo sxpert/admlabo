@@ -135,6 +135,7 @@ function df_update_fields (fields) {
 	fields.forEach (function (element, index, array) {
 		var e = $('[data-field='+element+']');
 		console.log (e);
+		e.children().not('[data-control]').remove();	
 		df_set_value(e);
 	});
 }
