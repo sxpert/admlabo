@@ -11,9 +11,12 @@ function icon_button (icon, func) {
 
 function df_initialize (index, elem) {
 	var field = $(elem).attr('data-field');
-	var  type = $(elem).attr('data-type');
-	df_set_value ($(elem))
-	df_set_edit_icon ($(elem))
+	var type = $(elem).attr('data-type');
+	var edit = $(elem).attr('data-edit');
+	df_set_value ($(elem));
+	if ((edit===undefined)|(edit!="no")) {
+		df_set_edit_icon ($(elem));
+	}
 };
 
 function data_field (event) {
@@ -85,6 +88,7 @@ function df_get_data (field) {
 function df_save_value (field) {
 	var f_type = field.attr('data-type');
 	var f_name = field.attr('data-field');
+	var f_update = field.attr('data-update');
 	var url = window.location.pathname;
 	url += 'value/'+f_type+'/'+f_name;
 	var data = null;
@@ -101,7 +105,8 @@ function df_save_value (field) {
 				case 'multiselect': df_multiselect_set_value (field, result); break;
 				case 'select': df_select_set_value (field, result); break;
 				case 'text': df_text_set_value (field, result); break;
-			}
+			};
+			df_update_fields (f_update);
 		});
 }
 
@@ -118,6 +123,20 @@ function df_set_value (field) {
 				case 'text': df_text_set_value (field, result); break;
 			}
 		});
+}
+
+/*
+ * update fields
+ * fields is a string containing comma separated field names.
+ */ 
+function df_update_fields (fields) {
+	console.log ('updating fields :');
+	fields = fields.split(',');
+	fields.forEach (function (element, index, array) {
+		var e = $('[data-field='+element+']');
+		console.log (e);
+		df_set_value(e);
+	});
 }
 
 /******************************************************************************

@@ -12,6 +12,9 @@
 <tr><th>Statut</th><td data-field="user_state" data-type="select"></td><tr>
 <tr><th>Prénom</th><td>{{ edited_user.first_name }}</td><tr>
 <tr><th>Nom de Famille</th><td>{{ edited_user.last_name }}</td></tr>
+<tr><th>User class</th><td>{{ edited_user.userclass.fr }}</td></tr>
+<tr><th>Équipe principale</th><td data-field="main-team" data-type="select"></td></tr>
+<tr><th>Équipes secondaires</th><td data-field="secondary-teams" data-edit="no"></td></tr>
 <tr><th>Login</th><td>{{ edited_user.login }}</td></tr>
 <tr><th>Uid Number</th><td>{{ edited_user.uidnumber }}</td></tr>
 <tr><th>Login Shell</th><td data-field="loginshell" data-type="text"></td></tr>
@@ -21,7 +24,7 @@
 <tr><th>Telephone</th><td>{% if edited_user.telephone %}{{ edited_user.telephone }}{% endif %}</td></tr>
 <tr><th>Mail</th><td>{{ edited_user.mail }}</td></tr>
 <tr><th>Mailing lists</th><td data-field="mailinglists" data-type="multiselect"></td></tr>
-<tr><th>Groups</th><td data-field="groups" data-type="multiselect"></td></tr>
+<tr><th>Groups</th><td data-field="groups" data-type="multiselect" data-update="main-team,secondary-teams"></td></tr>
 <tr><th>Machines</th><td><ul>{% for m in edited_user.machines.all %}
 	<li>{{ m.default_name }}<br/>{{ m.comment }}
 		<ul>{% for i in m.interfaces.all %}
@@ -29,7 +32,6 @@
 			{% endfor %}</ul>
 	</li>
 	{% endfor %}</ul></td></tr>
-<tr><th>User class</th><td></td></tr>
 <tr><th>Responsable</th><td data-field="manager" data-type="select"></td></tr>
 <tr><th>Responsable de</th><td data-field="managed" data-type="multiselect"></td></tr>
 <tr><th>Comptes applis</th><td>{% for k, v in edited_user.other_account_names %}
