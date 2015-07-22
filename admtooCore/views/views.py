@@ -12,21 +12,6 @@ from decorators import *
 import logging
 logger = logging.getLogger('django_auth_ldap')
 
-#==============================================================================
-# groups management
-#
-
-#
-# list of all groups
-#
-@admin_login
-def groups (request) :
-	groups = models.Group.objects.all()
-	context = {
-		'groups': groups,
-	}
-	return render(request, 'groups.html', context)
-
 #
 # details of one particular group
 #
@@ -142,7 +127,7 @@ def group_view_parent_field (request, group_id, action) :
 			pass
 		if g.parent is not None :
 			d = g.parent.name
-			u = reverse ('group_view', args=(g.parent.gidnumber,))
+			u = reverse ('group-view', args=(g.parent.gidnumber,))
 		else :
 			d = ''
 			u = None

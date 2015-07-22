@@ -23,7 +23,8 @@ urlpatterns = patterns( '',
 		views.user_view_field, name='user_view_field'),
 # Groups
 	url(r'^groups/', views.groups, name='groups'),
-	url(r'^group/(?P<group_id>\d+)/view/$', views.group_view, name='group_view'),
+	url(r'^group/new/$', views.group_new, name='group-new'),
+	url(r'^group/(?P<group_id>\d+)/view/$', views.group_view, name='group-view'),
 	url(r'^group/(?P<group_id>\d+)/view/(?P<action>[^/]*)/(?P<fieldtype>[^/]*)/(?P<fieldname>[^/]*)$', 
 		views.group_view_field, name='group_view_field'),
 # Machines

@@ -134,7 +134,7 @@ def user_view_group_field (request, userid, action) :
 		groups = []
 		for g in u.all_groups() :
 			gdata = {}
-			gdata['url'] = reverse ('group_view', args=(g.gidnumber,))
+			gdata['url'] = reverse ('group-view', args=(g.gidnumber,))
 			n = g.name
 			if g.is_team_group() :
 				n = '[T] '+n

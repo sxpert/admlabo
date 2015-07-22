@@ -3,12 +3,13 @@
 {% block content %}
 <p><a href="{% url 'dashboard' %}">retour au dashboard</a></p>
 <h1>liste des groupes</h1>
-<p>{{ groups|length }} groupes</p>
+<p>{{ groups|length }} groupes <button form="new-group">nouveau groupe</button></p>
 <table>
   <tbody>
 {% for group in groups %}
-    <tr><td><a href="{% url 'group_view' group.gidnumber %}">{{ group.name }}</a></td><td>{{ group.description }}<tr>
+    <tr><td><a href="{% url 'group-view' group.gidnumber %}">{{ group.name }}</a></td><td>{{ group.description }}<tr>
 {% endfor %}
   </tbody>
 </table>
+<form id="new-group" method="get" action="{% url 'group-new' %}"></form>
 {% endblock %}
