@@ -14,6 +14,10 @@ from UserView import *
 
 # groups
 from GroupList import *
+from GroupView import *
+
+# mailing lists
+from MailingListView import *
 
 from MachineView import *
 
@@ -21,6 +25,5 @@ from MachineView import *
 from XmlDB import *
 
 #old
-from views import *
 from Test import *
 

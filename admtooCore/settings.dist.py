@@ -102,7 +102,7 @@ LOGIN_URL          = 'login-form'
 DEFAULT_COUNTRY    = 'FR'
 DEFAULT_USER_GROUP = 'ipag-pos-site'
 
-ADMIN_DATA_DIR     = 'admtooLibData'
+ADMIN_DATA_DIR     = 'admtooLibData' 
 ADMIN_FILES_DIR    = os.path.join(BASE_DIR, ADMIN_DATA_DIR, 'files')
 
 STORAGE_SERVER     = 'srv73'
@@ -110,6 +110,8 @@ STORAGE_SERVER     = 'srv73'
 BACKUPPC_SERVER    = 'midgard'
 BACKUPPC_USER      = 'backuppc'
 BACKUPPC_GROUP     = 'services' 
+
+GIDNUMBER_RANGES   = [[3000,3999],[5000,5999]]
 
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases

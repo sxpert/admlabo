@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
-from django.db import models
+from django.db import models, transaction
+from django.db.models import Max
+from django.conf import settings
 import json
 import netfields
 import logging
@@ -28,6 +30,47 @@ class Group (models.Model) :
 
 	def __str__ (self) :
 		return self.name
+	
+	# 
+	# finds an available gidnumber within the permitted range
+	@transaction.atomic
+	def create_new (self) :
+		logger.error ('identifying new group id')
+		last_group = Group.objects.all().aggregate(Max('gidnumber'))['gidnumber__max']
+		logger.error (type(last_group))
+		logger.error ('current max gidnumber '+str(last_group))	
+		new_gidnumber = last_group+1
+		# check if the new number is within the range
+		try :
+			ranges = settings.GIDNUMBER_RANGES
+		except AttributeError as e :
+			# ranges are not defined, assume all are authorized
+			return True
+		logger.error (type(ranges))
+		if type(ranges) is not list :
+			logger.error ('ERROR: settings.GIDNUMBER_RANGES should be an array of 2 values arrays')
+			# consider things ok though
+			return True
+		# if no ranges defined, consider everything ok
+		if len(ranges) <= 0:
+			return True		
+		ok = False
+		for r in ranges :
+			if type(r) is not list :
+				logger.error ('ERROR: settings.GIDNUMBER_RANGES should be an array of 2 values arrays')
+				# skip this element
+				continue
+			d, u = r
+			if (d <= new_gidnumber) and (new_gidnumber <= u) :
+				ok = True
+		if ok :
+			logger.error ('number is in range')	
+		else :
+			logger.error ('ERROR: new number is invalid')
+		self.gidnumber = new_gidnumber
+		# don't involve the external update mechanisms just yet, as nothing is filled in
+		super (Group, self).save ()
+		return ok
 
 	def prepare_group_data (self) :
 		members = self.member_logins()

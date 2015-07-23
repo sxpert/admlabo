@@ -2,7 +2,7 @@
 
 import json
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
@@ -22,6 +22,21 @@ def group_view (request, group_id) :
 		'group' : g,
 	}
 	return render(request, 'group-view.html', context)
+
+#
+# creation of new group.
+# finds an empty gidnumber to use, create new group with it
+# and then passes to the group_view for editing
+#
+@admin_login
+def group_new (request) :
+	g = models.Group ()
+	if g.create_new() :
+		return redirect ('group-view', group_id=g.gidnumber)
+	else :
+		# show the list again with an error in context
+		return redirect ('group-list')
+
 
 #------------------------------------------------------------------------------
 # 
@@ -177,9 +192,3 @@ def group_view_field (request, group_id, action, fieldtype, fieldname) :
 	return HttpResponse(jsdata, content_type='application/json') 
 
 
-#==============================================================================
-# mailing lists management
-#
-
-def mailinglist_view (request, ml_id) :
-	pass
