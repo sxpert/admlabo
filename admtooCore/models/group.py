@@ -72,6 +72,17 @@ class Group (models.Model) :
 		super (Group, self).save ()
 		return ok
 
+	#
+	# return a group identifier for the group list
+	# either the name, if not empty, or the gidnumber
+	#
+	def identifier (self) :
+		logger.error (type(self.name))
+		if (self.name is not None) and (type(self.name) in (str, unicode,)) and (len(self.name)>0) :
+			return self.name
+		return self.gidnumber
+
+
 	def prepare_group_data (self) :
 		members = self.member_logins()
 		g = {}
