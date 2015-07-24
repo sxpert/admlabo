@@ -5,8 +5,8 @@
 {% block css %}<link rel="stylesheet" type="text/css" href="{% static "css/ipag.css" %}"/>{% endblock %}
 {% block content %}
 <p><a href="{% url 'groups' %}">retour à la liste des groupes</a></p>
-<p>group view</p>
 <form action="." method="post">{% csrf_token %}
+<p>group view <button name="action" value="delete">Supprimer le groupe</button></p>
 <table>
 <tbody>
 <tr><th>Nom de groupe</th><td data-field="name" data-type="text"></td><tr>

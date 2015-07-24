@@ -72,6 +72,14 @@ class Group (models.Model) :
 		super (Group, self).save ()
 		return ok
 
+	# 
+	# removes a group
+	#
+	def destroy (self) :
+		
+		pass
+	
+
 	#
 	# return a group identifier for the group list
 	# either the name, if not empty, or the gidnumber

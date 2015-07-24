@@ -18,6 +18,11 @@ logger = logging.getLogger('django_auth_ldap')
 @admin_login
 def group_view (request, group_id) :
 	g = models.Group.objects.get(gidnumber = group_id)
+	action = request.POST.get('action', '').strip()
+	if action == 'delete' :
+		g.destroy ()
+		return redirect ('group-list')
+
 	context = {
 		'group' : g,
 	}
