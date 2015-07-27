@@ -75,9 +75,23 @@ class Group (models.Model) :
 	# 
 	# removes a group
 	#
-	def destroy (self) :
-		
-		pass
+	def destroy (self, user=None) :
+		# get members list
+		g = self.prepare_group_data()
+		logger.error ("destroying group : "+str(g['members']))
+
+		import command, json
+		c = command.Command ()
+		if user is None :
+			c.user = "(Unknown)"
+		else :
+			c.user = user
+		c.verb = 'DestroyGroup'
+		c.data = json.dumps(g)
+		c.save ()
+		# remove group from database
+		# TODO: keep in history table ?
+		self.delete()
 	
 
 	#
@@ -85,11 +99,10 @@ class Group (models.Model) :
 	# either the name, if not empty, or the gidnumber
 	#
 	def identifier (self) :
-		logger.error (type(self.name))
+		#logger.error (type(self.name))
 		if (self.name is not None) and (type(self.name) in (str, unicode,)) and (len(self.name)>0) :
 			return self.name
 		return self.gidnumber
-
 
 	def prepare_group_data (self) :
 		members = self.member_logins()

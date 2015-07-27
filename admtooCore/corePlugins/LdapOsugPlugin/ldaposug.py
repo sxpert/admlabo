@@ -285,6 +285,21 @@ class Core_LdapOsug (object) :
 		self._log ('ERROR '+str(res)+' problem while adding group')
 		self._log (str(arr))
 		return False
+	
+	def _group_delete (self, cn, gidNumber) :
+		if cn is not None :
+			if len(cn)>0 :
+				dn = self._group_dn (cn)
+				self._log ('deleteing group '+dn)
+				try :
+					self._l.delete_s (dn)
+				except ldap.NO_SUCH_OBJECT as e :
+					self._log ('object does not exist in ldap directory')
+				# either case, the object is gone from the directory, so all is well
+				return True
+		self._log ('ERROR : LdapOsug _group_delete: group cn None ou longueur nulle')
+		return False
+
 
 	# rename a group
 	def _group_rename (self, oldname, newname) :
@@ -449,7 +464,30 @@ class Core_LdapOsug (object) :
 	
 	def GetUser (self, uid) :
 		return self._user_get(uid)
-		
+	
+	def DestroyGroup (self, *args, **kwargs) :
+		self._log ('LdapOsug DestroyGroup')
+		_, command = args
+		if 'logger' in kwargs.keys() :
+			logger = kwargs['logger']
+			if logger is not None :
+				self._log ('setting logger to '+str(logger))
+				self._logger = logger
+		import json
+		c = json.loads (command.data)
+		ck = c.keys ()
+		cn = None
+		if 'cn' in ck :
+			cn = c['cn']
+		gidNumber = None
+		if 'gidNumber' in ck :
+			gidNumber = c['gidNumber']
+		self._log (cn)
+		self._log (gidNumber)
+		return self._group_delete (cn, gidNumber)
+		return True
+
+	
 	def UpdateGroup (self, *args, **kwargs) :
 		self._log ('LdapOsug UpdateGroup command')
 		self._log ('args    : '+str(args))

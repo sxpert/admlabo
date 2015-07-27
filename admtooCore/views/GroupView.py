@@ -20,8 +20,9 @@ def group_view (request, group_id) :
 	g = models.Group.objects.get(gidnumber = group_id)
 	action = request.POST.get('action', '').strip()
 	if action == 'delete' :
-		g.destroy ()
-		return redirect ('group-list')
+		logger.error ('destroying group '+str(g.gidnumber))
+		g.destroy (request.user)
+		return redirect ('groups')
 
 	context = {
 		'group' : g,
