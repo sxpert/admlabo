@@ -20,3 +20,15 @@ OSUG_LDAP_CONFIG = {
 					}
 			}
 		}
+
+OSUG_LDAP_URI  = 'ldap://ldap.example.com'
+OSUG_LDAP_BASE = 'dc=example,dc=com'
+OSUG_LDAP_ROOT = 'cn=root,dc=example,dc=com'
+OSUG_LDAP_PASS = 'password'
+
+OSUG_LDAP_IPAG_BASE = 'dc=example,dc=com'
+OSUG_LDAP_IPAG_PEOPLE_OU = 'ou=people'
+OSUG_LDAP_IPAG_GROUP_OU = 'ou=group'
+
+OSUG_LDAP_IPAG_PERMANENT_GROUP = 'cn=permanent,'+OSUG_LDAP_IPAG_GROUP_OU+','+OSUG_LDAP_IPAG_BASE
+OSUG_LDAP_IPAG_SERVICES_GROUP = 'cn=services,'+OSUG_LDAP_IPAG_GROUP_OU+','+OSUG_LDAP_IPAG_BASE

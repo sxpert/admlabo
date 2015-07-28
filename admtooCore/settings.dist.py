@@ -81,7 +81,7 @@ AUTH_LDAP_GROUP_SEARCH = LDAPSearch(osug.OSUG_LDAP_IPAG_GROUP_OU+','+osug.OSUG_L
 									ldap.SCOPE_SUBTREE, "(objectClass=posixGroup)")
 AUTH_LDAP_GROUP_TYPE = PosixGroupType(name_attr='cn')
 AUTH_LDAP_USER_FLAGS_BY_GROUP = {
-	"is_active" : osug.OSUG_LDAP_IPAG_SERVICES_GROUP,
+	"is_active" : osug.OSUG_LDAP_IPAG_PERMANENT_GROUP,
 	"is_staff" : osug.OSUG_LDAP_IPAG_SERVICES_GROUP,
 	"is_superuser": osug.OSUG_LDAP_IPAG_SERVICES_GROUP
 }
