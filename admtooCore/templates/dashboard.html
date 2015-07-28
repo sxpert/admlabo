@@ -2,12 +2,28 @@
 {% load staticfiles %}
 {% block title %} - Dashboard{% endblock %}
 {% block scripts %}<script src="{% static "js/dashboard.js" %}"></script>{% endblock %}
-{% block css %}<link rel="stylesheet" type="text/css" href="{% static "css/dashboard.css" %}"/>{% endblock %}
+{% block css %}
+<link rel="stylesheet" type="text/css" href="{% static "css/menu.css" %}"/>
+<link rel="stylesheet" type="text/css" href="{% static "css/dashboard.css" %}"/>{% endblock %}
 {% block content %}
 <h1>dashboard du si IPAG</h1>
-<p><a href="{% url 'new-arrival-form' %}">Arrivée d'une nouvelle personne</a></p>
-<p><a href="{% url 'users' %}">Liste des utilisateurs</a></p>
-<p><a href="{% url 'groups' %}">Liste des groupes</a></p>
+<div class="menu">
+	<ul>
+		<li>Actions
+			<ul>
+				<li><a href="{% url 'new-arrival-form' %}">Arrivée d'une nouvelle personne</a></li>
+			</ul>
+		</li>
+	</ul>
+	<ul>
+		<li>Listes
+			<ul>
+				<li><a href="{% url 'users' %}">Liste des utilisateurs</a></li>
+				<li><a href="{% url 'groups' %}">Liste des groupes</a></li>
+			</ul>
+		</li>
+	</ul>
+</div>
 <div id="blocks">
 <div class="ui-block" id="DBNewArrivals"></div>
 <div class="ui-block" id="DBUnknownUsers" data-sort-default="arrival"></div><br/>
