@@ -83,6 +83,7 @@ function df_get_data (field, callback=undefined) {
 				case 'multiselect': df_multiselect_initialize (field, result); break;
 				case 'select': df_select_initialize (field, result); break;
 				case 'text' : df_text_initialize (field, result); break;
+				case 'multitext': df_multitext_initialize (field, result); break;
 			}
 		});
 }
@@ -98,17 +99,23 @@ function df_save_value (field) {
 		case 'multiselect': data = df_multiselect_get_value (field); break;
 		case 'select': data = df_select_get_value (field); break;
 		case 'text': data = df_text_get_value (field); break;
+		case 'multitext': data = df_multitext_get_value (field); break;
 	}
 	data = JSON.stringify (data);
 	df_ajax ('POST', url, data,
 		function (result) {
-			df_set_edit_icon(field);
+			console.log (result);
+			var e = ('errors' in result);
+			if (!e) 
+				df_set_edit_icon(field);
 			switch (f_type) {
 				case 'multiselect': df_multiselect_set_value (field, result); break;
 				case 'select': df_select_set_value (field, result); break;
 				case 'text': df_text_set_value (field, result); break;
+				case 'multitext': df_multitext_initialize (field, result); break;
 			};
-			df_update_fields (f_update);
+			if (!e) 
+				df_update_fields (f_update);
 		});
 }
 
@@ -375,6 +382,80 @@ function df_text_get_value (field) {
 	var val = control.val();
 	var data = {'value': val};
 	return data;
+}
+
+/*
+ * multitext type field
+ */
+
+function df_multitext_initialize (field, data) {
+	console.log ('df_multitext_initialize');
+	console.log (data);
+	var values = data['values'];
+	var errors = null;
+	if ('errors' in data)
+		errors = data['errors'];
+	console.log (values);
+	var ul = $('<ul data-control="multitext-list">')
+	for (var k in values) {
+		console.log (k);
+		var li = $('<li data-control="multitext-entry">');
+		var b = icon_button ('content/svg/design/ic_remove_24px', df_multitext_remove_option);
+		var input = $('<input type="text" data-control="multitext-input">');
+		input.val(values[k]);
+		li.append(b);
+		li.append(input);
+		if (errors && (errors[k]!=null)) {
+			console.log (errors[k]);
+			var error = $('<img src="'+icon_path('content/svg/design/ic_report_24px')+'" data-control="button"/>');
+			error.attr('title', errors[k]);
+			li.append (error);
+		}
+		ul.append(li);
+	}
+	var li = $('<li data-control="multitext-append">');
+	var b = icon_button ('content/svg/design/ic_add_24px', df_multitext_add_option);
+	li.append(b);
+	ul.append(li);
+	field.append (ul);
+}
+
+function df_multitext_get_value (field) {
+	console.log ("df_multitext_get_value");
+	var list = field.find('[data-control=multitext-input]')
+	console.log (list);
+	var data = {};
+	var values = [];
+	for (var i=0; i<list.length; i++) {
+		var li = $(list[i])
+		values.push (li.val());
+	}
+	data['values'] = values;
+	console.log (data);
+	return data;
+}
+
+/* remove an entry from the list
+ */
+function df_multitext_remove_option (e) {
+	console.log ('multitext-remove-option');
+	var li = $(e.target).parents('[data-control=multitext-entry]');
+	li.remove();
+}
+
+/* adds an empty multitext entry
+ */
+function df_multitext_add_option (e) {
+	console.log ('multitext-add-option');
+	var mt = $(e.target).parents('[data-control=multitext-list]');
+	console.log (mt);
+	/* generate new entry */
+	var li = $('<li data-control="multitext-entry">');
+	var b = icon_button ('content/svg/design/ic_remove_24px', df_multitext_remove_option);
+	var input = $('<input type="text" data-control="multitext-input">');
+	li.append (b);
+	li.append (input);
+	li.insertAfter (mt.children('[data-control=multitext-entry]:last'));
 }
 
 /*

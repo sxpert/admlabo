@@ -28,14 +28,25 @@ form > table > tbody > tr > th {
 	line-height    : 16pt;
 	margin-left    : 1em;
 }
+[data-control=multitext-list] {
+	margin         : 0;
+	padding        : 0;
+	list-style     : none;
+}
+[data-control=multitext-entry],
+[data-control=multitext-append] {
+	width: 20em;
+	vertical-align: middle;
+}
 [data-control=button] {
 	width          : 14pt;
 	height         : 14pt;
-	cursor         : pointer;		
+	cursor         : pointer;
+	vertical-align : middle;
 }
 #footer {
-	min-height: 10ex;
+	min-height     : 10ex;
 }
 #copyright { 
- 	font-size: 7pt;
+ 	font-size      : 7pt;
 }

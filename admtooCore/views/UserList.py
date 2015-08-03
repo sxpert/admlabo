@@ -14,5 +14,5 @@ def users (request) :
 	context = {
 		'users': users,
 	}
-	return render(request, 'users.html', context)
+	return render(request, 'user-list.html', context)
 

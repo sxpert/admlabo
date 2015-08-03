@@ -25,5 +25,5 @@ def groups (request) :
 	context = {
 		'groups': groups,
 	}
-	return render(request, 'groups.html', context)
+	return render(request, 'group-list.html', context)
 

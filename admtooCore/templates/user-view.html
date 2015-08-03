@@ -23,6 +23,7 @@
 <tr><th>Room number</th><td>{% if edited_user.room %}{{ edited_user.room }}{% endif %}</td></tr>
 <tr><th>Telephone</th><td>{% if edited_user.telephone %}{{ edited_user.telephone }}{% endif %}</td></tr>
 <tr><th>Mail</th><td>{{ edited_user.mail }}</td></tr>
+<tr><th>Mail Aliases</th><td data-field="mailaliases" data-type="multitext"></td></tr>
 <tr><th>Mailing lists</th><td data-field="mailinglists" data-type="multiselect"></td></tr>
 <tr><th>Groups</th><td data-field="groups" data-type="multiselect" data-update="main-team,secondary-teams"></td></tr>
 <tr><th>Machines</th><td><ul>{% for m in edited_user.machines.all %}

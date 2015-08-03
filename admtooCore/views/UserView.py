@@ -271,6 +271,16 @@ def user_view_secondary_teams_field (request, userid, action) :
 	return data
 
 #----
+# mail aliases field
+#
+
+def user_view_mail_aliases_field (request, userid, action) :
+	data = {}
+	data['values'] = ('alias1', 'alias2', 'alias3',)
+	data['errors'] = (None, 'already used for \'user\'', None,)
+	return data
+
+#----
 # main function
 #
 @admin_login
@@ -291,6 +301,9 @@ def user_view_field (request, user_id, action, fieldtype, fieldname) :
 		},
 		"text" : {
 			"loginshell"      : user_view_loginshell_field
+		},
+		"multitext" : {
+			"mailaliases"     : user_view_mail_aliases_field
 		},
 		"display" : {
 			"secondary-teams" : user_view_secondary_teams_field

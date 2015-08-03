@@ -1,0 +1,22 @@
+table {	
+	border-collapse: collapse;
+}	
+th, td {
+	padding-left : 4pt;
+	padding-right: 4pt;
+}
+th {
+	text-align: left;
+}
+body tr:nth-child(2n) {
+	background-color: #ebebeb;
+} 
+tr.user-departure-soon {
+	background-color: #ebebb0 !important;
+}
+tr.user-departure-purgatory {
+	background-color: #ebc7b0 !important;
+}
+tr.user-departure-gone {
+	background-color: #ebb0b0 !important;
+}
