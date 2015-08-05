@@ -7,6 +7,7 @@ from domainname import DomainName
 from ipaddress import IPAddress
 from vlan import Vlan
 from user import User
+from mailalias import MailAlias
 from command import Command
 from country import Country
 from userclass import UserClass
