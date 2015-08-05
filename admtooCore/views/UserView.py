@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import json
+from django.db import transaction, IntegrityError
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.core.urlresolvers import reverse
@@ -274,19 +275,119 @@ def user_view_secondary_teams_field (request, userid, action) :
 # mail aliases field
 #
 
+@transaction.atomic
 def user_view_mail_aliases_field (request, userid, action) :
 	data = {}
-	if action == 'value' :
-		if request.method == 'POST' :
-			logger.error ('attempt to change mailaliases')
-			reqd = json.loads (request.body)
-			logger.error (str(reqd))	
-	data['values'] = ('alias1', 'alias2', 'alias3',)
-	data['errors'] = (None, 'already used for \'user\'', None,)
-	# list all mail aliases for the user from the mailaliases table
-	
-	
-	
+	logger.error (action)
+	u = models.User.objects.get(uidnumber=userid)
+	if (action == 'value') and (request.method == 'POST') :
+		logger.error ('attempt to change mailaliases')
+		reqd = json.loads (request.body)
+		logger.error (str(reqd))
+		errors = []
+		ok = True 
+		if 'values' in reqd.keys() : 
+			values = reqd['values']
+			for v in values :
+				logger.error (v)
+				# find if v is already used by a different user
+				try :
+					user = models.MailAlias.objects.get(alias=v).user
+				except models.MailAlias.DoesNotExist as e :
+					# no problem, that's a new alias
+					errors.append (None)
+				else :
+					# mebbe this is not the same user...
+					logger.error (type(user.uidnumber))
+					logger.error (type(userid))
+					logger.error (str(user.uidnumber)+' '+str(userid))
+					if user.uidnumber != int(userid) :
+						errors.append('déja utilisé par '+str(user.login))
+						ok = False
+					else :
+						errors.append(None)
+			if ok :
+				logger.error ('all values are ok, proceeding to update the database')
+				# first, remove all aliases not in the new list
+				for a in u.UserAliases.all() :
+					logger.error (a.alias)
+					if a.alias not in values :
+						logger.error ('deleting entry')
+						a.delete()
+				# add values not there yet
+				for v in values :
+					try : 
+						alias = models.MailAlias.objects.get(alias=v)
+					except models.MailAlias.DoesNotExist as e :
+						# add a new entry
+						logger.error('alias '+v+' not found, adding to user '+u.login)
+						a = models.MailAlias()
+						a.alias = v
+						a.user = u
+						a.save()
+					else :
+						logger.error ('alias '+v+' already exists')
+				data['values'] = values
+				return data
+			data['values'] = values
+			data['errors'] = errors
+			return data
+		else :
+			pass
+		data['values'] = ('alias1', 'alias2', 'alias3',)
+		data['errors'] = (None, 'already used for \'user\'', None,)
+		return data
+	# !(value & POST)
+	logger.error (action)
+	# list all values for mailalias that are possible
+	al = u.UserAliases.all()
+	aliases = []
+	# add aliases from the al list to the list
+	for a in al :
+		if a.alias not in aliases :
+			aliases.append (a.alias)
+	# check if full name from user email is present, add to list
+	if u.mail is not None :
+		p = u.mail.find('@')
+		if p>=0 :
+			alias = u.mail[0:p]
+			if alias not in aliases :
+				# attempt to push in the mailaliases
+				a = models.MailAlias()
+				a.alias = alias
+				a.user = u
+				try :
+					a.save()
+				except IntegrityError as e :
+					# ok, forget it...
+					pass
+				else :
+					aliases.append (alias)
+		else :
+			logger.error ('ERROR: user_view_mail_alias_field : user mail record is badly formed for user '+u.login)
+	else:
+		logger.error ('ERROR: user_view_mail_alias_field : user '+u.login+' has no email assigned')
+	# check if user login is in aliases, add if not
+	if u.login not in aliases :
+		# attempt to add the login as a mail alias
+		a = models.MailAlias()
+		a.alias = u.login
+		a.user = u
+		try :
+			a.save()
+		except IntegrityError as e :
+			# there's already a mailalias entry for this...
+			pass
+		else :
+			aliases.append (u.login)
+	aliases.sort()
+	data['values'] = aliases
+	if action == 'options' :
+		err = []
+		while len(err) < len(aliases) :
+			err.append(None)
+		data['errors'] = err
+	logger.error (data)
 	return data
 
 #----

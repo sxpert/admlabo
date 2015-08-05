@@ -131,6 +131,7 @@ function df_set_value (field) {
 				case 'select': df_select_set_value (field, result); break;
 				case 'display': 
 				case 'text': df_text_set_value (field, result); break;
+				case 'multitext' : df_multitext_initialize (field, result); break;
 			}
 		});
 }
@@ -406,23 +407,28 @@ function df_multitext_initialize (field, data) {
 	for (var k in values) {
 		console.log (k);
 		var li = $('<li data-control="multitext-entry">');
-		var b = icon_button ('content/svg/design/ic_remove_24px', df_multitext_remove_option);
-		var input = $('<input type="text" data-control="multitext-input">');
-		input.val(values[k]);
-		li.append(b);
-		li.append(input);
-		if (errors && (errors[k]!=null)) {
-			console.log (errors[k]);
-			var error = $('<img src="'+icon_path('content/svg/design/ic_report_24px')+'" data-control="button"/>');
-			error.attr('title', errors[k]);
-			li.append (error);
-		}
+		if (errors) {
+			var b = icon_button ('content/svg/design/ic_remove_24px', df_multitext_remove_option);
+			var input = $('<input type="text" data-control="multitext-input">');
+			input.val(values[k]);
+			li.append(b);
+			li.append(input);
+			if (errors && (errors[k]!=null)) {
+				console.log (errors[k]);
+				var error = $('<img src="'+icon_path('content/svg/design/ic_report_24px')+'" data-control="button"/>');
+				error.attr('title', errors[k]);
+				li.append (error);
+			} 
+		} else 
+			li.text(values[k])
 		ul.append(li);
 	}
-	var li = $('<li data-control="multitext-append">');
-	var b = icon_button ('content/svg/design/ic_add_24px', df_multitext_add_option);
-	li.append(b);
-	ul.append(li);
+	if (errors) {
+		var li = $('<li data-control="multitext-append">');
+		var b = icon_button ('content/svg/design/ic_add_24px', df_multitext_add_option);
+		li.append(b);
+		ul.append(li);
+	}
 	field.append (ul);
 }
 
@@ -454,14 +460,13 @@ function df_multitext_remove_option (e) {
 function df_multitext_add_option (e) {
 	console.log ('multitext-add-option');
 	var mt = $(e.target).parents('[data-control=multitext-list]');
-	console.log (mt);
 	/* generate new entry */
 	var li = $('<li data-control="multitext-entry">');
 	var b = icon_button ('content/svg/design/ic_remove_24px', df_multitext_remove_option);
 	var input = $('<input type="text" data-control="multitext-input">');
 	li.append (b);
 	li.append (input);
-	li.insertAfter (mt.children('[data-control=multitext-entry]:last'));
+	li.insertBefore (mt.children('[data-control=multitext-append]'));
 }
 
 /*

@@ -41,6 +41,7 @@ class UserAdmin (admin.ModelAdmin) :
 
 
 admin.site.register(User, UserAdmin)
+admin.site.register(MailAlias)
 
 class GroupForm (forms.ModelForm) :
 	users = forms.ModelMultipleChoiceField (
