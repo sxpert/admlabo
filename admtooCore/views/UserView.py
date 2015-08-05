@@ -276,8 +276,17 @@ def user_view_secondary_teams_field (request, userid, action) :
 
 def user_view_mail_aliases_field (request, userid, action) :
 	data = {}
+	if action == 'value' :
+		if request.method == 'POST' :
+			logger.error ('attempt to change mailaliases')
+			reqd = json.loads (request.body)
+			logger.error (str(reqd))	
 	data['values'] = ('alias1', 'alias2', 'alias3',)
 	data['errors'] = (None, 'already used for \'user\'', None,)
+	# list all mail aliases for the user from the mailaliases table
+	
+	
+	
 	return data
 
 #----

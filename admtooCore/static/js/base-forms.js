@@ -396,7 +396,13 @@ function df_multitext_initialize (field, data) {
 	if ('errors' in data)
 		errors = data['errors'];
 	console.log (values);
-	var ul = $('<ul data-control="multitext-list">')
+	/* create or empty the existing container */
+	var ul = field.find('[data-control=multitext-list]');
+	if (ul.length==0)
+		ul = $('<ul data-control="multitext-list">');
+	else
+		ul.empty();
+	/* generate the entries */
 	for (var k in values) {
 		console.log (k);
 		var li = $('<li data-control="multitext-entry">');
