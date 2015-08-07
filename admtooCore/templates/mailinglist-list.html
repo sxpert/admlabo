@@ -1,0 +1,15 @@
+{% extends "ipag-base.html" %}
+{% block title %} - Groupes{% endblock %}
+{% block content %}
+<p><a href="{% url 'dashboard' %}">retour au dashboard</a></p>
+<h1>liste des mailinglist</h1>
+<p>{{ mailinglists|length }} mailing lists <button form="new-mailinglist">nouvelle mailing list</button></p>
+<table>
+  <tbody>
+{% for ml in mailinglists %}
+    <tr><td><a href="{% url 'mailinglist-view' ml.ml_id %}">{{ ml.name }}</a></td><td>{{ ml.description }}<tr>
+{% endfor %}
+  </tbody>
+</table>
+<form id="new-mailinglist" method="get" action="{% url 'mailinglist-new' %}"></form>
+{% endblock %}

@@ -17,6 +17,7 @@ from GroupList import *
 from GroupView import *
 
 # mailing lists
+from MailingListList import *
 from MailingListView import *
 
 from MachineView import *

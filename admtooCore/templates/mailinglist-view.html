@@ -1,0 +1,21 @@
+{% extends "ipag-base.html" %}
+{% load staticfiles %}
+{% block title %} - mailing list {{ group.name }}{% endblock %}
+{% block scripts %}<script src="{% static "js/base-forms.js" %}"></script>{% endblock %}
+{% block css %}<link rel="stylesheet" type="text/css" href="{% static "css/ipag.css" %}"/>{% endblock %}
+{% block content %}
+<p><a href="{% url 'mailinglist-list' %}">retour à la liste des mailing lists</a></p>
+<form action="." method="post">{% csrf_token %}
+<p>mailinglist view <button name="action" value="delete">Supprimer la mailing list</button></p>
+<table>
+<tbody>
+<tr><th>ID de liste</th><td>{{ ml.ml_id }}</td><tr>
+<tr><th>mailalias de liste</th><td data-field="name" data-type="text"></td></tr>
+<tr><th>Description</th><td data-field="description" data-type="text"></td></tr>
+<tr><th>liste parente</th><td data-field="parent" data-type="select"></td></tr>
+<tr><th>Groupe des membres</th><td data-field="group" data-type="select"></td></tr>
+<tr><th>Classe d'utilisateurs</th><td data-field="userclass" data-type="select"></td></tr>
+</tbody>
+</table>
+</form>
+{% endblock %}

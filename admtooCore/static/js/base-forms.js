@@ -294,6 +294,7 @@ function df_select_initialize (field, data) {
 	var noblank = data['noblank']; // no blank option
 	var opt = data['options'];
 	var sel = data['selected'];
+	
 	var topt = [];
 	for (var key in opt) topt.push([key, opt[key]]);
 	topt.sort(function(a, b) { return a[1] > b[1]; });
@@ -304,7 +305,8 @@ function df_select_initialize (field, data) {
 		var key = topt[opt][0];
 		var val = topt[opt][1];
 		s+='<option value="'+key+'"';
-		if (parseInt(key)==sel) s+=' selected';
+		//if (parseInt(key)==sel) s+=' selected';
+		if (key==sel) s+=' selected';
 		s+='>'+val+'</option>';
 	}
 	s+='</select>';
@@ -324,10 +326,13 @@ function df_select_set_value (field, data) {
 
 function df_select_get_value (field) {
 	var control = field.find('[data-control=select]');
-	var sel = parseInt($(control[0].selectedOptions[0]).val());
+//	var sel = parseInt($(control[0].selectedOptions[0]).val());
+	var sel = $(control[0].selectedOptions[0]).val();
+	console.log (sel)
+	if (sel.length==0)
+		sel = null;
 	var data;
-	if (sel !== null) data = { 'value': sel };
-	else data= {};
+	data = { 'value': sel };
 	return data;
 }
 
