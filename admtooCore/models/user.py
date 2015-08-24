@@ -268,7 +268,7 @@ class User (models.Model) :
 			today = datetime.date.today()
 			
 			delta = (today - self.departure).days
-			logger.error (self.login+" "+str(delta))
+			#Logger.error (self.login+" "+str(delta))
 			if (delta >= settings.USER_DEPARTURE_SOON) and (delta < 0) :
 				return "user-departure-soon"
 			elif (delta == 0) and (delta <= settings.USER_DEPARTURE_GONE) :
