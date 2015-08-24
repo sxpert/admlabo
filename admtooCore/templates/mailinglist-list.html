@@ -7,7 +7,7 @@
 <table>
   <tbody>
 {% for ml in mailinglists %}
-    <tr><td><a href="{% url 'mailinglist-view' ml.ml_id %}">{{ ml.name }}</a></td><td>{{ ml.description }}<tr>
+    <tr><td><a href="{% url 'mailinglist-view' ml.ml_id %}">{% if ml.name %}{{ ml.name }}{% else %}{{ ml.ml_id }}{% endif %}</a></td><td>{{ ml.description }}<tr>
 {% endfor %}
   </tbody>
 </table>

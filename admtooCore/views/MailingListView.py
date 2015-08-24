@@ -3,7 +3,7 @@
 import json
 from django.db import transaction, IntegrityError
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from .. import models
 from decorators import *
@@ -19,7 +19,20 @@ logger = logging.getLogger('django_auth_ldap')
 # list of all groups
 #
 @admin_login
+@transaction.atomic
 def mailinglist_view (request, ml_id) :
+	if request.method == 'POST' :
+		logger.error (request.POST)
+		action = None
+		if 'action' in request.POST :
+			action = request.POST['action']
+		logger.error (action)
+		if action == 'delete' :
+			# remove the mailing list in question
+			ml = models.MailingList.objects.get(ml_id = ml_id)
+			ml.delete ()
+			# return to the mailinglist list
+			return redirect ('mailinglist-list')
 	ml = models.MailingList.objects.get(ml_id=ml_id)
 	context = {
 		'ml' : ml
@@ -27,8 +40,39 @@ def mailinglist_view (request, ml_id) :
 	return render(request, 'mailinglist-view.html', context)
 
 @admin_login
+@transaction.atomic
 def mailinglist_new (request) :
-	context = {}
+	ml_id = None
+	error = None
+	if request.method == 'POST' :
+		# find the new ml_id
+		if 'ml_id' in request.POST :
+			ml_id = request.POST['ml_id']
+			if type(ml_id) is unicode :
+				pass
+			# maybe other types need handled ?
+			# try to create the new ml record
+			# step 1, check if this ml exists already
+			try :
+				ml = models.MailingList.objects.get(ml_id=ml_id)
+			except models.MailingList.DoesNotExist as e :
+				logger.error ('mailing list \''+ml_id+'\' does not exist, creating')
+				# step 2 : create new mailing list record
+				ml = models.MailingList()
+				ml.ml_id = ml_id
+				ml.save()
+				# step 3 : redirect to view mailinglist
+				return redirect ('mailinglist-view', ml_id=ml.ml_id)
+			else :
+				logger.error ('ERROR: ml \''+ml_id+'\' already exists')
+				error = 'La mailing list avec ce nom existe déja'
+	context = {
+		'action' : 'new',
+		'error'  : error,  
+		'ml'     : {
+			'ml_id' : ml_id
+		}
+	}
 	return render(request, 'mailinglist-view.html', context)
 
 #----

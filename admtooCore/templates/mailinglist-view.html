@@ -6,15 +6,17 @@
 {% block content %}
 <p><a href="{% url 'mailinglist-list' %}">retour à la liste des mailing lists</a></p>
 <form action="." method="post">{% csrf_token %}
-<p>mailinglist view <button name="action" value="delete">Supprimer la mailing list</button></p>
+{% if action != 'new' %}<p>mailinglist view <button name="action" value="delete">Supprimer la mailing list</button></p>{% endif %}
 <table>
 <tbody>
-<tr><th>ID de liste</th><td>{{ ml.ml_id }}</td><tr>
-<tr><th>mailalias de liste</th><td data-field="name" data-type="text"></td></tr>
+<tr><th>ID de liste</th><td>{% if error %}<span class="error">{{ error }}</span><br/>
+{% endif %}{% if action == 'new' %}<input type="text" name="ml_id" value="{{ ml.ml_id }}"/>{% else %}{{ ml.ml_id }}{% endif %}</td><tr>
+{% if action != 'new' %}<tr><th>mailalias de liste</th><td data-field="name" data-type="text"></td></tr>
 <tr><th>Description</th><td data-field="description" data-type="text"></td></tr>
 <tr><th>liste parente</th><td data-field="parent" data-type="select"></td></tr>
 <tr><th>Groupe des membres</th><td data-field="group" data-type="select"></td></tr>
-<tr><th>Classe d'utilisateurs</th><td data-field="userclass" data-type="select"></td></tr>
+<tr><th>Classe d'utilisateurs</th><td data-field="userclass" data-type="select"></td></tr>{% endif %}
+{% if action == 'new' %}<tr><th>&nbsp;</th><td><button name="action" value="add">Ajouter la mailing list</button></td></tr>{% endif %}
 </tbody>
 </table>
 </form>
