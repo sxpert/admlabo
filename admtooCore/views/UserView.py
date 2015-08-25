@@ -313,7 +313,7 @@ def user_view_mail_aliases_field (request, userid, action) :
 					logger.error (a.alias)
 					if a.alias not in values :
 						logger.error ('deleting entry')
-						a.delete()
+						a.delete(request_user=request.user)
 				# add values not there yet
 				for v in values :
 					try : 
@@ -324,7 +324,7 @@ def user_view_mail_aliases_field (request, userid, action) :
 						a = models.MailAlias()
 						a.alias = v
 						a.user = u
-						a.save()
+						a.save(request_user=request.user)
 					else :
 						logger.error ('alias '+v+' already exists')
 				data['values'] = values
@@ -357,7 +357,7 @@ def user_view_mail_aliases_field (request, userid, action) :
 				a.alias = alias
 				a.user = u
 				try :
-					a.save()
+					a.save(request_user=request.user)
 				except IntegrityError as e :
 					# ok, forget it...
 					pass
@@ -374,7 +374,7 @@ def user_view_mail_aliases_field (request, userid, action) :
 		a.alias = u.login
 		a.user = u
 		try :
-			a.save()
+			a.save(request_user=request.user)
 		except IntegrityError as e :
 			# there's already a mailalias entry for this...
 			pass

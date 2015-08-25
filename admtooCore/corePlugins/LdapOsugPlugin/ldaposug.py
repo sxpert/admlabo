@@ -437,6 +437,35 @@ class Core_LdapOsug (object) :
 			else :
 				self._log (str(arr))
 		
+	#----
+	# handle mailalias in ldap as alias objects
+
+	def _mailalias_update (self, user, alias) :
+		self._log ('_mailalias_update')
+		if type(user) is unicode :
+			user = user.encode('utf-8')
+		if type(alias) is unicode :
+			alias = alias.encode('utf-8')
+		# step 1: find if we have an existing alias
+		self._log ('step 1 : looking for alias \''+alias+'\'')
+		f='(&(objectClass=alias)(uid='+alias+'))'
+		ca = self._l.search_s(OSUG_LDAP_BASE, ldap.SCOPE_SUBTREE, f)
+		self._log (ca)
+		if len(ca) != 1 :
+			self._log ('alias not found, adding')
+			ml = {}
+			ml['objectClass'] = ['alias']
+			ml['uid'] = [alias]
+			ml['aliasedobjectname'] = [self._user_dn(user)]
+			self._log (ml)
+		else :
+			self._log ('alias present, checking if changes needs be made')
+			
+		self._log ('returning')
+		return False
+
+	def _mailaliasi_delete (self, user, alias) :
+		self._log ('deleting alias '+alias)
 
 	def _test (self) :
 		self._log ('error message from LdapOsug object')
@@ -569,6 +598,37 @@ class Core_LdapOsug (object) :
 			self._log ("USER GONE")
 			res = True
 		return res
+
+	#---- 
+	# MailAlias handling
+	#
+	
+	def UpdateMailAlias (self, *args, **kwargs) :
+		_, command = args
+		if 'logger' in kwargs.keys() :
+			logger = kwargs['logger']
+			if logger is not None :
+				self_log('setting logger to '+str(logger))
+				self._logger = logger
+		import json
+		c = json.loads (command.data)
+		ck = c.keys()
+		# we should have 2 things in here 
+		user = None
+		if 'user' in ck :
+			user = c['user']
+		else :
+			self._log ('FATAL: LdapOsug.UpdateMailAlias unable to find user value in command data')
+			return False
+		alias = None
+		if 'alias' in ck :
+			alias = c['alias']
+		else :
+			self._log ('FATAL: LdapOsug.UpdateMailAlias unable to find alias value in command data')
+			return False
+		res = self._mailalias_update (user, alias)
+		return res
+
 
 if __name__ == '__main__' :
 	print ("LDAP OSUG TEST")
