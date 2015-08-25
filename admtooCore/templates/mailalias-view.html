@@ -1,0 +1,20 @@
+{% extends "ipag-base.html" %}
+{% load staticfiles %}
+{% block title %} - mail alias {{ ma.alias }}{% endblock %}
+{% block scripts %}<script src="{% static "js/base-forms.js" %}"></script>{% endblock %}
+{% block css %}<link rel="stylesheet" type="text/css" href="{% static "css/ipag.css" %}"/>{% endblock %}
+{% block content %}
+<p><a href="{% url 'mailalias-list' %}">retour à la liste des alias de mail</a></p>
+<form action="." method="post">{% csrf_token %}
+{% if action != 'new' %}<p>mailalias view <button name="action" value="delete">Supprimer l'alias de mail</button></p>{% endif %}
+<table>
+<tbody>
+<tr><th>Alias</th><td>{% if error %}<span class="error">{{ error }}</span><br/>
+{% endif %}{% if action == 'new' %}<input type="text" name="alias" value="{{ ma.alias }}"/>{% else %}{{ ma.alias }}{% endif %}</td><tr>
+{% if action != 'new' %}<tr><th>Description</th><td data-field="description" data-type="text"></td></tr>
+<tr><th>Adresse mail</th><td data-field="mail" data-type="text"></td></tr>{% endif %}
+{% if action == 'new' %}<tr><th>&nbsp;</th><td><button name="action" value="add">Ajouter l'alias de mail</button></td></tr>{% endif %}
+</tbody>
+</table>
+</form>
+{% endblock %}

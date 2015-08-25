@@ -5,7 +5,7 @@ logger=logging.getLogger('django')
 
 class MailAlias (models.Model) :
 	alias = models.CharField (max_length=254, unique=True)
-	user  = models.ForeignKey ('User', null=True, blank=True, related_name='UserAliases')
+#	user  = models.ForeignKey ('User', null=True, blank=True, related_name='UserAliases')
 	description = models.CharField (max_length=254, null=True, blank=True)
 	mail = models.EmailField(max_length=254,null=True, blank=True)
 
@@ -18,8 +18,9 @@ class MailAlias (models.Model) :
 
 	def _ldap (self, verb, user=None) :
 		ma_data = {
-			'alias' : self.alias,
-			'email'  : self.user.mail
+			'alias'       : self.alias,
+			'description' : self.description,
+			'mail'        : self.mail
 		}
 		import command, json
 		c = command.Command ()

@@ -1,0 +1,15 @@
+{% extends "ipag-base.html" %}
+{% block title %} - Groupes{% endblock %}
+{% block content %}
+<p><a href="{% url 'dashboard' %}">retour au dashboard</a></p>
+<h1>liste des alias de mail</h1>
+<p>{{ mailaliases|length }} mailing lists <button form="new-mailalias">nouvel alias de mail</button></p>
+<table>
+  <tbody>
+{% for ma in mailaliases %}
+    <tr><td><a href="{% url 'mailalias-view' ma.alias %}">{{ ma.description }}<tr>
+{% endfor %}
+  </tbody>
+</table>
+<form id="new-mailalias" method="get" action="{% url 'mailalias-new' %}"></form>
+{% endblock %}

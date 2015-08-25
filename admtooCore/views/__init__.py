@@ -20,6 +20,10 @@ from GroupView import *
 from MailingListList import *
 from MailingListView import *
 
+# mail aliases
+from MailAliasList import *
+from MailAliasView import *
+
 from MachineView import *
 
 # API
