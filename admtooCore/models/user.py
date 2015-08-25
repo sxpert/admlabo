@@ -20,7 +20,7 @@ class User (models.Model) :
 	first_name	= models.CharField(max_length=128, null=True, blank=True)
 	last_name   = models.CharField(max_length=128, null=True, blank=True)
 	birthdate   = models.DateField(null=True, blank=True)
-	mail        = models.EmailField(null=True, blank=True)
+	mail        = models.EmailField(max_length=254,null=True, blank=True)
 	manager     = models.ForeignKey('self', null=True, blank=True)
 	userclass   = models.ForeignKey ('UserClass', null=True, blank=True)
 	arrival		= models.DateField(null=True, blank=True)
