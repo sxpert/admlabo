@@ -30,7 +30,7 @@ def mailalias_view (request, alias) :
 		if action == 'delete' :
 			# remove the mailing list in question
 			ma = models.MailAlias.objects.get(alias = alias)
-			ma.delete ()
+			ma.delete (request_user=request.user)
 			# return to the mailinglist list
 			return redirect ('mailalias-list')
 	ma = models.MailAlias.objects.get(alias=alias)
@@ -64,7 +64,7 @@ def mailalias_new (request) :
 				# step 2 : create new mailing list record
 				ma = models.MailAlias()
 				ma.alias = alias
-				ma.save()
+				ma.save(request_user=request.user)
 				# step 3 : redirect to view mailinglist
 				return redirect ('mailalias-view', alias=ma.alias)
 			else :
