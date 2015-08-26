@@ -30,7 +30,7 @@ def mailinglist_view (request, ml_id) :
 		if action == 'delete' :
 			# remove the mailing list in question
 			ml = models.MailingList.objects.get(ml_id = ml_id)
-			ml.delete ()
+			ml.delete (request_user=request.user)
 			# return to the mailinglist list
 			return redirect ('mailinglist-list')
 	ml = models.MailingList.objects.get(ml_id=ml_id)
@@ -60,7 +60,7 @@ def mailinglist_new (request) :
 				# step 2 : create new mailing list record
 				ml = models.MailingList()
 				ml.ml_id = ml_id
-				ml.save()
+				ml.save(request_user=request.user)
 				# step 3 : redirect to view mailinglist
 				return redirect ('mailinglist-view', ml_id=ml.ml_id)
 			else :
@@ -86,9 +86,9 @@ def mailinglist_view_name_field (request, ml_id, action) :
 		d = json.loads(request.body)
 		if 'value' in d.keys() :
 			value = d['value']
-			ml.name = value
-			#ml.save(request_user=request.user)
-			ml.save()
+			ml.rename (value, request_user=request.user)
+#			ml.name = value
+#			ml.save(request_user=request.user)
 	# in all cases, return the contents
 	if action in ('value', 'options',) :
 		data['value'] = ml.name
@@ -103,8 +103,7 @@ def mailinglist_view_description_field (request, ml_id, action) :
 		if 'value' in d.keys() :
 			value = d['value']
 			ml.description = value
-			#ml.save(request_user=request.user)
-			ml.save()
+			ml.save(request_user=request.user)
 	if action in ('value', 'options',) :
 		data['value'] = ml.description
 	return data
@@ -130,7 +129,7 @@ def mailinglist_view_parent_field (request, ml_id, action) :
 				if value is not None :
 					value = models.MailingList.objects.get(ml_id=value)
 				ml.parent = value
-				ml.save()
+				ml.save(request_user=request.user)
 		if ml.parent is not None :
 			data['value'] = ml.parent.name
 	return data
@@ -156,7 +155,7 @@ def mailinglist_view_group_field (request, ml_id, action) :
 		 		if value is not None :
 					value = models.Group.objects.get(gidnumber=value)
 				ml.group = value
-				ml.save()
+				ml.save(request_user=request.user)
 		if ml.group is not None :
 			data['value'] = ml.group.name
 	return data	
@@ -185,7 +184,7 @@ def mailinglist_view_userclass_field (request, ml_id, action) :
 				if value is not None :
 					value = models.UserClass.objects.get(pk = value)
 				ml.userclass = value
-				ml.save()
+				ml.save(request_user=request.user)
 		if ml.userclass is not None :
 			if ml.userclass.fr is not None :
 				data['value'] = ml.userclass.fr

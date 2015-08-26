@@ -470,11 +470,16 @@ class Core_LdapOsug (object) :
 			ml['objectClass'] = ['inetOrgPerson',]
 			ml['sn'] = mtype
 			ml['cn'] = [cn]
-			ml['description'] = [description]
+			if (description is not None) and (len(description)>0) :
+				ml['description'] = [description]
 			ml['mail'] = [mail]
 			self._log (ml)
 			ml = ldap.modlist.addModlist (ml)
-			res, arr = self._l.add_s (dn, ml)
+			try :
+				res, arr = self._l.add_s (dn, ml)
+			except Exception as e :
+				self._log (e)
+				return False
 			if res == 105 :
 				self._log ('mail successfully added')
 				return True
@@ -665,6 +670,8 @@ class Core_LdapOsug (object) :
 	# Mail objects handling (mail aliases and mailing lists are the same)
 	#
 	
+#	def _RenameMail (self, ou, *args, **kwargs) :
+
 	def _UpdateMail (self, ou, mail_type, *args, **kwargs) :
 		self._init_logger (**kwargs)
 		_, command = args
@@ -687,6 +694,8 @@ class Core_LdapOsug (object) :
 		mail = None
 		if 'mail' in ck :
 			mail = c['mail']
+			if '@' not in mail :
+				mail+= '@'+OSUG_LDAP_IPAG_MAILINGLIST_DOMAIN
 		else :
 			self._log ('FATAL: LdapOsug.UpdateMailAlias unable to find mail value in command data')
 			return False
@@ -716,6 +725,54 @@ class Core_LdapOsug (object) :
 
 	def DeleteMailAlias (self, *args, **kwargs) :
 		return self._DeleteMail (OSUG_LDAP_IPAG_MAILALIAS_OU, *args, **kwargs)
+
+	def RenameMailingList (self, *args, **kwargs) :
+		# special case, as we need to rename the entry
+		self._init_logger (**kwargs)
+		_, command = args
+		import json
+		c = json.loads (command.data)
+		ck = c.keys ()
+		if ('old_alias' not in ck) or ('new_alias' not in ck) :
+			self._log ('FATAL: LdapOsug.RenameMailingList both old_alias and new_alias are required to execute rename function')
+			return False
+
+		old_alias = c['old_alias']
+		new_alias = c['new_alias']
+		
+		# calculate the new mail entry
+		mail = new_alias+'@'+OSUG_LDAP_IPAG_MAILINGLIST_DOMAIN
+		if type(mail) is unicode :
+			mail = mail.encode('utf-8')
+
+		# rename entry
+		old_dn = self._mail_dn (OSUG_LDAP_IPAG_MAILINGLIST_OU, old_alias)
+		new_rdn = 'cn='+new_alias
+		self._log ('old_dn  '+old_dn)
+		self._log ('new_rdn '+new_rdn)
+		try :
+			res = self._l.rename_s (old_dn, new_rdn)
+		except ldap.NO_SUCH_OBJECT as e :
+			# unable to find the thing to rename...
+			# for now, all is fine
+			return True
+		if res[0] != 109 :
+			self._log (res)
+			return False
+		
+		# change mail value
+		ml = []
+		ml.append ((ldap.MOD_REPLACE, 'mail', [mail]))
+		new_dn = self._mail_dn (OSUG_LDAP_IPAG_MAILINGLIST_OU, new_alias)
+		res, arr = self._l.modify_s (new_dn, ml)
+		if res == 103 :
+			return True
+		self._log ('problems while attempting to modify')
+		self._log (str(arr))
+		return False
+		
+
+	#	return self._RenameMail (OSUG_LDAP_IPAG_MAILINGLIST_OU, *args, **kwargs)
 	
 	def UpdateMailingList (self, *args, **kwargs) :
 		return self._UpdateMail (OSUG_LDAP_IPAG_MAILINGLIST_OU, 'mailing list', *args, **kwargs)

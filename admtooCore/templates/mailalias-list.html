@@ -3,7 +3,7 @@
 {% block content %}
 <p><a href="{% url 'dashboard' %}">retour au dashboard</a></p>
 <h1>liste des alias de mail</h1>
-<p>{{ mailaliases|length }} mailing lists <button form="new-mailalias">nouvel alias de mail</button></p>
+<p>{{ mailaliases|length }} mail alias <button form="new-mailalias">nouvel alias de mail</button></p>
 <table>
   <tbody>
 {% for ma in mailaliases %}
