@@ -93,7 +93,10 @@ def mailalias_view_description_field (request, alias, action) :
 			ma.description = value
 			ma.save(request_user=request.user)
 	if action in ('value', 'options',) :
-		data['value'] = ma.description
+		if ma.description is None :
+			data['value'] = ''
+		else :
+			data['value'] = ma.description
 	return data
 
 @transaction.atomic
@@ -107,7 +110,10 @@ def mailalias_view_mail_field (request, alias, action) :
 			ma.mail = value
 			ma.save(request_user=request.user)
 	if action in ('value', 'options',) :
-		data['value'] = ma.mail
+		if ma.mail is None :
+			data['value'] = ''
+		else :	
+			data['value'] = ma.mail
 	return data
 
 #----

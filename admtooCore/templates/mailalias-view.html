@@ -10,7 +10,7 @@
 <table>
 <tbody>
 <tr><th>Alias</th><td>{% if error %}<span class="error">{{ error }}</span><br/>
-{% endif %}{% if action == 'new' %}<input type="text" name="alias" value="{{ ma.alias }}"/>{% else %}{{ ma.alias }}{% endif %}</td><tr>
+{% endif %}{% if action == 'new' %}<input type="text" name="alias" value="{% if ma.alias %}{{ ma.alias }}{% endif %}"/>{% else %}{{ ma.alias }}{% endif %}</td><tr>
 {% if action != 'new' %}<tr><th>Description</th><td data-field="description" data-type="text"></td></tr>
 <tr><th>Adresse mail</th><td data-field="mail" data-type="text"></td></tr>{% endif %}
 {% if action == 'new' %}<tr><th>&nbsp;</th><td><button name="action" value="add">Ajouter l'alias de mail</button></td></tr>{% endif %}

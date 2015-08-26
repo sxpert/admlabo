@@ -437,8 +437,14 @@ class Core_LdapOsug (object) :
 			else :
 				self._log (str(arr))
 		
-	#----
-	# handle mailalias in ldap as alias objects
+	#==============================================================================================
+	#
+	# Mail alias management
+
+	# create or update
+
+	def _mailalias_dn (self, alias) :
+		return 'cn='+alias+','+OSUG_LDAP_IPAG_MAILALIAS_BASE
 
 	def _mailalias_update (self, alias, description, mail) :
 		self._log ('_mailalias_update')
@@ -450,13 +456,12 @@ class Core_LdapOsug (object) :
 			mail = mail.encode('utf-8')
 		# step 1: find if we have an existing alias
 		self._log ('step 1 : looking for alias \''+alias+'\'')
-		mailalias_ou = OSUG_LDAP_IPAG_MAILALIAS_OU+','+OSUG_LDAP_IPAG_BASE
 		f='(&(objectClass=inetOrgPerson)(cn='+alias+'))'
-		ca = self._l.search_s(mailalias_ou, ldap.SCOPE_SUBTREE, f)
+		ca = self._l.search_s(OSUG_LDAP_IPAG_MAILALIAS_BASE, ldap.SCOPE_SUBTREE, f)
 		self._log (ca)
 		if len(ca) != 1 :
 			self._log ('alias not found, adding')
-			dn = 'cn='+alias+','+mailalias_ou
+			dn = self._mailalias_dn(alias)
 			ml = {}
 			ml['objectClass'] = ['inetOrgPerson',]
 			ml['sn'] = 'mail alias'
@@ -478,15 +483,26 @@ class Core_LdapOsug (object) :
 			self._log (ca)
 			ml = []
 			self._log ('alias present, checking if changes needs be made')
-			if ('description' in ca.keys()) and (ca['description']!=description) :
-				if description is not None:
-					ml.append ((ldap.MOD_REPLACE, 'description', [description]))
-				else :
-					ml.append ((ldap.MOD_DELETE, 'description', None))
-			if ('mail' in ca.keys()) and (ca['mail']!=mail) :
-				if mail is not None :
-					ml.append ((ldap.MOD_REPLACE, 'mail', [mail]))
-			
+			# description is optional
+			if 'description' in ca.keys() : 
+				if ca['description']!=description :
+					if description is not None:
+						ml.append ((ldap.MOD_REPLACE, 'description', [description]))
+					else :
+						ml.append ((ldap.MOD_DELETE, 'description', None))
+			else :
+				if description is not None :
+					ml.append ((ldap.MOD_ADD, 'description', [description]))
+			# mail is required
+			if 'mail' in ca.keys() :
+				if ca['mail']!=mail :
+					if mail is not None :
+						ml.append ((ldap.MOD_REPLACE, 'mail', [mail]))
+			else :
+				if mail is None :
+					mail = ''
+				ml.append ((ldap.MOD_ADD, 'mail', [mail]))
+
 			self._log (ml)
 			res, arr = self._l.modify_s (dn, ml)
 			if res == 103 :
@@ -495,15 +511,24 @@ class Core_LdapOsug (object) :
 			self._log ('problems while attempting to modify')
 			self._log (str(arr))
 			return False
-			
-		self._log ('returning')
-		return False
 
-	def _mailalias_delete (self, user, alias) :
+	# destroy
+
+	def _mailalias_delete (self, alias) :
 		self._log ('deleting alias '+alias)
-
-	def _test (self) :
-		self._log ('error message from LdapOsug object')
+		# only interested in the alias here, as we only need the dn
+		if type(alias) is unicode :
+			alias = alias.encode('utf-8')
+		dn = self._mailalias_dn (alias)
+		try :
+			res = self._l.delete_s (dn)
+		except ldap.NO_SUCH_OBJECT as e :
+			return True
+		if res[0] == 107 :
+			self._log ('mail alias deleted')
+			return True
+		self._log (res)
+		return False
 
 	#
 	# obtain expiration date
@@ -669,6 +694,27 @@ class Core_LdapOsug (object) :
 			return False
 			
 		res = self._mailalias_update (alias, description, mail)
+		return res
+
+	def DeleteMailAlias (self, *args, **kwargs) :
+		_, command = args
+		if 'logger' in kwargs.keys() :
+			logger = kwargs['logger']
+			if logger is not None :
+				self._log ('setting logger to '+str(logger))
+				self._logger = logger
+		import json
+		c = json.loads (command.data)
+		ck = c.keys()
+
+		alias = None
+		if 'alias' in ck :
+			alias = c['alias']
+		else :
+			self._log ('FATAL: LdapOsug.DeleteMailAlias unable to find alias value in command data')
+			return False
+		
+		res = self._mailalias_delete (alias)
 		return res
 
 
