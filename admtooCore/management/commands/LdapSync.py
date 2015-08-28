@@ -53,9 +53,21 @@ class LdapSync (object) :
 			else :
 				# user may have to be modified
 				expire = l._get_expire_date (lu)
+				update_expire = False
 				if expire is not None :
-					#print u.login, u.departure, expire
-					pass
+					if u.departure is not None : 
+						if expire > u.departure :
+							update_expire = True
+					else :
+						update_expire = True
+				if update_expire :
+					if u.departure is None :
+						m = u.login+" setting departure date to "+str(expire)
+					else :
+						m = u.login+" changing the departure date from "+str(u.departure)+" to "+str(expire)
+					print m
+					u.departure = expire
+					u.save()
 				
 
 			# check if we have already matched that user

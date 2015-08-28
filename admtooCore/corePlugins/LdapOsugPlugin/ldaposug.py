@@ -548,7 +548,8 @@ class Core_LdapOsug (object) :
 			# expire is number of days since epoch, in utc 
 			import datetime
 			expire_delta = datetime.timedelta(expire)
-			expire_date = datetime.date.fromtimestamp(0) + expire_delta
+			expire_delay = datetime.timedelta(OSUG_LDAP_IPAG_EXPIRE_DATE_DELAY)
+			expire_date = datetime.date.fromtimestamp(0) + expire_delta - expire_delay
 			return expire_date
 		return None
 	
