@@ -40,6 +40,13 @@ h5 {
 img {
 	width: 80em;
 }
+p.code {
+	font-family: DejaVu Sans Mono, monospace;
+	font-size: smaller;
+}
+span.response {
+	color: #06f;
+}
 </style>
 </head>
 <body>
@@ -69,6 +76,8 @@ Une version ultérieure est probablement utilisable tout autant, a condition de 
 <p>Les paquets nécessaires sont :</p>
 
 <ul>
+	<li>vim-nox</li>
+	<li>git</li>
 	<li>postgresql<br/>
 		la version de la distribution est 9.4, mais toute version ultérieure fait l'affaire<br/>
 		ce package installe tout ce qui est nécessaire</li>
@@ -79,12 +88,61 @@ Une version ultérieure est probablement utilisable tout autant, a condition de 
 	<li>python-django-auth-ldap</li>
 	<li>python-django-filters</li>
 	<li>python-django-guardian</li>
+<!--
 	<li>apache2 (la version 2.4.x offre des fonctionnalités intéressantes)</li>
 	<li>libapache2-mod-wsgi</li>
+-->
+	<li>nginx</li>
+	<li>uwsgi</li>
+	<li>uwsgi-plugin-python</li>
 	<li>ansible (la distribution vient avec une version 1.7.x qui est suffisante pour nos besoins)</li>
 </ul>
 
-			<h4>installation du systeme</h4>
+			<h4>installation de l'application</h4>
+
+<p>L'étape suivante consiste a récupérer la version actuelle de l'application</p>
+
+<p>Tout d'abord, générer une clé ssh</p>
+
+<p class="code"># ssh-keygen -t ed25519</p>
+
+<p>puis la mettre dans le authorized_keys du serveur de developpement (c'est le fichier <tt>/root/.ssh/id_ed25519.pub</tt>)</p>
+
+<p>ensuite, il faut récupérer le repository de l'application</p>
+
+<p class="code"># cd /srv/<br/>
+# git clone root@pxe:/srv/www/test.admipag prod.admipag<br/>
+<span class="response">Cloning into 'prod.admipag'...<br/>
+remote: Counting objects: 2123, done.<br/>
+remote: Compressing objects: 100% (2084/2084), done.<br/>
+remote: Total 2123 (delta 1379), reused 0 (delta 0)<br/>
+Receiving objects: 100% (2123/2123), 1.32 MiB | 0 bytes/s, done.<br/>
+Resolving deltas: 100% (1379/1379), done.<br/>
+Checking connectivity... done.</span><br/>
+# </p>
+
+<p>TODO: select the proper branch ?</p>
+		
+			<h4>Configuration de l'application</h4>
+
+<p> dans cette étape, il s'agit de mettre les bonnes variables dans les fichiers de configuration de l'application.</p>
+
+
+
+			<h4>configuration du serveur d'applications</h4>
+
+<p>Il s'agit ensuite de configurer le uwsgi pour lancer l'application</p>
+
+
+
+			<h4>configuration du serveur web</h4>
+<p>il faut ensuite configurer les serveurs</p>
+
+			<h4>nginx</h4>
+
+<p>La configuration se trouve dans <tt>/etc/nginx/sites-available/default</tt></p>
+
+
 
 
 		<h3>Système de plugins</h3>
