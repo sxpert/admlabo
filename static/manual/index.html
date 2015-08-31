@@ -43,6 +43,9 @@ img {
 p.code {
 	font-family: DejaVu Sans Mono, monospace;
 	font-size: smaller;
+	border: 1px solid #7fb2ff;
+	background-color: #bfd9ff;
+	padding: 3pt;
 }
 span.response {
 	color: #06f;
@@ -77,6 +80,7 @@ Une version ultérieure est probablement utilisable tout autant, a condition de 
 
 <ul>
 	<li>vim-nox</li>
+	<li>pwgen</li>
 	<li>git</li>
 	<li>postgresql<br/>
 		la version de la distribution est 9.4, mais toute version ultérieure fait l'affaire<br/>
@@ -97,6 +101,10 @@ Une version ultérieure est probablement utilisable tout autant, a condition de 
 	<li>uwsgi-plugin-python</li>
 	<li>ansible (la distribution vient avec une version 1.7.x qui est suffisante pour nos besoins)</li>
 </ul>
+
+<p>configurer vim pour avoir la colorisation de la syntaxe, dans le fichier <tt>/root/.vimrc</tt></p>
+
+<p class="code">syntax on</p>
 
 			<h4>installation de l'application</h4>
 
@@ -122,12 +130,57 @@ Checking connectivity... done.</span><br/>
 # </p>
 
 <p>TODO: select the proper branch ?</p>
+
+			<h4>Configuration de la base de données</h4>
+
+<p>Tout d'abord, il faut configurer le serveur de bases de données, avec un compte utilisateur pour l'application, et une base de données.</p>
+
+<p>Étape 1 : créer un login et un mot de passe avec pwgen<br/>
+NOTE: les valeurs ci dessous sont des exemples</p>
+
+<p class="code"><span class="response"># </span>pwgen -s 16 1</br>
+<span class="response">KlvwAg7OhtwLSm9q</span><br/>
+<span class="response"># </span>pwgen -s 32 -y 1<br/>
+<span class="response">xq}^_&amp;8W9[J+&amp;\9~T~Ne^1im@E5:kTni</span></p>
+
+<p>Étape 2: créer le compte, puis la base de données
+
+<p class="code"><span class="response"># </span>su postgres<br/>
+<span class="response">$ </span>psql<br/>
+<span class="response">psql (9.4.3)<br/>
+Type "help" for help.<br/>
+<br/>
+postgres=#</span> create user "KlvwAg7OhtwLSm9q" with encrypted password 'xq}^_&amp;8W9[J+&amp;\9~T~Ne^1im@E5:kTni';<br/>
+<span class="response">CREATE ROLE<br/>
+postgres=# </span> create database admipag_prod with owner "KlvwAg7OhtwLSm9q" encoding 'UTF-8';<br/>
+<span class="response">CREATE DATABASE<br/>
+postgres=# </span>\q<br/>
+<span class="response">$ </span></p>
 		
 			<h4>Configuration de l'application</h4>
 
 <p> dans cette étape, il s'agit de mettre les bonnes variables dans les fichiers de configuration de l'application.</p>
 
+<p class="code"># cd /srv/prod.admipag/admtooCore<br/>
+# cp settings.dist.py settings.py</p>
 
+<p> modifier ce fichier, en particulier les variables suivantes
+<ul>
+<li><tt>SECURITY_KEY</tt><br/>
+utiliser la commande <tt>pwgen -s 64 -y 1</tt></li>
+<li><tt>DEBUG = False</tt></li>
+<li><tt>TEMPLATE_DEBUG = False</tt></li>
+<li><tt>STORAGE_SERVER</tt><br/>
+mettre le nom du serveur gérant le stockage</li>
+<li><tt>BACKUPPC_SERVER</tt><br/>
+mettre le nom du serveur backuppc</li>
+<li><tt>BACKUPPC_USER</tt></li>
+<li><tt>BACKUPPC_GROUP</tt></li>
+<li><tt>GIDNUMBER_RANGES</tt></li>
+<li><tt>DATABASES</tt><br/>
+mettre la configuration nécessaire pour accéder a la base postgres configurée plus tot</li>
+</ul>
+</p>
 
 			<h4>configuration du serveur d'applications</h4>
 
