@@ -10,7 +10,7 @@ https://docs.djangoproject.com/en/1.7/howto/deployment/wsgi/
 import os
 import sys
 
-path = os.path.abspath (os.path.dirname(__file__))
+path = os.path.abspath (os.path.dirname(os.path.dirname(__file__)))
 
 print path
 
