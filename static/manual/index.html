@@ -262,6 +262,7 @@ postgres=# </span>\q<br/>
 utiliser la commande <tt>pwgen -s 64 -y 1</tt></li>
 <li><tt>DEBUG = False</tt></li>
 <li><tt>TEMPLATE_DEBUG = False</tt></li>
+<li><tt>ALLOWED_HOSTS = ['*']</tt></li>
 <li><tt>STORAGE_SERVER</tt><br/>
 mettre le nom du serveur gérant le stockage</li>
 <li><tt>BACKUPPC_SERVER</tt><br/>
@@ -280,7 +281,18 @@ mettre la configuration nécessaire pour accéder a la base postgres configurée
 
 <p>Il s'agit ensuite de configurer le uwsgi pour lancer l'application</p>
 
-
+<p class="code">
+[uwsgi]
+chdir = /srv/prod.admipag/
+pythonpath = /srv/prod.admipag/
+wsgi-file = admtooCore/wsgi.py
+processes = 10
+max-requests = 200
+chmod-socket = 666
+master = True
+vacuum = True
+socket = /tmp/prod.admipag.sock
+</p>
 
 			<h4>configuration du serveur web</h4>
 <p>il faut ensuite configurer les serveurs</p>
@@ -288,6 +300,8 @@ mettre la configuration nécessaire pour accéder a la base postgres configurée
 			<h4>nginx</h4>
 
 <p>La configuration se trouve dans <tt>/etc/nginx/sites-available/default</tt></p>
+
+
 
 
 
