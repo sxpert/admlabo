@@ -277,6 +277,27 @@ mettre la configuration nécessaire pour accéder a la base postgres configurée
 
 
 
+<p>initialiser la base de données</p>
+
+<p>initialiser les fichiers statiques</p>
+
+<p class="code">
+<span class="response">/srv/prod.admipag# </span>./manage.py collectstatic<br/>
+<span class="response"><br/>
+You have requested to collect static files at the destination<br/>
+location as specified in your settings:<br/>
+<br/>
+    /srv/prod.admipag/static_files<br/>
+<br/>
+This will overwrite existing files!<br/>
+Are you sure you want to do this?<br/>
+<br/>
+Type 'yes' to continue, or 'no' to cancel: </span>yes<br/>
+<span class="response">(...)<br/>
+144 static files copied to '/srv/prod.admipag/static_files'.<br/>
+root@test-install:/srv/prod.admipag# </span></p>
+
+
 			<h4>configuration du serveur d'applications</h4>
 
 <p>Il s'agit ensuite de configurer le uwsgi pour lancer l'application</p>
