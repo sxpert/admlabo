@@ -87,6 +87,7 @@ Une version ultérieure est probablement utilisable tout autant, a condition de 
 		ce package installe tout ce qui est nécessaire</li>
 	<li>python (2.7, la version fournie par le système est appropriée. la version 3 n'est pas encore compatible)<br/>
 		ce paquet est normalement déjà installé par la distribution</li>
+	<li>python-setuptools</li>
 	<li>python-psycopg2 (pour accéder a la base de données)</li>
 	<li>python-django (actuellement version 1.7.x)</li>
 	<li>python-django-auth-ldap</li>
@@ -105,6 +106,91 @@ Une version ultérieure est probablement utilisable tout autant, a condition de 
 <p>configurer vim pour avoir la colorisation de la syntaxe, dans le fichier <tt>/root/.vimrc</tt></p>
 
 <p class="code">syntax on</p>
+
+<p>installation du module netfields</p>
+
+<p class="code"><span class="response"># </span>cd /root<br/>
+<span class="response">~# </span>git config --global http.proxy http://www-cache.ujf-grenoble.fr:3128<br/>
+<span class="response">~# </span>git clone https://github.com/jimfunk/django-postgresql-netfields.git</br/>
+<span class="response">Cloning into 'django-postgresql-netfields'...<br/>
+remote: Counting objects: 580, done.<br/>
+remote: Total 580 (delta 0), reused 0 (delta 0), pack-reused 580<br/>
+Receiving objects: 100% (580/580), 103.23 KiB | 0 bytes/s, done.<br/>
+Resolving deltas: 100% (286/286), done.<br/>
+Checking connectivity... done.<br/>
+~# </span>cd django-postgresql-netfields/<br/>
+<span class="response">~/django-postgresql-netfields# </span>export https_proxy=http://www-cache.ujf-grenoble.fr:3128<br/> 
+<span class="response">~/django-postgresql-netfields# </span>python setup.py install<br/>
+<span class="response">running install<br/>
+running bdist_egg<br/>
+running egg_info<br/>
+writing requirements to django_netfields.egg-info/requires.txt<br/>
+writing django_netfields.egg-info/PKG-INFO<br/>
+writing top-level names to django_netfields.egg-info/top_level.txt<br/>
+writing dependency_links to django_netfields.egg-info/dependency_links.txt<br/>
+reading manifest file 'django_netfields.egg-info/SOURCES.txt'<br/>
+reading manifest template 'MANIFEST.in'<br/>
+writing manifest file 'django_netfields.egg-info/SOURCES.txt'<br/>
+installing library code to build/bdist.linux-x86_64/egg<br/>
+running install_lib<br/>
+running build_py<br/>
+creating build/bdist.linux-x86_64/egg<br/>
+creating build/bdist.linux-x86_64/egg/netfields<br/>
+copying build/lib.linux-x86_64-2.7/netfields/tests.py -> build/bdist.linux-x86_64/egg/netfields<br/>
+copying build/lib.linux-x86_64-2.7/netfields/managers.py -> build/bdist.linux-x86_64/egg/netfields<br/>
+copying build/lib.linux-x86_64-2.7/netfields/fields.py -> build/bdist.linux-x86_64/egg/netfields<br/>
+copying build/lib.linux-x86_64-2.7/netfields/apps.py -> build/bdist.linux-x86_64/egg/netfields<br/>
+copying build/lib.linux-x86_64-2.7/netfields/__init__.py -> build/bdist.linux-x86_64/egg/netfields<br/>
+copying build/lib.linux-x86_64-2.7/netfields/lookups.py -> build/bdist.linux-x86_64/egg/netfields<br/>
+copying build/lib.linux-x86_64-2.7/netfields/models.py -> build/bdist.linux-x86_64/egg/netfields<br/>
+copying build/lib.linux-x86_64-2.7/netfields/mac.py -> build/bdist.linux-x86_64/egg/netfields<br/>
+copying build/lib.linux-x86_64-2.7/netfields/validators.py -> build/bdist.linux-x86_64/egg/netfields<br/>
+copying build/lib.linux-x86_64-2.7/netfields/forms.py -> build/bdist.linux-x86_64/egg/netfields<br/>
+byte-compiling build/bdist.linux-x86_64/egg/netfields/tests.py to tests.pyc<br/>
+byte-compiling build/bdist.linux-x86_64/egg/netfields/managers.py to managers.pyc<br/>
+byte-compiling build/bdist.linux-x86_64/egg/netfields/fields.py to fields.pyc<br/>
+byte-compiling build/bdist.linux-x86_64/egg/netfields/apps.py to apps.pyc<br/>
+byte-compiling build/bdist.linux-x86_64/egg/netfields/__init__.py to __init__.pyc<br/>
+byte-compiling build/bdist.linux-x86_64/egg/netfields/lookups.py to lookups.pyc<br/>
+byte-compiling build/bdist.linux-x86_64/egg/netfields/models.py to models.pyc<br/>
+byte-compiling build/bdist.linux-x86_64/egg/netfields/mac.py to mac.pyc<br/>
+byte-compiling build/bdist.linux-x86_64/egg/netfields/validators.py to validators.pyc<br/>
+byte-compiling build/bdist.linux-x86_64/egg/netfields/forms.py to forms.pyc<br/>
+creating build/bdist.linux-x86_64/egg/EGG-INFO<br/>
+copying django_netfields.egg-info/PKG-INFO -> build/bdist.linux-x86_64/egg/EGG-INFO<br/>
+copying django_netfields.egg-info/SOURCES.txt -> build/bdist.linux-x86_64/egg/EGG-INFO<br/>
+copying django_netfields.egg-info/dependency_links.txt -> build/bdist.linux-x86_64/egg/EGG-INFO<br/>
+copying django_netfields.egg-info/not-zip-safe -> build/bdist.linux-x86_64/egg/EGG-INFO<br/>
+copying django_netfields.egg-info/requires.txt -> build/bdist.linux-x86_64/egg/EGG-INFO<br/>
+copying django_netfields.egg-info/top_level.txt -> build/bdist.linux-x86_64/egg/EGG-INFO<br/>
+creating 'dist/django_netfields-0.3.1-py2.7.egg' and adding 'build/bdist.linux-x86_64/egg' to it<br/>
+removing 'build/bdist.linux-x86_64/egg' (and everything under it)<br/>
+Processing django_netfields-0.3.1-py2.7.egg<br/>
+removing '/usr/local/lib/python2.7/dist-packages/django_netfields-0.3.1-py2.7.egg' (and everything under it)<br/>
+creating /usr/local/lib/python2.7/dist-packages/django_netfields-0.3.1-py2.7.egg<br/>
+Extracting django_netfields-0.3.1-py2.7.egg to /usr/local/lib/python2.7/dist-packages<br/>
+django-netfields 0.3.1 is already the active version in easy-install.pth<br/>
+<br/>
+Installed /usr/local/lib/python2.7/dist-packages/django_netfields-0.3.1-py2.7.egg<br/>
+Processing dependencies for django-netfields==0.3.1<br/>
+Searching for netaddr<br/>
+Reading https://pypi.python.org/simple/netaddr/<br/>
+Best match: netaddr 0.7.17<br/>
+Downloading https://pypi.python.org/packages/any/n/netaddr/netaddr-0.7.17-py2.7.egg#md5=c51b242ab15fb9c8815272888412f997<br/>
+Processing netaddr-0.7.17-py2.7.egg<br/>
+creating /usr/local/lib/python2.7/dist-packages/netaddr-0.7.17-py2.7.egg<br/>
+Extracting netaddr-0.7.17-py2.7.egg to /usr/local/lib/python2.7/dist-packages<br/>
+Adding netaddr 0.7.17 to easy-install.pth file<br/>
+Installing netaddr script to /usr/local/bin<br/>
+<br/>
+Installed /usr/local/lib/python2.7/dist-packages/netaddr-0.7.17-py2.7.egg<br/>
+Searching for Django==1.7.7<br/>
+Best match: Django 1.7.7<br/>
+Adding Django 1.7.7 to easy-install.pth file<br/>
+Installing django-admin script to /usr/local/bin<br/>
+Using /usr/lib/python2.7/dist-packages<br/>
+Finished processing dependencies for django-netfields==0.3.1<br/>
+root@test-install:~/django-postgresql-netfields# </span></p>
 
 			<h4>installation de l'application</h4>
 
@@ -186,6 +272,8 @@ mettre le nom du serveur backuppc</li>
 mettre la configuration nécessaire pour accéder a la base postgres configurée plus tot</li>
 </ul>
 </p>
+
+
 
 			<h4>configuration du serveur d'applications</h4>
 
