@@ -139,15 +139,17 @@ Using /usr/lib/python2.7/dist-packages<br/>
 Finished processing dependencies for django-netfields==0.3.1<br/>
 ~# </span></p>
 
-			<h4>installation de l'application</h4>
+			<h4>génération d'une clé ssh</h4>
 
-<p>L'étape suivante consiste a récupérer la version actuelle de l'application</p>
+<p>NOTE: si on est sur une machine autre que la machine PXE, il sera nécessaire de distribuer la clé ssh comme authorized_key sur les machines a administrer, utilisateur ansible.</p>
 
 <p>Tout d'abord, générer une clé ssh</p>
 
 <p class="code"># ssh-keygen -t ed25519</p>
 
 <p>puis la mettre dans le authorized_keys du serveur de developpement (c'est le fichier <tt>/root/.ssh/id_ed25519.pub</tt>)</p>
+
+			<h4>récupération des sources de l'application</h4>
 
 <p>ensuite, il faut récupérer le repository de l'application</p>
 
@@ -235,7 +237,7 @@ mettre la configuration nécessaire pour accéder a la base postgres configurée
 </ul>
 Il est possible que la modification d'autres variables présentes soit nécessaire</p>
 
-
+<p>configuration du plugin twiki</p>
 
 			<h4>initialiser la base de données</h4>
 
@@ -309,6 +311,26 @@ server {<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;}<br/>
 }</p>
 
+			<h4>configuration de l'outil ansible</h4>
+
+<p>la configuration de l'outil Ansible nécessite la modification de deux fichiers</p>
+
+<p>Tout d'abord <tt>/etc/ansible/ansible.conf</tt> dans lequel la seule variable a modifier est <tt>remote_user = ansible</tt></p>
+
+<p>ensuite <tt>/etc/ansible/hosts</tt> dans lequel on doit faire figurer les noms des machines auxquelles l'outil doit avoir accès, en particulier 
+<ul>
+<li>Le serveur de stockage (dans notre cas, horus)</li>
+<li>Le serveur de sauvegardes (midgard)</li>
+<li>le serveur twiki (ipag)</li>
+</ul>
+</p>
+
+			<h4>configuration du crontab</h4>
+
+<p>dans <tt>/etc/crontab</tt> ajouter les lignes suivantes</p>
+
+<p class="code">0&nbsp;&nbsp;&nbsp;*/2&nbsp;&nbsp;*&nbsp;*&nbsp;*&nbsp;&nbsp;&nbsp;root&nbsp;&nbsp;&nbsp;&nbsp;/srv/www/test.admipag/manage.py LdapSync<br/>
+*/5&nbsp;*&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;*&nbsp;*&nbsp;&nbsp;&nbsp;root&nbsp;&nbsp;&nbsp;&nbsp;/srv/www/test.admipag/manage.py LaunchUpdates >/dev/null</p>
 
 
 
