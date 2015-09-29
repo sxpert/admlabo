@@ -104,7 +104,7 @@ Une version ultérieure est probablement utilisable tout autant, a condition de 
 	<li>ansible (la distribution vient avec une version 1.7.x qui est suffisante pour nos besoins)</li>
 </ul>
 
-<p>configurer vim pour avoir la colorisation de la syntaxe, dans le fichier <tt>/root/.vimrc</tt></p>
+<p>configurer vim pour avoir la coloration syntaxique, dans le fichier <tt>/root/.vimrc</tt></p>
 
 <p class="code">syntax on</p>
 
@@ -141,7 +141,9 @@ Finished processing dependencies for django-netfields==0.3.1<br/>
 
 			<h4>génération d'une clé ssh</h4>
 
-<p>NOTE: si on est sur une machine autre que la machine PXE, il sera nécessaire de distribuer la clé ssh comme authorized_key sur les machines a administrer, utilisateur ansible.</p>
+<p>NOTE: <br/>
+La machine de développement initiale est pxe.obs.ujf-grenoble.fr.<br/>
+si vous cherchez a installer l'application sur une autre machine, il sera nécessaire de distribuer la clé ssh comme authorized_key sur les machines a administrer, utilisateur ansible.</p>
 
 <p>Tout d'abord, générer une clé ssh</p>
 
@@ -324,6 +326,17 @@ server {<br/>
 <li>le serveur twiki (ipag)</li>
 </ul>
 </p>
+
+<p class="code">
+[storage-manager]
+horus           ansible_ssh_user=laogtool
+[serveur-backuppc]
+midgard
+[serveurs-web]
+ipag            ansible_ssh_user=laogtool
+</p>
+
+<p>Si vous installez sur une autre machine que la machine de développement initial, il vous faudra injecter la clé id_ed25519.pub dans le authorized_keys des trois machines correspondantes, pour l'utilisateur adhoc pour chaque machine (l'utilisateur par défaut étant "ansible")</p>
 
 			<h4>configuration du crontab</h4>
 

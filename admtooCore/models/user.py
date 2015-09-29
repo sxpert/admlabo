@@ -13,24 +13,39 @@ def userclass_default () :
 	return UserClass.objects.get(probie=True).pk
 
 class User (models.Model) :
-	uidnumber   = models.IntegerField(unique=True, default=None)
-	group       = models.ForeignKey('Group', null=True, blank=True)
-	login       = models.CharField(max_length=64, unique=True, db_index=True)
-	login_shell = models.CharField(max_length=128, null=True, blank=True)
-	first_name	= models.CharField(max_length=128, null=True, blank=True)
-	last_name   = models.CharField(max_length=128, null=True, blank=True)
-	birthdate   = models.DateField(null=True, blank=True)
-	mail        = models.EmailField(max_length=254,null=True, blank=True)
-	manager     = models.ForeignKey('self', null=True, blank=True)
-	userclass   = models.ForeignKey ('UserClass', null=True, blank=True)
-	arrival		= models.DateField(null=True, blank=True)
-	departure	= models.DateField(null=True, blank=True)
-	groups		= models.ManyToManyField(Group, blank=True, related_name='users')
-	main_team   = models.ForeignKey ('Group', null=True, blank=True, related_name='team_member')
-	room		= models.CharField(max_length=32, null=True, blank=True)
-	telephone   = models.CharField(max_length=32, null=True, blank=True)
-	flags       = models.ManyToManyField('UserFlag', blank=True)
-	# state management
+	# unix related things
+	uidnumber    = models.IntegerField(unique=True, default=None)
+	group        = models.ForeignKey('Group', null=True, blank=True)
+	login        = models.CharField(max_length=64, unique=True, db_index=True)
+	login_shell  = models.CharField(max_length=128, null=True, blank=True)
+
+	# actual user info
+	first_name	 = models.CharField(max_length=128, null=True, blank=True)
+	last_name    = models.CharField(max_length=128, null=True, blank=True)
+	birthdate    = models.DateField(null=True, blank=True)
+
+	# user photo
+	photo_path      = models.CharField(max_length=256, null=True, blank=True)
+	photo_is_public = models.BooleanField(default = False)
+
+	# organisational info
+	mail         = models.EmailField(max_length=254,null=True, blank=True)
+	manager      = models.ForeignKey('self', null=True, blank=True)
+	userclass    = models.ForeignKey ('UserClass', null=True, blank=True)
+	arrival		 = models.DateField(null=True, blank=True)
+	departure	 = models.DateField(null=True, blank=True)
+
+	# teams and groups this user is in
+	groups		 = models.ManyToManyField(Group, blank=True, related_name='users')
+	main_team    = models.ForeignKey ('Group', null=True, blank=True, related_name='team_member')
+
+	# user localisation
+	room		 = models.CharField(max_length=32, null=True, blank=True)
+	telephone    = models.CharField(max_length=32, null=True, blank=True)
+
+	flags        = models.ManyToManyField('UserFlag', blank=True)
+
+	# user state management
 	NORMAL_USER    = 0
 	NEWIMPORT_USER = 1
 	DELETED_USER   = 2
@@ -40,8 +55,10 @@ class User (models.Model) :
 		( NEWIMPORT_USER, 'utilisateur nouvellement importé'),
 		( DELETED_USER,   'utilisateur supprimé'),
 	)
-	user_state	= models.IntegerField(choices = USER_STATE_CHOICES, default=NORMAL_USER)
-	appspecname = models.TextField(default='') 
+	user_state	 = models.IntegerField(choices = USER_STATE_CHOICES, default=NORMAL_USER)
+
+	# accounts in other applications
+	appspecname  = models.TextField(default='') 
 
 
 
