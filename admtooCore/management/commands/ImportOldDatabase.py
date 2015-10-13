@@ -7,28 +7,33 @@ from admtooLib import ldaplaog as l, xmldb as x
 class Command(BaseCommand) :
 	group_map = [
 		# team groups
-		('ipagsite',            'ipag-pos-site'),
+		('ipagsite',            'ipag-pos-tous'),
+		('ipag-pos',			'ipag-pos'),
 		('perm',                'ipag-pos-permanent'),
-		('admin',               'ipag-pos-administratif'),
-		('chercheur',           'ipag-pos-chercheur'), 
-		('ingetech',            'ipag-pos-groupetechnique'),
-		('thesard',             'ipag-pos-doctorant'),
-		('invites',             'ipag-pos-invite'),
-		('postdoc',             'ipag-pos-postdoctorant'),
-		('stage',               'ipag-pos-stagiaire'),
-		('master2',             'ipag-pos-etudiant'),
-		('astromol',            'ipag-pos-astromol'),
-		('cristal',             'ipag-pos-cristal'),
-		('planeto',             'ipag-pos-planeto'),
-		('sherpas',             'ipag-pos-sherpas'),
-		('chercheuraffilie',    'ipag-pos-affilie'),
+
+		('admin',               'ipag-equ-administratif'),
+		('ingetech',            'ipag-equ-technique'),
+		('astromol',            'ipag-equ-interstellaire'),
+		('cristal',             'ipag-equ-cristal'),
+		('planeto',             'ipag-equ-planeto'),
+		('sherpas',             'ipag-equ-sherpas'),
+		('exoplanetes',         'ipag-equ-exoplanetes'),
+		('odyssey',             'ipag-equ-odyssey'),
+
+		('ipag-sta-it',			'ipag-sta-it'),
+		('chercheur',           'ipag-sta-chercheur'), 
+		('thesard',             'ipag-sta-doctorant'),
+		('invites',             'ipag-sta-invite'),
+		('postdoc',             'ipag-sta-postdoctorant'),
+		('stage',               'ipag-sta-stagiaire'),
+		('master2',             'ipag-sta-etudiant'),
+		('chercheuraffilie',    'ipag-sta-affilie'),
 	
 		('aero',                'ipag-pos-aero'),
 		('amber',               'ipag-pos-amber'),
 		('consert',             'ipag-pos-consert'),
 		('direction',           'ipag-pos-direction'),
 		('electronique',        'ipag-pos-electronique'),
-		('exoplanetes',         'ipag-pos-exoplanetes'),
 		('extra',               'ipag-pos-extra'),	
 		('fost',                'ipag-pos-fost'),
 		('gravity',             'ipag-pos-gravity'),
@@ -37,7 +42,6 @@ class Command(BaseCommand) :
 		('marsis',              'ipag-pos-marsis'),
 		('neat',                'ipag-pos-neat'),
 		('nitrogen',			'ipag-pos-nitrogen'),
-		('odyssey',             'ipag-pos-odyssey'),
 		('pionier',             'ipag-pos-pionier'),
 		('radar',               'ipag-pos-radar'),
 		('safir',               'ipag-pos-safir'),
@@ -50,23 +54,24 @@ class Command(BaseCommand) :
 
 		# machine related groups
 		('dmz98',               'ipag-ssh-dmz98'),
-		('extra-blue',          'ipag-ssh-extra-blue'),
+		('extra-blue',          'ipag-ssh-extrablue'),
 		('guepard',             'ipag-ssh-guepard'),
 		('maui',                'ipag-ssh-maui'),
 		('picsou',              'ipag-ssh-picsou'),
 
 		# web site related groups
-		('web-anr-chaos',       'ipag-web-anr-chaos'),
+		('web-anr-chaos',       'ipag-web-anrchaos'),
 		('web-asa',             'ipag-web-asa'),	
 		('web-benchmarks',      'ipag-web-benchmarks'),
-		('web-chemical-cosmos', 'ipag-web-chemical-cosmos'),
+		('web-chemical-cosmos', 'ipag-web-chemicalcosmos'),
 		('web-desc',            'ipag-web-desc'),
 		('web-exochemistry',    'ipag-web-exochemistry'),
 		('web-focus',           'ipag-web-focus'),
 		('web-hydrides',        'ipag-web-hydrides'),
 		('web-nika2',           'ipag-web-nika2'),
 		('web-rt13',            'ipag-web-rt13'),
-		('web-stflorent',       'ipag-web-stflorent')
+		('web-stflorent',       'ipag-web-stflorent'),
+		('ipag-web-sphere',		'ipag-web-sphere'),
 	]
 
 	help = 'Synchronizes the database from the LDAP server and the XML database'
