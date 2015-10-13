@@ -628,7 +628,7 @@ class Core_LdapOsug (object) :
 		else :
 			oldcn, oldgidnumber = g
 			if (cn is not None) and (oldcn != cn) :
-				self.group_rename (oldcn, cn)
+				self._group_rename (oldcn, cn)
 			return self._group_update (cn, gidNumber, description, memberUid)
 	
 	def UpdateUser (self, *args, **kwargs) :
