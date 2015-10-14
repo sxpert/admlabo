@@ -290,12 +290,16 @@ class Core_LdapOsug (object) :
 		if cn is not None :
 			if len(cn)>0 :
 				dn = self._group_dn (cn)
-				self._log ('deleteing group '+dn)
+				self._log ('deleting group '+dn)
 				try :
 					self._l.delete_s (dn)
 				except ldap.NO_SUCH_OBJECT as e :
 					self._log ('object does not exist in ldap directory')
 				# either case, the object is gone from the directory, so all is well
+				return True
+			else :
+				# this is probably a new group that was not finished
+				# it was never committed to the ldap, skip the command
 				return True
 		self._log ('ERROR : LdapOsug _group_delete: group cn None ou longueur nulle')
 		return False
@@ -329,14 +333,20 @@ class Core_LdapOsug (object) :
 		if description is not None :
 			if type(description) is unicode :
 				description = description.encode('utf8')
-		if ('description' in g.keys()) and (g['description']!=description) :
-			d = 'None'
-			if description is not None:
-				d = '\''+description+'\''
-				ml.append ((ldap.MOD_REPLACE, 'description', [description]))
-			else :
-				ml.append ((ldap.MOD_DELETE, 'description', None))
-	
+		# modify description
+		if 'description' in g.keys() :
+			# if the description in the ldap entry is different than the new description
+			if g['description']!=description :
+				if (description is not None) and (len(description)>0):
+					ml.append ((ldap.MOD_REPLACE, 'description', [description]))
+				else :
+					ml.append ((ldap.MOD_DELETE, 'description', None))
+		# there is no description in the ldap entry yet, add it if the description is new
+		else :
+			if (description is not None) and (len(description)>0) :
+				self._log('adding new description \''+description+'\'')
+				ml.append ((ldap.MOD_ADD, 'description', [description]))	
+
 		# member lists
 		if members is not None :
 			if type(members) is not list :
