@@ -55,12 +55,21 @@ class Command (models.Model) :
 	def subject(self) :
 		import json
 		d = json.loads(self.data)
+		# user
 		if self.verb=='UpdateUser':
 			return d['uid']
+		# groups
 		elif self.verb=='UpdateGroup':
 			return d['cn']
 		elif self.verb=='DestroyGroup':
-			return d['cn']
+			if (d['cn'] is not None) and (len(d['cn'])>0) :
+				return d['cn']
+			else :
+				return str(d['gidNumber'])
+		# mail alias
+		elif self.verb=='UpdateMailAlias':
+			return d['alias']
+		# user dirs
 		elif self.verb=='CreateUserDir' :
 			return d['basedir']+'/'+d['uid']
 		elif self.verb=='UpdateTWikiGroup' :
