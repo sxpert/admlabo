@@ -38,7 +38,8 @@ class MailAlias (models.Model) :
 			user = kwargs['request_user']
 			del kwargs['request_user']
 		super (MailAlias, self).save(*args, **kwargs)
-		self._ldap ('UpdateMailAlias', user)
+		if self.mail is not None :
+			self._ldap ('UpdateMailAlias', user)
 
 	def delete (self, *args, **kwargs) :
 		user = None
