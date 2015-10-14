@@ -2,11 +2,18 @@
 {% load staticfiles %}
 {% block title %} - mailing list {{ group.name }}{% endblock %}
 {% block scripts %}<script src="{% static "js/base-forms.js" %}"></script>{% endblock %}
-{% block css %}<link rel="stylesheet" type="text/css" href="{% static "css/ipag.css" %}"/>{% endblock %}
+{% block css %}<style type="text/css">
+#header {
+    height: 3em;
+}
+#delete {
+    float: right;
+}
+</style>{% endblock %}
 {% block content %}
 <p><a href="{% url 'mailinglist-list' %}">retour à la liste des mailing lists</a></p>
 <form action="." method="post">{% csrf_token %}
-{% if action != 'new' %}<p>mailinglist view <button name="action" value="delete">Supprimer la mailing list</button></p>{% endif %}
+{% if action != 'new' %}<div id="header">mailinglist view <button id="delete" name="action" value="delete">Supprimer la mailing list</button></div>{% endif %}
 <table>
 <tbody>
 <tr><th>ID de liste</th><td>{% if error %}<span class="error">{{ error }}</span><br/>
