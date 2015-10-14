@@ -51,6 +51,7 @@ class LdapSync (object) :
 				added_users+=1
 				u.save ()
 			else :
+				modified = False
 				# user may have to be modified
 				expire = l._get_expire_date (lu)
 				update_expire = False
@@ -67,6 +68,9 @@ class LdapSync (object) :
 						m = u.login+" changing the departure date from "+str(u.departure)+" to "+str(expire)
 					print m
 					u.departure = expire
+					modified = True
+				# the user was modified, save it
+				if modified : 
 					u.save()
 				
 
