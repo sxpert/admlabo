@@ -80,7 +80,7 @@ def group_view_members_field (request, group_id, action) :
 			mem.append (u.uidnumber)
 		data['selected'] = mem
 		opt = {}
-		for u in models.User.objects.all () :
+		for u in models.User.objects.exclude (user_state=models.User.DELETED_USER) :
 			opt[u.uidnumber] = u.full_name()
 		data['options'] = opt
 	if action=='value' :
