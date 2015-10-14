@@ -139,6 +139,8 @@ def user_view_group_field (request, userid, action) :
 			n = g.name
 			if g.is_team_group() :
 				n = '[T] '+n
+			if g.is_status_group():
+				n = '[S] '+n
 			gdata['value'] = n
 			
 			groups.append(gdata)

@@ -11,11 +11,13 @@ class Group (models.Model) :
 	NORMAL_GROUP = 0
 	TEAM_GROUP = 1
 	SERVICE_GROUP = 2
+	STATUS_GROUP = 3
 
 	GROUP_TYPES_CHOICES = (
 		( NORMAL_GROUP,  ''),
 		( TEAM_GROUP,    'Groupe d\'équipe'),
 		( SERVICE_GROUP, 'Groupe de service'),
+		( STATUS_GROUP,  'Groupe de statut'),
 	)
 
 	gidnumber   = models.IntegerField(primary_key=True)
@@ -193,3 +195,6 @@ class Group (models.Model) :
 	
 	def is_service_group (self) :
 		return self.group_type == self.SERVICE_GROUP
+
+	def is_status_group (self) :
+		return self.group_type == self.STATUS_GROUP
