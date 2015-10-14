@@ -7,7 +7,11 @@
 <table>
   <tbody>
 {% for group in groups %}
-    <tr><td><a href="{% url 'group-view' group.gidnumber %}">{{ group.identifier }}</a></td><td>{{ group.description }}<tr>
+    <tr>
+		<td>{{ group.group_type_prefix }}</td>
+		<td><a href="{% url 'group-view' group.gidnumber %}">{{ group.identifier }}</a></td>
+		<td>{{ group.description }}</td>
+	</tr>
 {% endfor %}
   </tbody>
 </table>

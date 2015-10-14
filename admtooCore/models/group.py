@@ -19,6 +19,7 @@ class Group (models.Model) :
 		( SERVICE_GROUP, 'Groupe de service'),
 		( STATUS_GROUP,  'Groupe de statut'),
 	)
+	GROUP_TYPES_PREFIXES = ['','[T]','','[S]']
 
 	gidnumber   = models.IntegerField(primary_key=True)
 	name        = models.CharField(max_length=64, unique=True) 
@@ -189,7 +190,13 @@ class Group (models.Model) :
 	
 	def get_children (self) :
 		return Group.objects.filter(parent=self)	
-					
+				
+	def group_type_name (self) :
+		return self.GROUP_TYPES_CHOICES[self.group_type][1]
+	
+	def group_type_prefix (self) :
+		return self.GROUP_TYPES_PREFIXES[self.group_type]
+	
 	def is_team_group (self) :
 		return self.group_type == self.TEAM_GROUP
 	
