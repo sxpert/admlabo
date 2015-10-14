@@ -2,11 +2,18 @@
 {% load staticfiles %}
 {% block title %} - groupe {{ group.name }}{% endblock %}
 {% block scripts %}<script src="{% static "js/base-forms.js" %}"></script>{% endblock %}
-{% block css %}<link rel="stylesheet" type="text/css" href="{% static "css/ipag.css" %}"/>{% endblock %}
+{% block css %}<style type="text/css">
+#header {
+	height: 3em;
+}
+#delete {
+	float: right;
+}
+</style>{% endblock %}
 {% block content %}
 <p><a href="{% url 'groups' %}">retour à la liste des groupes</a></p>
 <form action="." method="post">{% csrf_token %}
-<p>group view <button name="action" value="delete">Supprimer le groupe</button></p>
+<div id="header">group view <button id="delete" name="action" value="delete">Supprimer le groupe</button></div>
 <table>
 <tbody>
 <tr><th>Nom de groupe</th><td data-field="name" data-type="text"></td><tr>
