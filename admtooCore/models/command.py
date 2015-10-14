@@ -59,6 +59,8 @@ class Command (models.Model) :
 			return d['uid']
 		elif self.verb=='UpdateGroup':
 			return d['cn']
+		elif self.verb=='DestroyGroup':
+			return d['cn']
 		elif self.verb=='CreateUserDir' :
 			return d['basedir']+'/'+d['uid']
 		elif self.verb=='UpdateTWikiGroup' :
