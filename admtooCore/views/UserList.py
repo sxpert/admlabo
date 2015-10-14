@@ -10,7 +10,7 @@ from decorators import *
 
 @admin_login
 def users (request) :
-	users = models.User.objects.all().order_by('last_name')
+	users = models.User.objects.exclude(user_state=models.User.DELETED_USER).order_by('last_name')
 	context = {
 		'users': users,
 	}
