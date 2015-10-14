@@ -222,7 +222,7 @@ def user_view_user_state_field (request, userid, action) :
 				user_state = data['value']
 				u.user_state = user_state
 				u.save(request_user=request.user)
-		data['value'] = models.User.USER_STATE_CHOICES[u.user_state][1]
+		data['value'] = models.User.USER_STATE_CHOICES[int(u.user_state)][1]
 	return data
 
 #----
