@@ -21,7 +21,7 @@ logger = logging.getLogger('django_auth_ldap')
 #
 @admin_login
 def groups (request) :
-	groups = models.Group.objects.all()
+	groups = models.Group.objects.all().order_by('name')
 	context = {
 		'groups': groups,
 	}
