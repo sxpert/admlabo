@@ -1,4 +1,10 @@
-./manage.py dumpdata AdminTool admtooCore.Country > admtooCore/fixtures/Country.json
-./manage.py dumpdata AdminTool admtooCore.Office > admtooCore/fixtures/Office.json
-./manage.py dumpdata AdminTool admtooCore.EmailAlert > admtooCore/fixtures/EmailAlert.json
-./manage.py dumpdata AdminTool admtooCore.UserClass > admtooCore/fixtures/UserClass.json
+#!/bin/bash
+APP=admtooCore
+TABLES=( Country Office EmailAlert EmailAlertMessage UserClass )
+
+for table in "${TABLES[@]}"
+do 
+	echo dumping table ${table}
+	./manage.py dumpdata ${APP}.${table} > ${APP}/fixtures/${table}.json
+done
+
