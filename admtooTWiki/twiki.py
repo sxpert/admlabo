@@ -149,7 +149,7 @@ class TWiki (object) :
 			if asn is not None :
 				if 'twiki' in asn.keys() :
 					twiki_name = asn['twiki']
-					if twiki_nane is not None :
+					if twiki_name is not None :
 						c = command.Command ()
 						c.user = cmd.user
 						c.verb = 'UpdateTWikiGroup'
