@@ -11,12 +11,12 @@ th {
 body tr:nth-child(2n) {
 	background-color: #ebebeb;
 } 
-tr.user-departure-soon {
+.user-departure-soon {
 	background-color: #ebebb0 !important;
 }
-tr.user-departure-purgatory {
+.user-departure-purgatory {
 	background-color: #ebc7b0 !important;
 }
-tr.user-departure-gone {
+.user-departure-gone {
 	background-color: #ebb0b0 !important;
 }

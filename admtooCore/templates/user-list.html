@@ -1,7 +1,24 @@
 {% extends "ipag-base.html" %}
 {% load staticfiles %}
 {% block title %} - Dashboard{% endblock %}
-{% block css %}<link rel="stylesheet" type="text/css" href="{% static "css/user-list.css" %}"/>{% endblock %}
+{% block css %}<link rel="stylesheet" type="text/css" href="{% static "css/user-list.css" %}"/>
+<style type="text/css">
+#legende {
+	position: fixed;
+	top: 3em;
+	right: 0;
+	width: 15%;
+	height: 3.8em;
+	padding: 3pt;
+	border: 1px solid #ccc;
+}
+.swatch {
+	display: inline-block;
+	width: 1em;
+	height: 1em;
+	border: 1px solid black;
+}
+</style>{% endblock %}
 {% block content %}
 <p><a href="{% url 'dashboard' %}">retour au dashboard</a></p>
 <p>user index</p>
@@ -31,4 +48,9 @@
 {% endfor %}
   </tbody>
 </table>
+<div id="legende">
+<div><div class="swatch user-departure-soon">&nbsp;</div> Utilisateurs bientôt partis</div>
+<div><div class="swatch user-departure-purgatory">&nbsp;</div> Utilisateurs en surcis</div>
+<div><div class="swatch user-departure-gone">&nbsp;</div> Utilisateurs partis</div>
+</div>
 {% endblock %}
