@@ -1,6 +1,6 @@
 #!/bin/bash
 APP=admtooCore
-TABLES=( Country Office EmailAlert EmailAlertMessage UserClass )
+TABLES=( Country Office EmailAlert EmailAlertMessage UserClass UserDir )
 
 for table in "${TABLES[@]}"
 do 
