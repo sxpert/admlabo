@@ -289,7 +289,7 @@ class User (models.Model) :
 			#Logger.error (self.login+" "+str(delta))
 			if (delta >= settings.USER_DEPARTURE_SOON) and (delta < 0) :
 				return "user-departure-soon"
-			elif (delta == 0) and (delta <= settings.USER_DEPARTURE_GONE) :
+			elif (delta >= 0) and (delta <= settings.USER_DEPARTURE_GONE) :
 				return "user-departure-purgatory"
 			elif (delta > settings.USER_DEPARTURE_GONE) :
 				return "user-departure-gone"
