@@ -107,8 +107,9 @@ class User (models.Model) :
 		if self.manager is not None :
 			u['manager'] = self.manager.login
 		u['loginShell'] = self.login_shell
-		u['roomNumber'] = self.room
-		u['telephoneNumber'] = self.telephone		
+		# should only be modified through biper
+		#u['roomNumber'] = self.room
+		#u['telephoneNumber'] = self.telephone		
 
 		import command, json
 		c = command.Command ()

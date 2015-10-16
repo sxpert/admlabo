@@ -15,8 +15,10 @@ class LdapSync (object) :
 		l = plugins.Core_LdapOsug
 		users = l.GetUsers()
 		added_users = 0
+		modified_users = 0
 		deleted_users = 0
 		# add new users not yet in the database
+		# in some cases, users exist with no valid uidnumber, those are skipped
 		for uidnumber in users.keys() :
 			lu = users[uidnumber]
 			create = False
@@ -48,11 +50,22 @@ class LdapSync (object) :
 				u.last_name = lu['sn']
 				if 'mail' in lu :
 					u.mail = lu['mail']
+				
 				added_users+=1
 				u.save ()
 			else :
 				modified = False
 				# user may have to be modified
+
+				# mail
+				if 'mail' in lu :
+					ldap_mail = lu['mail'].lower()
+					if u.mail != ldap_mail :				
+						print "mail in ldap '"+str(ldap_mail)+" is different from mail in database "+str(u.mail)
+						u.mail = ldap_mail
+						modified = True
+
+				# expiration date
 				expire = l._get_expire_date (lu)
 				update_expire = False
 				if expire is not None :
@@ -69,8 +82,26 @@ class LdapSync (object) :
 					print m
 					u.departure = expire
 					modified = True
+				
+				# room
+				if 'roomNumber' in lu :
+					ldap_room = lu['roomNumber']
+					if u.room != ldap_room :
+						print "room in ldap "+str(ldap_room)+" is different from room in database "+str(u.room)
+						u.room = ldap_room
+						modified = True
+		
+				#telephone
+				if 'telephoneNumber' in lu :
+					ldap_phone = lu['telephoneNumber']
+					if u.telephone != ldap_phone :
+						print "telephone in ldap "+str(ldap_phone)+" is different from telephone in database "+str(u.telephone)
+						u.telephone = ldap_phone
+						modified = True
+
 				# the user was modified, save it
 				if modified : 
+					modified_users+=1
 					u.save()
 				
 
@@ -99,6 +130,7 @@ class LdapSync (object) :
 					deleted_users+=1
 		# stats
 		print 'ADD '+str(added_users)+' users'
+		print 'MOD '+str(modified_users)+' users'
 		print 'DEL '+str(deleted_users)+' users'
 #
 # base django command line tool object.

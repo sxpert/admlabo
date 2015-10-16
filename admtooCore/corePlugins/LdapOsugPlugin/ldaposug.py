@@ -133,6 +133,8 @@ class Core_LdapOsug (object) :
 			if len(d) == 0 :
 				d = None
 			if d is not None :
+				# keeping this here as it will have no action but
+				# roomNumber is to be modified only through biper
 				if k in ('gecos','roomNumber'):
 					d = self._to_ia5(d)
 				else :
@@ -667,6 +669,7 @@ class Core_LdapOsug (object) :
 #		if 'manager' in ck :
 #			d['manager'] = l.user_dn(c['manager'])
 		# room and telephone
+		# should only be modified through biper
 #		if 'roomNumber' in ck :
 #			d['roomNumber'] = c['roomNumber']
 

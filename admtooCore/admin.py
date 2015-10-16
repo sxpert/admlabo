@@ -24,7 +24,8 @@ class UserAdmin (admin.ModelAdmin) :
 			   'login', 'login_shell', 'first_name', 'last_name', 'room', 'telephone', 'mail', 'manager', 
 			   'userclass', 'arrival', 'departure', 'groups', 'flags', 'appspecname')
 	list_display = ('last_name', 'first_name', 'mail_link', 'login', 'uidnumber', 'manager_name', 'user_state') 
-	readonly_fields = ('uidnumber', 'login', 'first_name', 'last_name', 'mail')
+	# room and telephone are to be modified via biper only
+	readonly_fields = ('uidnumber', 'login', 'first_name', 'last_name', 'mail', 'room', 'telephone')
 	filter_horizontal = ('groups', 'flags')
 
 	def manager_name (self, obj) :
