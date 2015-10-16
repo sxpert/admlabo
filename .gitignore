@@ -5,3 +5,4 @@ old/*
 **/config/*
 !**/config/__init__.py
 !**/config/*.dist.py
+static_files/*
