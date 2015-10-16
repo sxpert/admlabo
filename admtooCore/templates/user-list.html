@@ -32,6 +32,7 @@
       <th>Adresse Mail</th>
       <th>Login</th>
       <th>Date de départ</th>
+      <th>Date de suspension</th>
       <th>Équipe principale</th>
     </tr>
   </thead>
@@ -43,14 +44,15 @@
 		<td>{{ user.mail }}</td>
 		<td><a href="{% url 'user-view' user.uidnumber %}">{{ user.login }}</a></td>
 		<td>{{ user.departure|date:"c" }}</td>
+		<td>{{ user.suspend_date|date:"c" }}</td>
         <td>{{ user.main_team.description }}</td>
 	</tr>
 {% endfor %}
   </tbody>
 </table>
 <div id="legende">
-<div><div class="swatch user-departure-soon">&nbsp;</div> Utilisateurs bientôt partis</div>
-<div><div class="swatch user-departure-purgatory">&nbsp;</div> Utilisateurs en surcis</div>
-<div><div class="swatch user-departure-gone">&nbsp;</div> Utilisateurs partis</div>
+<div><div class="swatch user-departure-soon">&nbsp;</div> 30 jours avant le départ</div>
+<div><div class="swatch user-departure-purgatory">&nbsp;</div> Prolongé</div>
+<div><div class="swatch user-departure-gone">&nbsp;</div> Suspendu</div>
 </div>
 {% endblock %}

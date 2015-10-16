@@ -295,6 +295,13 @@ class User (models.Model) :
 				return "user-departure-gone"
 		return ""
 
+	def suspend_date (self) :
+		if self.departure is not None :
+			from django.conf import settings
+			import datetime
+			return self.departure + datetime.timedelta(settings.USER_DEPARTURE_GONE)
+		return ""
+
 
 	#==========================================================================
 	# User declaration related methods
