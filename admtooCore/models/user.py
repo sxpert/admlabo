@@ -58,7 +58,7 @@ class User (models.Model) :
 	user_state	 = models.IntegerField(choices = USER_STATE_CHOICES, default=NORMAL_USER)
 
 	# accounts in other applications
-	appspecname  = models.TextField(default='') 
+	appspecname  = models.TextField(default='', blank=True) 
 
 
 
