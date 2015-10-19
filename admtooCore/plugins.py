@@ -83,7 +83,7 @@ class Plugins (object) :
 							m.append (a)
 				
 					members = m
-					print pluginclass+" filtered members :\n"+str(members)
+					#print pluginclass+" filtered members :\n"+str(members)
 					# 
 					if name in members :
 						plugins.append (p)
