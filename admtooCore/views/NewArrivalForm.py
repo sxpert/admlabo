@@ -176,8 +176,35 @@ def NewArrivalForm (request) :
 		newuser['departure'] = departure
 
 		#======================================================================
-		#
+		# building access
+	
+		obs_a = request.POST.get('obs_a', '').strip()
+		if len(obs_a) > 0 and obs_a == 'on' :
+			obs_a = True
+		else :
+			obs_a = False
+		newuser['obs_a'] = obs_a
+
+		phy_d = request.POST.get('phy_d', '').strip()
+		if len(phy_d) > 0 and phy_d == 'on' :
+			phy_d = True
+		else :
+			phy_d = False
+		newuser['phy_d'] = phy_d
+	
+		osug_d = request.POST.get('osug_d', '').strip()
+		if len(osug_d) > 0 and osug_d == 'on' :
+			osug_d = True
+		else :
+			osug_d = False
+		newuser['osug_d'] = osug_d
 		
+		if not ( obs_a or phy_d or osug_d) :
+			errors['access'] = 'Au moins une des 3 options doit être sélectionnée'
+
+		#======================================================================
+		#
+	
 		#
 		comp_account = request.POST.get('comp_account', '').strip()
 		# should be "0" or "1"
@@ -272,6 +299,10 @@ def NewArrivalForm (request) :
 			#
 			nu.arrival =        arrival
 			nu.departure =      departure
+			#
+			nu.obs_a =          obs_a
+			nu.phy_d =          phy_d
+			nu.osug_d =         osug_d
 			#
 			nu.comp_account =   analyze_radio(comp_account)
 			nu.os_type =        os_type

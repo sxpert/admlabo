@@ -111,6 +111,15 @@
 </tbody></table>
 
 <h2>Les moyens techniques</h2>
+
+<table><tbody>
+{% if errors.access %}<tr><td colspan="2" class="form-error">{{ errors.access }}</td></tr>{% endif %}
+<tr><th>Accès aux batiments&nbsp;<span class="must-have">●</span></th>
+	<td><input type="checkbox" name="obs_a"{% if newuser.obs_a %} checked{%endif%}/>Batiment A (observatoire)<br/>
+		<input type="checkbox" name="phy_d"{% if newuser.phy_d %} checked{%endif%}/>Phytem D<br/>
+		<input type="checkbox" name="osug_d"{% if newuser.osug_d %} checked{%endif%}/>OSUG D</td></tr>
+</tbody></table>
+
 <h3>Informatique</h3>
 <div class="warning">
 <ul><li>Une station de travail fixe ne sera installée que dans un <strong>bureau définitif</strong></li>

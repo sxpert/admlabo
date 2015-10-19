@@ -42,6 +42,7 @@ class NewUser (models.Model) :
 	# manager
 	manager = models.ForeignKey ('User', null=True, blank=True, related_name='Manager')
 	user = models.ForeignKey ('User', null=True, blank=True, related_name='User')
+
 	# basic information
 	last_name = models.CharField(max_length=128, null=True, blank=True)
 	first_name = models.CharField(max_length=128, null=True, blank=True)
@@ -54,20 +55,30 @@ class NewUser (models.Model) :
 	team = models.ForeignKey('Group', null=True, blank=True)
 	office = models.ForeignKey('Office', null=True, blank=True)
 	other_office = models.CharField(max_length=128, null=True, blank=True)
+
 	# dates
 	arrival = models.DateField (default=arrival_default)
 	departure = models.DateField (null=True, blank=True)
+
+	# building access
+	obs_a = models.BooleanField (default=False)
+	phy_d = models.BooleanField (default=False)
+	osug_d = models.BooleanField (default=False)
+	
 	# computers
 	comp_account = models.BooleanField (default=True)
 	os_type = models.IntegerField(choices = NEWUSER_OS_CHOICES, default=OS_LINUX)
 	specific_os = models.CharField (max_length=128, null=True, blank=True)
 	comp_purchase = models.BooleanField (default=False)
-	# access
+
+	# access	
 	ir_lab = models.BooleanField(default=False)
 	workshop = models.BooleanField(default=False)
 	chem_lab = models.BooleanField(default=False)
+
 	# 
 	risky_activity = models.BooleanField(default=False)
+
 	#
 	comments = models.TextField (null=True, blank=True)
 
