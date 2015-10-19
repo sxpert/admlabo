@@ -3,4 +3,5 @@
 import corePlugins
 
 admtooPlugins=[corePlugins.Core_LdapOsug,
-			   corePlugins.Core_Storage]
+			   corePlugins.Core_Storage,
+			   corePlugins.Send_Mail]

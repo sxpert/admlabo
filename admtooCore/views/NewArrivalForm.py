@@ -301,7 +301,8 @@ def NewArrivalForm (request) :
 			nu.save ()
 
 			# call send mail controller
-			nu.send_arrival_mail ()	
+			nu.send_arrival_mail (request_user=request.user)	
+		
 			return redirect ('dashboard')		
 
 	#

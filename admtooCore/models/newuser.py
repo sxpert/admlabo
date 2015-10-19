@@ -81,12 +81,73 @@ class NewUser (models.Model) :
 	def os_type_choice(self) :
 		return self.NEWUSER_OS_CHOICES[self.os_type][1]
 
-	def send_arrival_mail (self) :
+	def serialize (self) :
+		data = {}
+
+		manager = {}
+		manager['last_name'] = self.manager.last_name
+		manager['first_name'] = self.manager.first_name
+		manager['full_name'] = self.manager.full_name()
+		manager['mail'] = self.manager.mail
+		data['manager'] = manager
+		
+		data['last_name'] = self.last_name
+		data['first_name'] = self.first_name
+		data['birthdate'] = self.birthdate
+		data['external_email'] = self.external_email
+		data['citizenship'] = { 'citizenship': self.citizenship.citizenship }
+		
+		status = {}
+		status['fr'] = self.status.fr
+		status['probie'] = self.status.probie
+		data['status'] = status
+
+		data['study_level'] = self.study_level
+		data['ujf_student'] = self.ujf_student
+		data['team'] = { 'name': self.team.name }
+		data['office'] = str(self.office)
+		data['other_office'] = self.other_office
+		
+		data['arrival'] = self.arrival
+		data['departure'] = self.departure
+
+		data['comp_account'] = self.comp_account
+		data['os_type'] = self.os_type
+		data['os_type_choice'] = self.os_type_choice()
+		data['specific_os'] = self.specific_os
+		data['comp_purchase'] = self.comp_purchase		
+
+		data['ir_lab'] = self.ir_lab
+		data['workshop'] = self.workshop
+		data['chem_lab'] = self.chem_lab
+	
+		data['risky_activity'] = self.risky_activity
+
+		data['comments'] = self.comments
+
+		return data
+	
+	def send_arrival_mail (self, request_user=None) :
 		from ..controllers import SendMail
 		maildata = {}	
 		nu = NewUser.objects.get (pk=self.pk)
-		maildata['newuser'] = nu
+		maildata['newuser'] = self.serialize()
 		causes = ['NewArrival']
 		if not self.citizenship.eu_member :
 			causes.append ('NewArrivalNotEUMember')
-		SendMail.sendMail (causes, maildata)
+		# call sendmail controller
+		#SendMail.sendMail (causes, maildata)
+		
+		# post sendmail command
+		import command, json
+		c = command.Command ()
+		if request_user is None :
+			c.user = "(Unknown)"
+		else :
+			c.user = str(request_user)
+		data = { 'mailconditions': causes, 'maildata': maildata }
+		c.verb = 'SendMail'
+		c.data = json.dumps (data)
+		c.save ()
+
+
