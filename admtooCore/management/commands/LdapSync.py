@@ -74,6 +74,12 @@ class LdapSync (object) :
 							update_expire = True
 					else :
 						update_expire = True
+				# if expire is none the dude is now a permanent fixture ?
+				else :
+					if u.departure is not None :
+						u.departure = None
+						update_expire = True
+
 				if update_expire :
 					if u.departure is None :
 						m = u.login+" setting departure date to "+str(expire)
