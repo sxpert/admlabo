@@ -64,6 +64,11 @@ class LdapSync (object) :
 						print "mail in ldap '"+str(ldap_mail)+" is different from mail in database "+str(u.mail)
 						u.mail = ldap_mail
 						modified = True
+				else :
+					# no mail in ldap
+					if u.mail is not None :
+						u.mail = None
+						modified = True
 
 				# expiration date
 				expire = l._get_expire_date (lu)
@@ -96,13 +101,21 @@ class LdapSync (object) :
 						print "room in ldap "+str(ldap_room)+" is different from room in database "+str(u.room)
 						u.room = ldap_room
 						modified = True
-		
+				else :
+					if u.room is not None:	
+						u.room = None
+						modified = True
+
 				#telephone
 				if 'telephoneNumber' in lu :
 					ldap_phone = lu['telephoneNumber']
 					if u.telephone != ldap_phone :
 						print "telephone in ldap "+str(ldap_phone)+" is different from telephone in database "+str(u.telephone)
 						u.telephone = ldap_phone
+						modified = True
+				else :
+					if u.telephone is not None :
+						u.telephone = None
 						modified = True
 
 				# the user was modified, save it
@@ -125,6 +138,8 @@ class LdapSync (object) :
 					# apply automatic matching to the new user 
 					nu.user = u
 					nu.save()
+					# send mail indicating the user has been matched
+					
 		#
 		# remove users that can't be found...
 		for u in User.objects.all() :
