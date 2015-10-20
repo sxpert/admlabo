@@ -58,7 +58,13 @@ class UpdateLauncher (object) :
 				self.log ('FATAL: unable to lock rows, exiting')
 				self.log (str(e))
 				return
-			self.log ("found "+str(len(commands))+" to execute")
+			try :
+				nb_commands = len(commands)
+			except Exception as e :
+				self.log ('FATAL: error while getting the number of commands to be run')
+				self.log (str(e))
+				return
+			self.log ("found "+str(nb_commands)+" to execute")
 			for c in commands :
 				try :					
 					func = getattr (plugins, c.verb) 
