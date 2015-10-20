@@ -78,6 +78,25 @@ class Group (models.Model) :
 	# 
 	# removes a group
 	#
+	def delete (self, user=None) :
+		import json
+		from user import User
+		from usergrouphistory import UserGroupHistory
+		creator = None
+		if user is not None :
+			creator = User.objects.get(login=user)
+		# add UserGroupHistory entries for all members
+		data = json.dumps ({self.gidnumber: self.name})
+		for u in self.members() :
+			ugh = UserGroupHistory()
+			ugh.creator = creator
+			ugh.user = u
+			ugh.action = ugh.ACTION_DEL
+			ugh.data = data
+			ugh.save ()
+		# call super.delete	
+		super (Group, self).delete()
+
 	def destroy (self, user=None) :
 		# get members list
 		g = self.prepare_group_data()
@@ -94,7 +113,7 @@ class Group (models.Model) :
 		c.save ()
 		# remove group from database
 		# TODO: keep in history table ?
-		self.delete()
+		self.delete(user)
 	
 
 	#
