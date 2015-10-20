@@ -96,7 +96,7 @@ def user_view_mailinglist_field (request, userid, action) :
 		mls = []
 		for ml in u.all_mailinglists() :
 			mdata = {}
-			mdata['url'] = reverse ('mailinglist_view', args=(ml.ml_id,)) 
+			mdata['url'] = reverse ('mailinglist-view', args=(ml.ml_id,)) 
 			mdata['value'] = ml.name
 			mls.append(mdata)
 		data['values'] = mls

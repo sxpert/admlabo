@@ -57,6 +57,10 @@ class LdapSync (object) :
 				modified = False
 				# user may have to be modified
 
+				# is user back in play ?
+				#if u.user_state == User.DELETED_USER :
+				#	u.user_state = User.NORMAL_USER
+
 				# mail
 				if 'mail' in lu :
 					ldap_mail = lu['mail'].lower()
@@ -139,6 +143,7 @@ class LdapSync (object) :
 					nu.user = u
 					nu.save()
 					# send mail indicating the user has been matched
+					
 					
 		#
 		# remove users that can't be found...

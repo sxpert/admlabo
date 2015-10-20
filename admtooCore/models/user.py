@@ -132,6 +132,11 @@ class User (models.Model) :
 		super (User, self).save(*args, **kwargs)
 		if self.user_state != self.DELETED_USER:
 			self._update_ldap(user)
+		else : 
+			# remove user from all groups it belongs to
+			# put those groups in the history table
+			#self.changegroups([],user)
+			pass
 
 	def full_name (self) :
 		n = []
@@ -233,19 +238,43 @@ class User (models.Model) :
 	# la grouplist est un array de gidnumbers
 	def change_groups (self, grouplist, user=None) :
 		changed = False
+		add_groups = {}
+		del_groups = {}
 		i=0
 		while i < len(grouplist) :
 			grouplist[i] = int(grouplist[i])
 			i += 1
 		for g in self.groups.all() :
 			if g.gidnumber not in grouplist :
+				del_groups[g.gidnumber] = g.name
 				self.groups.remove(g)
 				g._update_ldap(user)
 		for g in grouplist :
 			g = Group.objects.get(gidnumber=g)
 			if (g is not None) and (g not in self.groups.all()) :
+				add_groups[g.gidnumber] = g.name
 				self.groups.add (g)
-				g._update_ldap(user)
+				g._update_ldap(user)		
+		
+		# generate the usergrouphistory records
+		from usergrouphistory import UserGroupHistory
+		import json
+		creator = User.objects.get (login=user)
+		if len(add_groups)>0 :
+			ugh = UserGroupHistory()
+			ugh.creator = creator
+			ugh.user = self
+			ugh.action = ugh.ACTION_ADD
+			ugh.data = json.dumps(add_groups)
+			ugh.save()
+		if len(del_groups)>0 :
+			ugh = UserGroupHistory()
+			ugh.creator = creator
+			ugh.user = self
+			ugh.action = ugh.ACTION_DEL
+			ugh.data = json.dumps(del_groups)
+			ugh.save()
+			
 		# remove the main team if not in grouplist anymore
 		if self.main_team is not None:
 			if self.main_team.gidnumber not in grouplist :
@@ -330,4 +359,4 @@ class User (models.Model) :
 		from ..plugins import plugins
 		t = plugins.TWiki
 		return t.gen_user_name (self.first_name, self.last_name)
-
+		

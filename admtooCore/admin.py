@@ -42,6 +42,14 @@ class UserAdmin (admin.ModelAdmin) :
 
 
 admin.site.register(User, UserAdmin)
+
+class UserGroupHistoryAdmin (admin.ModelAdmin) :
+	fields = ('created', 'creator', 'user', 'action', 'data')
+	readonly_fields = ('created', 'creator', 'user')
+	list_display = ('created', 'creator', 'user', 'action')
+
+admin.site.register(UserGroupHistory, UserGroupHistoryAdmin)
+
 admin.site.register(MailAlias)
 
 class GroupForm (forms.ModelForm) :
