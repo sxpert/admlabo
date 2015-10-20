@@ -14,8 +14,8 @@ class TWiki (object) :
 		if self._logger is not None :
 			self._logger.error (message)
 		else:
-			msg = unicode(message)
-			sys.stdout.write (msg+'\n')
+			sys.stdout.write (message)
+			sys.stdout.write ('\n')
 			sys.stdout.flush ()
 
 	def _format_name (self, name) :
