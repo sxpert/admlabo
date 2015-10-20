@@ -159,8 +159,14 @@ class Group (models.Model) :
 			m.append (user)
 		return m
 	
+	# should add usergrouphistory entries 
 	def set_members (self, members, user=None) :
 		from user import User
+		from usergrouphistory import UserGroupHistory
+		import json
+		creator = None
+		if user is not None :		
+			creator = User.objects.get (login=user)
 		m = []
 		for u in members :
 			m.append (int(u))
@@ -170,6 +176,14 @@ class Group (models.Model) :
 			if u.uidnumber not in m :
 				u.groups.remove (self)
 				changed = True
+				# add UserGroupHistory entry
+				ugh = UserGroupHistory()
+				ugh.creator = creator
+				ugh.user = u
+				ugh.action = ugh.ACTION_DEL
+				ugh.data = json.dumps ({ self.gidnumber : self.name })
+				ugh.save()
+
 		# add new members 
 		for uidnumber in m :
 			try :
@@ -183,6 +197,14 @@ class Group (models.Model) :
 				else :
 					u.groups.add(self)
 					changed = True
+
+					# add UserGroupHistory entry
+					ugh = UserGroupHistory()
+					ugh.creator = creator
+					ugh.user = u
+					ugh.action = ugh.ACTION_ADD
+					ugh.data = json.dumps ({ self.gidnumber : self.name })
+					ugh.save()
 		if changed :
 			self._update_ldap(user)
 	

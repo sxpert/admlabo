@@ -259,7 +259,9 @@ class User (models.Model) :
 		# generate the usergrouphistory records
 		from usergrouphistory import UserGroupHistory
 		import json
-		creator = User.objects.get (login=user)
+		creator = None
+		if user is not None :
+			creator = User.objects.get (login=user)
 		if len(add_groups)>0 :
 			ugh = UserGroupHistory()
 			ugh.creator = creator
