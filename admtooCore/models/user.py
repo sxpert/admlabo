@@ -130,13 +130,14 @@ class User (models.Model) :
 			user = kwargs['request_user']
 			del kwargs['request_user']
 		super (User, self).save(*args, **kwargs)
-		if self.user_state != self.DELETED_USER:
+		user_state = int(self.user_state)
+		if not (user_state == self.DELETED_USER) :
 			self._update_ldap(user)
 		else : 
 			# remove user from all groups it belongs to
 			# put those groups in the history table
-			#self.changegroups([],user)
-			pass
+			logger.error ('>>> removing all groups')
+			self.change_groups([],user)
 
 	def full_name (self) :
 		n = []

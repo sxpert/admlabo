@@ -9,7 +9,7 @@
 <form action="." method="post">{% csrf_token %}
 <table>
 <tbody>
-<tr><th></th><td data-field="user_state" data-type="select"></td><tr>
+<tr><th></th><td data-update="groups,mailinglists,main-team,secondary-teams" data-field="user_state" data-type="select"></td><tr>
 <tr><th>Prénom</th><td>{{ edited_user.first_name }}</td><tr>
 <tr><th>Nom de Famille</th><td>{{ edited_user.last_name }}</td></tr>
 <tr><th>Statut</th><td>{{ edited_user.userclass.fr }}</td></tr>
