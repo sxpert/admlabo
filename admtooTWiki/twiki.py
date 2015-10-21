@@ -118,7 +118,7 @@ class TWiki (object) :
 				# destroy the temporary file		
 				f.close()
 				if not res : 
-					a.log ('FATAL: unable to copy file to it\'s destination')
+					a.log ('FATAL: Impossible to create twiki group '+twiki_group_name+'\nunable to copy file to it\'s destination')
 				# everything is fine
 				return True
 			else :
