@@ -606,13 +606,16 @@ class Core_LdapOsug (object) :
 
 	
 	def UpdateGroup (self, *args, **kwargs) :
-		self._log ('LdapOsug UpdateGroup command')
-		self._log ('args    : '+str(args))
-		self._log ('kwargs  : '+str(kwargs))
+		if DEBUG :
+			self._log ('LdapOsug UpdateGroup command')
+			self._log ('args    : '+str(args))
+			self._log ('kwargs  : '+str(kwargs))
 		_, command = args
-		self._log ('command : '+str(command)) 
-		self._log ('verb    : '+str(command.verb))
-#		self._log ('data    : '+str(command.data))
+		if DEBUG :
+			self._log ('command : '+str(command)) 
+			self._log ('verb    : '+str(command.verb))
+		if DEBUG_MORE :
+			self._log ('data    : '+str(command.data))
 		self._init_logger (**kwargs)
 		import json
 		c = json.loads (command.data)
@@ -644,13 +647,16 @@ class Core_LdapOsug (object) :
 			return self._group_update (cn, gidNumber, description, memberUid)
 	
 	def UpdateUser (self, *args, **kwargs) :
-		self._log ('LdapOsug UpdateUser command')
-		self._log ('args    : '+str(args))
-		self._log ('kwargs  : '+str(kwargs))
+		if DEBUG : 
+			self._log ('LdapOsug UpdateUser command')
+			self._log ('args    : '+str(args))
+			self._log ('kwargs  : '+str(kwargs))
 		_, command = args
-		self._log ('command : '+str(command)) 
-		self._log ('verb    : '+str(command.verb))
-	#	self._log ('data    : '+str(command.data))
+		if DEBUG :
+			self._log ('command : '+str(command)) 
+			self._log ('verb    : '+str(command.verb))
+		if DEBUG_MORE :
+			self._log ('data    : '+str(command.data))
 		self._init_logger (**kwargs)
 		import json
 		c = json.loads (command.data)

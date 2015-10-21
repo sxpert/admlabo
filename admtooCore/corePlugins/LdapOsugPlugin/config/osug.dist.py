@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 DEBUG = True
+DEBUG_MORE = False
 
 OSUG_LDAP_CONFIG = {
 	False : {
