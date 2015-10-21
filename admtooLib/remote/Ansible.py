@@ -117,7 +117,14 @@ class Ansible (object) :
 		contacted = results['contacted']
 		if hostname not in contacted :
 			self.log ('FATAL: can\'t find '+hostname+' in results')
-			self.log (repr(results))
+			# extract message 
+			if 'dark' in results :
+				dark = results['dark']
+				if hostname in dark :
+					host = dark[hostname]
+					if 'msg' in host :
+						msg = host['msg']
+						self.log(msg)
 			return False
 		host = contacted[hostname]
 		if 'changed' not in host :
