@@ -119,6 +119,7 @@ class TWiki (object) :
 				f.close()
 				if not res : 
 					a.log ('FATAL: Impossible to create twiki group '+twiki_group_name+'\nunable to copy file to it\'s destination')
+					return False
 				# everything is fine
 				return True
 			else :
