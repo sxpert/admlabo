@@ -18,7 +18,7 @@ from remote import Ansible as rem
 def createDirectory (fqdn, dirname, uid, gid, modes, files) :
 	a = rem()
 	if not a.createDirectory (fqdn, dirname, uid, gid, modes) :
-		a.log ('FATAL: Unable to create directory \n'+str(results))
+		a.log ('FATAL: Unable to create directory')
 		return False
 	a.log ('répertoire créé, création des fichiers')
 	ok = True
