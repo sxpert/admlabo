@@ -14,7 +14,8 @@ class TWiki (object) :
 		if self._logger is not None :
 			self._logger.error (message)
 		else:
-			sys.stdout.write (message)
+			msg = str(message)
+			sys.stdout.write (msg)
 			sys.stdout.write ('\n')
 			sys.stdout.flush ()
 
