@@ -91,6 +91,7 @@ class Ansible (object) :
 		return True
 
 	def copy (self, fqdn, uid, gid, src, dest, modes) :
+		ansible.utils.VERBOSITY=4
 		hostname = self.getHostname (fqdn)
 
 		# assemble args
