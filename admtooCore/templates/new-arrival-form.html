@@ -94,7 +94,7 @@
 <option value="{{o.ref}}"{% if newuser.office == o.ref %} selected{%endif%}>{{o}}</option>{% endfor %}</select></td></tr>
 
 {% if errors.other_office %}<tr id="other_office_error"><td colspan="2" class="form-error">{{ errors.other_office }}</td></tr>{% endif %}
-<tr><th class="right note">Précisez</th><td><input type="text" name="other_office" value="{{newuser.other_office}}"/></td></tr>
+<tr><th class="right note">Précisez le numéro de bureau</th><td><input type="text" name="other_office" value="{{newuser.other_office}}"/></td></tr>
 </tbody></table>
 
 
