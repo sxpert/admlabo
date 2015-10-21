@@ -143,6 +143,7 @@ class LdapSync (object) :
 					nu.user = u
 					nu.save()
 					# send mail indicating the user has been matched
+					nu.send_match_email ()
 					
 					
 		#

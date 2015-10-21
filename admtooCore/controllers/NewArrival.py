@@ -53,6 +53,9 @@ def associateUserWith (user, newuser_id, request_user=None, logins=None) :
 	user.appspecname = json.dumps(appSpecName)
 	logger.error ('appSpecName (after) : '+str(user.appspecname))
 
+	# set groups !
+	
+
 	# set self as an active user
 	user.user_state = user.NORMAL_USER
 	user.save (request_user=request_user)

@@ -139,15 +139,12 @@ class NewUser (models.Model) :
 		return data
 	
 	def send_arrival_mail (self, request_user=None) :
-		from ..controllers import SendMail
 		maildata = {}	
 		nu = NewUser.objects.get (pk=self.pk)
 		maildata['newuser'] = nu.serialize()
 		causes = ['NewArrival']
 		if not self.citizenship.eu_member :
 			causes.append ('NewArrivalNotEUMember')
-		# call sendmail controller
-		#SendMail.sendMail (causes, maildata)
 		
 		# post sendmail command
 		import command, json
@@ -162,4 +159,5 @@ class NewUser (models.Model) :
 		c.save ()
 
 	def send_match_mail (self, request_user=None) :
+		
 		pass
