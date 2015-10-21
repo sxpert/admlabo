@@ -142,7 +142,7 @@ class NewUser (models.Model) :
 		from ..controllers import SendMail
 		maildata = {}	
 		nu = NewUser.objects.get (pk=self.pk)
-		maildata['newuser'] = self.serialize()
+		maildata['newuser'] = nu.serialize()
 		causes = ['NewArrival']
 		if not self.citizenship.eu_member :
 			causes.append ('NewArrivalNotEUMember')
