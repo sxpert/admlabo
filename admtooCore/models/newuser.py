@@ -54,7 +54,7 @@ class NewUser (models.Model) :
 	ujf_student = models.BooleanField(default=False)
 	team = models.ForeignKey('Group', null=True, blank=True)
 	office = models.ForeignKey('Office', null=True, blank=True)
-	other_office = models.CharField(max_length=128, null=True, blank=True)
+	other_office = models.CharField(max_length=32, null=True, blank=True)
 
 	# dates
 	arrival = models.DateField (default=arrival_default)
@@ -161,4 +161,5 @@ class NewUser (models.Model) :
 		c.data = json.dumps (data)
 		c.save ()
 
-
+	def send_match_mail (self, request_user=None) :
+		pass
