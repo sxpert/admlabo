@@ -180,7 +180,7 @@ class NewUserAdmin (admin.ModelAdmin) :
 		( 'Contact',              { 'fields': ( 'external_email', )}),
 		( 'Au sein de l\'IPAG',   { 'fields': ( 'status', 'study_level', 'ujf_student', 'team', 'office', 'other_office', )}),
 		( 'Dates',                { 'fields': ( 'arrival', 'departure', )}),
-		( 'Moyens Informatiques', { 'fields': ( 'comp_account', 'os_type', 'specific_os', 'comp_purchase', )}),
+		( 'Moyens Informatiques', { 'fields': ( 'comp_account', 'os_type', 'specific_os', 'os_lang', 'comp_purchase', )}),
 		( 'Autres Accès',         { 'fields': ( 'ir_lab', 'workshop', 'chem_lab', )}),
 		( 'Sécurité',             { 'fields': ( 'risky_activity', )}),
 		( None,                   { 'fields': ( 'comments', )}),)
