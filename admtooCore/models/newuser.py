@@ -21,7 +21,8 @@ def citizenship_default () :
 	return settings.DEFAULT_COUNTRY	
 
 def status_default () :
-	return 9
+	uc = models.UserClass.objects.get(defval=True)
+	return uc.pk
 #
 # new users
 #

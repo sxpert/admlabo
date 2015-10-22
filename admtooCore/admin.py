@@ -168,7 +168,7 @@ class CountryAdmin (admin.ModelAdmin) :
 admin.site.register(Country, CountryAdmin)
 
 class UserClassAdmin (admin.ModelAdmin) :
-	list_display = ('ref', 'fr', 'en', 'probie', 'group')
+	list_display = ('ref', 'defval', 'fr', 'en', 'probie', 'group')
 
 admin.site.register(UserClass, UserClassAdmin)
 admin.site.register(Office)
