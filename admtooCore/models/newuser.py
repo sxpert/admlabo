@@ -38,7 +38,15 @@ class NewUser (models.Model) :
 		( OS_MAC,     'Mac OS'),
 		( OS_WINDOWS, 'Windows (7)'),
 	)
-		
+	
+	OS_LANG_FR = 0
+	OS_LANG_EN = 1
+
+	NEWUSER_OS_LANG_CHOICES = (
+		( OS_LANG_FR,	'Français'),
+		( OS_LANG_EN,	'Anglais'),
+	)
+	
 	# manager
 	manager = models.ForeignKey ('User', null=True, blank=True, related_name='Manager')
 	user = models.ForeignKey ('User', null=True, blank=True, related_name='User')
@@ -68,6 +76,7 @@ class NewUser (models.Model) :
 	# computers
 	comp_account = models.BooleanField (default=True)
 	os_type = models.IntegerField(choices = NEWUSER_OS_CHOICES, default=OS_LINUX)
+	os_lang = models.IntegerField(choices = NEWUSER_OS_LANG_CHOICES, default=OS_LANG_FR)
 	specific_os = models.CharField (max_length=128, null=True, blank=True)
 	comp_purchase = models.BooleanField (default=False)
 
@@ -92,8 +101,17 @@ class NewUser (models.Model) :
 	def os_type_choice(self) :
 		return self.NEWUSER_OS_CHOICES[self.os_type][1]
 
+	def os_lang_choice(self) :
+		return self.NEWUSER_OS_LANG_CHOICES[self.os_lang][1]
+
 	def serialize (self) :
 		data = {}
+
+		if self.user is not None :
+			user = {}
+			user['login'] = self.user.login
+			user['uidnumber'] = self.user.uidnumber
+			data['user'] = user
 
 		manager = {}
 		manager['last_name'] = self.manager.last_name
@@ -125,6 +143,7 @@ class NewUser (models.Model) :
 		data['comp_account'] = self.comp_account
 		data['os_type'] = self.os_type
 		data['os_type_choice'] = self.os_type_choice()
+		data['os_lang_choice'] = self.os_lang_choice()
 		data['specific_os'] = self.specific_os
 		data['comp_purchase'] = self.comp_purchase		
 
@@ -159,5 +178,18 @@ class NewUser (models.Model) :
 		c.save ()
 
 	def send_match_mail (self, request_user=None) :
+		maildata = {}
+		nu = NewUser.objects.get (pk=self.pk)
+		maildata['newuser'] = nu.serialize()
+		causes = ['UserMatch']
 		
-		pass
+		import command, json
+		c = command.Command ()
+		if request_user is None :
+			c.user = "(Unknown)"
+		else :
+			c.user = str(request_user)
+		data = { 'mailconditions': causes, 'maildata': maildata }
+		c.verb = 'SendMail'
+		c.data = json.dumps(data)
+		c.save()
