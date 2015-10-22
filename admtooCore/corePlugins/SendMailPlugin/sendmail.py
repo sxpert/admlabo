@@ -4,7 +4,8 @@ import sys,json
 from django.conf import settings
 from django.template import Context, Template
 from django.core.mail import get_connection, send_mail, EmailMultiAlternatives
-from django.db import models
+#from django.db import models
+from ... import models
 
 class Send_Mail (object) :
 	def __init__ (self) :

@@ -39,17 +39,21 @@ function toggle_comp_account () {
     var os_type = $('[name=os_type]');
     var specific_os = $('[name=specific_os]');
     var comp_purchase = $('[name=comp_purchase]');
+	var os_lang = $('[name=os_lang]');
 	var tr1 = $(os_type.parents('tr')[0]);
     var tr2 = $(specific_os.parents('tr')[0]);
     var tr3 = $(comp_purchase.parents('tr')[0]);
+	var tr4 = $(os_lang.parents('tr')[0]);
     if (val=='0') {
         tr1.hide();
         tr2.hide();
         tr3.hide();
+		tr4.hide();
 	} else {
         tr1.show();
 		toggle_os_type();
 		tr3.show();
+		tr4.show();
 	}
 }
 function toggle_os_type () {

@@ -227,6 +227,16 @@ def NewArrivalForm (request) :
 		newuser['specific_os'] = specific_os
 
 		#
+		os_lang = request.POST.get('os_lang', '').strip()
+		if len(os_lang) == 0 :
+			errors['os_lang'] = "La langue de la station de travail ne peut être vide"
+		try :
+			os_lang = int(os_lang)
+		except ValueError as e :
+			pass
+		newuser['os_lang'] = os_lang
+
+		#
 		comp_purchase = request.POST.get('comp_purchase', '').strip()
 		# should be "0" or "1"
 		if comp_account == '0' :
@@ -307,6 +317,7 @@ def NewArrivalForm (request) :
 			nu.comp_account =   analyze_radio(comp_account)
 			nu.os_type =        os_type
 			nu.specific_os =    specific_os
+			nu.os_lang =        os_lang
 			nu.comp_purchase =  analyze_radio(comp_purchase)
 			#
 			nu.ir_lab =         analyze_radio(ir_lab)
@@ -350,5 +361,6 @@ def NewArrivalForm (request) :
 	context['allteams'] = models.Group.objects.filter(group_type=models.Group.TEAM_GROUP).order_by('name')
 	context['alloffices'] = models.Office.objects.all()
 	context['allostypes'] = models.NewUser.NEWUSER_OS_CHOICES
+	context['alloslangs'] = models.NewUser.NEWUSER_OS_LANG_CHOICES
 	return render(request, 'new-arrival-form.html', context)
 

@@ -122,7 +122,10 @@ class NewUser (models.Model) :
 		
 		data['last_name'] = self.last_name
 		data['first_name'] = self.first_name
-		data['birthdate'] = self.birthdate
+		data['birthdate'] = None
+		logger.error (self.birthdate)
+		if self.birthdate is not None :
+			data['birthdate'] = self.birthdate.isoformat()
 		data['external_email'] = self.external_email
 		data['citizenship'] = { 'citizenship': self.citizenship.citizenship }
 		
@@ -137,8 +140,14 @@ class NewUser (models.Model) :
 		data['office'] = str(self.office)
 		data['other_office'] = self.other_office
 		
-		data['arrival'] = self.arrival
-		data['departure'] = self.departure
+		data['arrival'] = None
+		logger.error (self.arrival)
+		logger.error (self.departure)
+		if self.arrival is not None :
+			data['arrival'] = self.arrival.isoformat()
+		data['departure'] = None
+		if self.departure is not None :
+			data['departure'] = self.departure.isoformat()
 
 		data['comp_account'] = self.comp_account
 		data['os_type'] = self.os_type

@@ -143,6 +143,11 @@
 <tr><th class="right note">Précisez</th>
 	<td><input type="text" name="specific_os" value="{{ newuser.specific_os }}"/></td></tr>
 
+<tr><th>Langue de la station de travail&nbsp;<span class="must-have">●</span></th>
+	<td><select name="os_lang">{% for t in alloslangs %}
+<option value="{{t.0}}"{% if newuser.os_lang == t.0 %} selected{%endif%}>{{t.1}}</option>{% endfor %}</select></td></tr>
+
+
 {% if errors.comp_purchase %}<tr><td colspan="2" class="form-error">{{ errors.comp_purchase }}</td></tr>{% endif %}
 <tr><th>Achat de matériel en cours&nbsp;<span class="must-have">●</span></th>
 	<td><input type="radio" name="comp_purchase" value="1"{% if newuser.comp_purchase == "1" %} checked{%endif%}>oui
