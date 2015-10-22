@@ -30,6 +30,7 @@ class Group (models.Model) :
 
 	class Meta:
 		app_label = 'admtooCore'
+		ordering = ['name']
 
 	def __str__ (self) :
 		return self.name
