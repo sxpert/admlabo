@@ -70,7 +70,7 @@ class GroupForm (forms.ModelForm) :
 class GroupAdmin (admin.ModelAdmin) :
 	form = GroupForm
 	fields = ('gidnumber', 'name', 'group_type', 'description', 'parent', 'users', 'appspecname')
-	list_display = ('name', 'group_description')
+	list_display = ('name', 'gidnumber', 'group_description')
 
 	def get_form (self, request, obj=None, **kwargs) :
 		if obj:
@@ -168,7 +168,7 @@ class CountryAdmin (admin.ModelAdmin) :
 admin.site.register(Country, CountryAdmin)
 
 class UserClassAdmin (admin.ModelAdmin) :
-	list_display = ('ref', 'fr', 'en', 'probie')
+	list_display = ('ref', 'fr', 'en', 'probie', 'group')
 
 admin.site.register(UserClass, UserClassAdmin)
 admin.site.register(Office)
