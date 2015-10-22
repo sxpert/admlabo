@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from django.conf import settings
 from .. import models
 import json
 import logging
@@ -53,12 +54,26 @@ def associateUserWith (user, newuser_id, request_user=None, logins=None) :
 	user.appspecname = json.dumps(appSpecName)
 	logger.error ('appSpecName (after) : '+str(user.appspecname))
 
-	# set groups !
-	
+	# find all groups
+	groups = []
+	# first, the group related to the userclass
+	groups.append (nu.status.group.gidnumber)
+	# next, the group related to the assigned team	
+	groups.append (nu.team.gidnumber)
+
+	# set the user default group
+	if user.group is None :
+		user.group = models.Group.objects.get(name=settings.DEFAULT_USER_GROUP)
+	groups.append (user.group.gidnumber)
+
+	# set the main team (there's only one for a new user... simple)
+	user.main_team = nu.team
 
 	# set self as an active user
 	user.user_state = user.NORMAL_USER
 	user.save (request_user=request_user)
+
+	user.change_groups(groups, user=request_user)
 
 	# add command to create directories
 	models.userdir.generateDirs (user, request_user)
