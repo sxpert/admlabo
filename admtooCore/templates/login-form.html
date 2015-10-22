@@ -6,6 +6,8 @@
 {% endcomment %}
 {% block css %}<link rel="stylesheet" type="text/css" href="{% static "css/ipag.css" %}"/>{% endblock %}
 {% block content %}
+<p> Bienvenue sur l'application de gestion des comptes informatique de l'IPAG</p>
+<p>Entrez votre login et mot de passe habituel pour accéder au formulaire de demande de création de compte.</p>
 <form action="{{ action_url }}" method="post">{% csrf_token %}
 <table>
 <tbody>
