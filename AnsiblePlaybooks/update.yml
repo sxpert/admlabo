@@ -7,15 +7,21 @@
   sudo : yes
   tasks :
 
-  - name : stop the uwsgi service
+  - name : Service | stop the uwsgi service
     service : name=uwsgi state=stopped arguments=prod.admipag
 
-  - name : update the application source from git
+  - name : Git     | update the application source from git
     git : dest=/srv/prod.admipag repo=root@pxe:/srv/www/test.admipag key_file=/home/ansible/.ssh/id_ed25519 update=yes
 
-  - name : inject database modifications
+  - name : Django  | inject database modifications
     django_manage : app_path=/srv/prod.admipag command=migrate
 
-  - name : restart the uwsgi service
+#  - name : Django  | update some fixtures
+#    django_manage : app_path=/srv/prod.admipag command=loaddata fixtures="EmailAlert EmailAlertMessage"
+
+#  - name : Django  | update static files
+#    django_manage : app_path=/srv/prod.admipag command=collectstatic link=yes
+
+  - name : Service | restart the uwsgi service
     service : name=uwsgi state=started arguments=prod.admipag 
   

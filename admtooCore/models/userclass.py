@@ -8,6 +8,7 @@ class UserClass (models.Model) :
 	fr  = models.CharField (max_length=128, null=True, blank=True)
 	en  = models.CharField (max_length=128, null=True, blank=True)
 	probie = models.BooleanField (default=False)
+	group = models.ForeignKey ('Group', null=True, blank=True)
 
 	class Meta:
 		app_label = 'admtooCore'
