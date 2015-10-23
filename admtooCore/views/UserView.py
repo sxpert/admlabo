@@ -431,7 +431,7 @@ def user_view_userclass_field (request, userid, action) :
 				if uc.group is not None :
 					groups.append(uc.group.gidnumber)
 					u.change_groups (groups, request.user)
-				u.save()
+				u.save(request_user=request.user)
 		# get the value
 		value = ''
 		if u.userclass is not None :
