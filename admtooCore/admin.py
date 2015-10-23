@@ -23,7 +23,7 @@ class UserAdmin (admin.ModelAdmin) :
 	fields = (('uidnumber', 'group', 'user_state'), 
 			   'login', 'login_shell', 'first_name', 'last_name', 'room', 'telephone', 'mail', 'manager', 
 			   'userclass', 'main_team', 'arrival', 'departure', 'groups', 'flags', 'appspecname')
-	list_display = ('last_name', 'first_name', 'mail_link', 'login', 'uidnumber', 'manager_name', 'user_state') 
+	list_display = ('last_name', 'first_name', 'mail_link', 'login', 'uidnumber', 'manager_name', 'userclass', 'user_state') 
 	# room and telephone are to be modified via biper only
 	readonly_fields = ('uidnumber', 'login', 'first_name', 'last_name', 'mail', 'room', 'telephone')
 	filter_horizontal = ('groups', 'flags')
