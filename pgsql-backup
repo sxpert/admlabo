@@ -1,4 +1,4 @@
 #!/bin/sh
 d=`date +%F`
-( su postgres -c 'pg_dump admipag_prod' ) | gzip - > /srv/data/admipag_prod-${d}.sql.gz
+( su postgres -c 'pg_dump admipag_prod' ) | gzip - > /srv/backup/admipag_prod-${d}.sql.gz
 
