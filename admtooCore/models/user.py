@@ -7,9 +7,9 @@ logger=logging.getLogger('django')
 # other models used
 from group import Group
 from machine import Machine
+from userclass import UserClass
 
 def userclass_default () :
-	from userclass import UserClass
 	return UserClass.objects.get(probie=True).pk
 
 class User (models.Model) :
@@ -68,6 +68,23 @@ class User (models.Model) :
 
 	def __init__ (self, *args, **kwargs) :
 		super(User, self).__init__(*args, **kwargs)
+		groups = self.unique_groups ()
+		if len(groups) > 0 :
+			# search for status groups
+			status_groups = []
+			for g in groups :
+				if g.group_type == g.STATUS_GROUP :
+					status_groups.append(g)
+			if len (status_groups) == 1 :
+				try :
+					uc = UserClass.objects.get(group=status_groups[0]) 
+				except UserClass.DoesNotExist as e :
+					pass
+				else :
+					if self.userclass is None: 
+						self.userclass = uc 
+						self._save()
+		
 
 	def __repr__ (self) :
 		return self.login
