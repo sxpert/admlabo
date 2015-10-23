@@ -419,7 +419,7 @@ def user_view_userclass_field (request, userid, action) :
 			if (u.userclass is not None) and (u.userclass.group is not None) :
 				uc_gidn = u.userclass.group.gidnumber
 			groups = []
-			for g in u.all_groups() :
+			for g in u.unique_groups() :
 				# do not add the current userclass to the list
 				if uc_gidn != g.gidnumber :	
 					groups.append (g.gidnumber)
