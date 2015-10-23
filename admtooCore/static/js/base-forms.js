@@ -150,6 +150,7 @@ function df_update_fields (fields) {
 		switch (f_type) {
 			case 'select' : df_select_refresh (e); break;
 			case 'display' : df_set_value(e); break;
+			case 'multiselect' : df_multiselect_refresh (e); break;
 		}
 	});
 }
@@ -284,6 +285,13 @@ function df_multiselect_get_value (field) {
 	var data = { 'values': sel };
 	return data;
 }
+
+/* TODO: handle the case when we're currently editing this field */
+function df_multiselect_refresh (field) {	
+	df_set_edit_icon (field);
+	df_set_value (field);	
+}
+
 
 /*
  * select type field

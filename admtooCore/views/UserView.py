@@ -393,6 +393,58 @@ def user_view_mail_aliases_field (request, userid, action) :
 	return data
 
 #----
+# user class field
+#
+
+@transaction.atomic
+def user_view_userclass_field (request, userid, action) :
+	data = {}
+	u = models.User.objects.get(uidnumber=userid)
+	if action == 'options' :
+		# list all options available
+		classes = {}
+		for uc in models.UserClass.objects.all() :	
+			n = uc.ref
+			if uc.fr is not None :
+				n = uc.fr
+			classes[uc.pk] = n
+		data['options'] = classes
+		data['noblank'] = True
+		if u.userclass is not None :
+			data['selected'] = u.userclass.pk
+	elif action == 'value' :
+		# change the value
+		if request.method == 'POST' :
+			uc_gidn = None
+			if (u.userclass is not None) and (u.userclass.group is not None) :
+				uc_gidn = u.userclass.group.gidnumber
+			groups = []
+			for g in u.all_groups() :
+				# do not add the current userclass to the list
+				if uc_gidn != g.gidnumber :	
+					groups.append (g.gidnumber)
+			reqd = json.loads(request.body)
+			# set the new userclass
+			if 'value' in reqd :
+				uc = models.UserClass.objects.get(pk=int(reqd['value']))
+				u.userclass = uc
+				if uc.group is not None :
+					groups.append(uc.group.gidnumber)
+					u.change_groups (groups, request.user)
+				u.save()
+		# get the value
+		value = ''
+		if u.userclass is not None :
+			if u.userclass.fr is not None :
+				value = u.userclass.fr
+			else:
+				value = u.userclass.ref
+		data['value'] = value
+	else :
+		logger.error ("unknown action "+action)
+	return data
+
+#----
 # main function
 #
 @admin_login
@@ -407,6 +459,7 @@ def user_view_field (request, user_id, action, fieldtype, fieldname) :
 			"managed"         : user_view_managed_field
 		},
 		"select" : {
+			"userclass"       : user_view_userclass_field,
 			"manager"         : user_view_manager_field,
 			"user_state"      : user_view_user_state_field,
 			"main-team"       : user_view_main_team_field
