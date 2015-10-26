@@ -1,6 +1,6 @@
 #!/bin/sh
 D=$( date +%F )
 FILE="admipag_prod-${D}.sql.gz"
-su postgres -c "pg_dump admipag_prod | gzip - > /tmp/${FILE}"
+( cd /tmp; su postgres -c "pg_dump admipag_prod | gzip - > /tmp/${FILE}" )
 mv /tmp/${FILE} /srv/backup/${FILE}
 
