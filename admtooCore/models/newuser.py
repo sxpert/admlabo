@@ -21,7 +21,7 @@ def citizenship_default () :
 	return settings.DEFAULT_COUNTRY	
 
 def status_default () :
-	from . import userclass
+	from userclass import UserClass
 	uc = UserClass.objects.get(defval=True)
 	return uc.pk
 #
