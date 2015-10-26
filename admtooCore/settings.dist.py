@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Django settings for admipag project.
 
@@ -26,6 +27,7 @@ SECRET_KEY = ''
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+ADMINS = (('admin user', 'admin@example.com'),)
 
 TEMPLATE_DEBUG = True
 
