@@ -14,12 +14,8 @@ class TWiki (object) :
 		if self._logger is not None :
 			self._logger.error (message)
 		else:
-			if type(message) is not str :
-				message = repr(message)
-			msg = str(message)
-			sys.stdout.write (msg)
-			sys.stdout.write ('\n')
-			sys.stdout.flush ()
+			import logging
+			logging.error (message)
 
 	def _format_name (self, name) :
 		s = ''
@@ -38,10 +34,32 @@ class TWiki (object) :
 				s += c
 		return s
 
+	#==========================================================================
+	# generator functions
+
 	def gen_user_name (self, fname, lname) :
 		fname = self._format_name (fname)
 		lname = self._format_name (lname)
 		return fname+lname
+
+	def _copy_file_to_twiki_server (self, s, basedir, filename) :
+		# copy the contents of s to the twiki system, so as to update the contents of the group
+		a = af.rem()
+		# save to a temporary file
+		import tempfile
+		f = tempfile.NamedTemporaryFile ()
+		f.write (s.encode('utf-8'))
+		f.flush ()
+		import os
+		# call the remote access file copy
+		res = a.copy (TWIKI_SERVER, TWIKI_FILE_OWNER, TWIKI_FILE_GROUP, f.name, 
+					  os.path.join(basedir, filename), '0664')
+		# destroy the temporary file		
+		f.close()
+		if not res : 
+			return False
+		# everything is fine
+		return True
 
 	def _gen_group_config (self, gdata) :
 		# generate list of users
@@ -130,6 +148,13 @@ class TWiki (object) :
 			self._log('no appSpecName defined')
 			return False
 
+	def _gen_kifekoi_table (self) :
+		
+		pass
+
+	#==========================================================================
+	# commands
+
 	def UpdateTWikiGroup (self, *args, **kwargs) :
 		_, command = args
 		if "logger" in kwargs.keys() :
@@ -172,4 +197,100 @@ class TWiki (object) :
 		self._log ('TWiki.UpdateGroup : '+msg)
 			
 		return True
+		
+	#
+	# launched from crontab
+	# 
+	def	UpdateKiFeKoi (self, *args, **kwargs) :
+		from admtooCore.models import user
+
+		# gets the contents of the list to generate the kifekoi document with
+		kfk = user.User.generate_kifekoi_list ()
+
+		# generate the document		
+		# header
+		s = u'%TABLE{ sort="on" tableborder="1" cellpadding="1" cellspacing="1" headerrows="1" footerrows="0" }%\n'
+		s+= u'| * %ICONURL{ipagSecours}%* | * %ICONURL{ipagExtincteur}%* | * %ICONURL{ipagEvacuation}%* '
+		s+= u'| * %ICONURL{ipagHS}%* | *NOM* | *Prénom* | *Équipe* | *Tél.* | ** | *Bureau* | *Autres* |\n'
+
+		# content
+		for u in kfk :
+			f = u['flags']
+			# emergency manager
+			l = u'| '	
+			if 'secours' in f :	
+				l+= u'%ICONURL{ipagSecours}% '
+			# fire training
+			l+= u'| '
+			if 'extincteur' in f :
+				l+= u'%ICONURL{ipagExtincteur}% '
+			# evacuation training
+			l+= u'| '
+			if 'evacuation' in f :
+				l+= u'%ICONURL{ipagEvacuation}% '
+			# health and safety
+			l+= u'| '
+			if 'HS' in f :
+				l+= u'%ICONURL{ipagHS}% '
+			# user info
+			l+= u'| <noautolink>'+u['last_name']+u'</noautolink> '
+			l+= u'| <noautolink>'+u['first_name']+u'</noautolink> '
+			l+= u'| '
+			# team
+			# telephone
+			l+= u'| '
+			if u['telephone'] is not None :
+				l+= u['telephone'][-5:]+u' '
+			# office
+			l+= u'| '
+			if u['room'] is not None :
+				l+= '%NOP%'+u['room']+u' '
+			# other flags
+			l+= u'| '
 			
+			if 'membreCL' in f:
+				l+= '%ICONURL{ipagMembreCL}% '
+			if 'responsable' in f:
+				l+= '%ICONURL{ipagResponsable}% '
+			if 'cafet' in f:
+				l+= '%ICONURL{ipagCafet}% '
+			if 'refthesard' in f:
+				l+= '%ICONURL{ipagRefthesard}% '
+			if 'coStages' in f:
+				l+= '%ICONURL{ipagStages}% '
+			if 'coSeminaires' in f:
+				l+= '%ICONURL{ipagSeminaires}% '
+			if 'coFormation' in f:
+				l+= '%ICONURL{ipagFormation}% '
+			if 'acmo' in f:
+				l+= '%ICONURL{ipagAcmo}% '
+			if 'flag_annuaire' in f :
+				l+= '%ICONURL{ipagFlag_annuaire}% '
+			if 'flag_photo_web' in f :
+				l+= '%ICONURL{ipagFlag_photo_web}% '			
+	
+			# the end
+			l+= u'|'
+
+			l+= u'\n'
+			
+			s+= l
+		# footer
+
+		s+= u'---\n'
+		s+= u'<small> <font color="#808080">\n'
+		s+= u'_Dernière mise à jour : 11 Oct 2015_\n'
+		s+= u'</small>\n'
+		s+= u'\n'
+		s+= u'<!--\n'
+		s+= u'   * Set CACHEABLE = off\n'
+		s+= u'-->\n'
+
+		# upload the document to the twiki server
+		if self._copy_file_to_twiki_server (s, TWIKI_DATA, 'Ipag/Intranet/KifekoiTable2.txt') :
+			# TODO: cleanup all UpdateKiFeKoi commands that are waiting in the list
+			return True
+
+		self._log ('FATAL: Unable to install new version of KiFeKoi table in the twiki instance')
+
+		return False

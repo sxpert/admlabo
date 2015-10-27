@@ -250,7 +250,8 @@ def user_view_main_team_field (request, userid, action) :
 					u.main_team = models.Group.objects.get(gidnumber = main_team)
 				else :
 					u.main_team = None
-				u.save()
+				u.save(request_user=request.user)
+				u.update_kifekoi (request.user)
 		if u.main_team is None :
 			data['value'] = '<i>No main team</i>';
 		else :

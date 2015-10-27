@@ -24,7 +24,7 @@ class Command (models.Model) :
 	modified  = models.DateTimeField (auto_now=True, auto_now_add=True, null=True)
 	user      = models.CharField (max_length=64)
 	verb      = models.CharField (max_length=64)
-	data      = models.TextField () # could be some soft of json field
+	data      = models.TextField (default='', blank=True) # could be some soft of json field
 	in_cron   = models.BooleanField (default=False)
 	done      = models.BooleanField (default=False)
 
@@ -54,7 +54,11 @@ class Command (models.Model) :
 	
 	def subject(self) :
 		import json
-		d = json.loads(self.data)
+		try :
+			d = json.loads(self.data)
+		except ValueError as e :
+			# nothing to decode
+			return ''
 		# user
 		if self.verb=='UpdateUser':
 			return d['uid']

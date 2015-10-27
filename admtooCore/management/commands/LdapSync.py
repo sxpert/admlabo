@@ -155,6 +155,10 @@ class LdapSync (object) :
 					u.user_state = User.DELETED_USER
 					u.save ()
 					deleted_users+=1
+		
+		if modified_users > 0 :
+			User.update_kifekoi()
+
 		# stats
 		print 'ADD '+str(added_users)+' users'
 		print 'MOD '+str(modified_users)+' users'

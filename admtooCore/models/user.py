@@ -379,4 +379,49 @@ class User (models.Model) :
 		from ..plugins import plugins
 		t = plugins.TWiki
 		return t.gen_user_name (self.first_name, self.last_name)
-		
+	
+	#==========================================================================
+	# generate a command to update the kifekoi 
+
+	@staticmethod
+	def generate_kifekoi_list () :
+		data = []
+		users = User.objects.all().order_by ('last_name', 'first_name')
+		for u in users :
+			user = {}
+			user['first_name'] = u.first_name
+			user['last_name'] = u.last_name
+			user['telephone'] = u.telephone
+			user['room'] = u.room
+			if u.main_team is not None :
+				try :
+					user['team'] = u.main_team.wiki_team_name()
+				except AttributeError as e :
+					pass
+			else :
+				# find the team groups within the users's groups
+				pass
+			# flags
+			flags = []
+			for f in u.flags.all() :
+				flags.append (f.name)
+			user['flags'] = flags
+			# add user to list
+			data.append (user)
+		return data
+
+	def update_kifekoi (self, request_user=None) :	
+		# users list generated, insert the command
+		import command, json
+		c = command.Command ()
+		if request_user is None :
+			c.user = "(Unknown)"
+		else :
+			c.user = str(request_user)
+		c.verb = 'UpdateKiFeKoi'
+		c.in_cron = True
+		c.data = ''
+		c.save ()
+
+			
+	
