@@ -242,7 +242,7 @@ class TWiki (object) :
 			if u['telephone'] is not None :
 				l+= u['telephone'][-5:]+u' '
 			# office
-			l+= u'| '
+			l+= u'| | '
 			if u['room'] is not None :
 				l+= '%NOP%'+u['room']+u' '
 			# other flags
