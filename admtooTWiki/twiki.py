@@ -42,13 +42,13 @@ class TWiki (object) :
 		lname = self._format_name (lname)
 		return fname+lname
 
-	def _copy_file_to_twiki_server (self, s, basedir, filename) :
+	def _copy_file_to_twiki_server (self, s, encoding, basedir, filename) :
 		# copy the contents of s to the twiki system, so as to update the contents of the group
 		a = af.rem()
 		# save to a temporary file
 		import tempfile
 		f = tempfile.NamedTemporaryFile ()
-		f.write (s.encode('utf-8'))
+		f.write (s.encode(encoding))
 		f.flush ()
 		import os
 		# call the remote access file copy
@@ -287,7 +287,7 @@ class TWiki (object) :
 		s+= u'-->\n'
 
 		# upload the document to the twiki server
-		if self._copy_file_to_twiki_server (s, TWIKI_DATA, 'Ipag/Intranet/KifekoiTable2.txt') :
+		if self._copy_file_to_twiki_server (s, 'iso-8859-15', TWIKI_DATA, 'Ipag/Intranet/KifekoiTable2.txt') :
 			# TODO: cleanup all UpdateKiFeKoi commands that are waiting in the list
 			return True
 
