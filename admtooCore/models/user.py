@@ -386,7 +386,7 @@ class User (models.Model) :
 	@staticmethod
 	def generate_kifekoi_list () :
 		data = []
-		users = User.objects.all().order_by ('last_name', 'first_name')
+		users = User.objects.filter(user_state=User.NORMAL_USER).order_by ('last_name', 'first_name')
 		for u in users :
 			user = {}
 			user['first_name'] = u.first_name
