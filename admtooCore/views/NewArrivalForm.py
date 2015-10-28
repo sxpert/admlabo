@@ -339,7 +339,7 @@ def NewArrivalForm (request) :
 			else :
 				# apply automatic matching to the new user 
 				nu.user = user
-				nu.send_match_email(request_user=request.user)				
+				nu.send_match_mail(request_user=request.user)				
 
 			nu.save ()
 
