@@ -238,7 +238,10 @@ class TWiki (object) :
 			l+= u'| <noautolink>'+u['last_name']+u'</noautolink> '
 			l+= u'| <noautolink>'+u['first_name']+u'</noautolink> '
 			l+= u'| '
+			
 			# team
+			if u['team'] is not None :
+				l+= u'%ICONURL{'+u['team']+'}% '
 			
 			# telephone
 			l+= u'| '
