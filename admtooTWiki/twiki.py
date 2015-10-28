@@ -240,8 +240,9 @@ class TWiki (object) :
 			l+= u'| '
 			
 			# team
-			if ('team' in u) and (u['team'] is not None) :
-				l+= u'%ICONURL{'+u['team']+'}% '
+			if 'team' in u : 
+				if u['team'] is not None :
+					l+= u'%ICONURL{'+u['team']+'}% '
 			
 			# telephone
 			l+= u'| '
