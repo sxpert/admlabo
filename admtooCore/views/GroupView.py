@@ -74,7 +74,7 @@ def group_view_name_field (request, group_id, action) :
 # 
 # TWikiName
 
-def group_view_twiki_name_field (request, group_id, action) :
+def group_view_appspecname_variable_field (request, group_id, action, varname) :
 	g = models.Group.objects.get(gidnumber=group_id)
 	data = {}
 	if action == 'options' :
@@ -85,8 +85,8 @@ def group_view_twiki_name_field (request, group_id, action) :
 				jsondata = json.loads(d)
 			except ValueError as e :
 				jsondata = {}
-			if 'twiki' in jsondata :
-				twikiname = jsondata['twiki']
+			if varname in jsondata :
+				twikiname = jsondata[varname]
 		data['value'] = twikiname
 	if action == 'value' :
 		if request.method == 'POST' :
@@ -98,7 +98,7 @@ def group_view_twiki_name_field (request, group_id, action) :
 					jsondata = json.loads(d)
 				except ValueError as e :
 					jsondata = {}
-				jsondata['twiki'] = value
+				jsondata[varname] = value
 				g.appspecname = json.dumps(jsondata)
 				g.save(request_user=request.user)
 		d = g.appspecname
@@ -108,8 +108,8 @@ def group_view_twiki_name_field (request, group_id, action) :
 				jsondata = json.loads(d)
 			except ValueError as e: 
 				jsondata = {}
-			if 'twiki' in jsondata :
-				twikiname = jsondata['twiki']
+			if varname in jsondata :
+				twikiname = jsondata[varname]
 		data['value'] = twikiname
 	return data
 	
@@ -238,7 +238,9 @@ def group_view_field (request, group_id, action, fieldtype, fieldname) :
 
 		# only temporary
 		if fieldname == 'TWikiName' :
-			data = group_view_twiki_name_field (request, group_id, action)
+			data = group_view_appspecname_variable_field (request, group_id, action, 'twiki')
+		if fieldname == 'TWikiTeamLogo' :
+			data = group_view_appspecname_variable_field (request, group_id, action, 'TWikiTeamLogo')
 
 		if fieldname == 'description' :
 			data = group_view_description_field (request, group_id, action)
