@@ -400,12 +400,14 @@ class User (models.Model) :
 			user['room'] = u.room
 			if u.main_team is not None :
 				try :
-					user['team'] = u.main_team.wiki_team_name()
+					user['team'] = u.main_team.wiki_teamlogo()
 				except AttributeError as e :
 					pass
 			else :
 				# find the team groups within the users's groups
-				pass
+				groups = u.groups.filter(group_type=Group.TEAM_GROUP)
+				if len(groups) == 1 :
+					user['team'] = groups[0].wiki_teamlogo()
 			# flags
 			flags = []
 			for f in u.flags.all() :

@@ -179,7 +179,7 @@ class Group (models.Model) :
 			m.append (user)
 		return m
 	
-	# should add usergrouphistory entries 
+	# sets the list of members for a group 
 	def set_members (self, members, user=None) :
 		from user import User
 		from usergrouphistory import UserGroupHistory
@@ -227,7 +227,8 @@ class Group (models.Model) :
 					ugh.save()
 		if changed :
 			self._update_ldap(user)
-	
+
+	#	
 	# helper functions used by the xml template
 	
 	def get_children (self) :
@@ -247,3 +248,14 @@ class Group (models.Model) :
 
 	def is_status_group (self) :
 		return self.group_type == self.STATUS_GROUP
+
+	# find the groups wiki_team_name
+	def wiki_teamlogo (self) :
+		import json
+		try :
+			asn = json.loads(self.appspecname)
+		except ValueError as e :
+			return None
+		if 'TWikiTeamLogo' in asn :
+			return asn['TWikiTeamLogo']
+		return None

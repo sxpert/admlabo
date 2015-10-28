@@ -203,13 +203,15 @@ class TWiki (object) :
 	# 
 	def	UpdateKiFeKoi (self, *args, **kwargs) :
 		from admtooCore.models import user
+		import time
 
 		# gets the contents of the list to generate the kifekoi document with
 		kfk = user.User.generate_kifekoi_list ()
 
 		# generate the document		
 		# header
-		s = u'%TABLE{ sort="on" tableborder="1" cellpadding="1" cellspacing="1" headerrows="1" footerrows="0" }%\n'
+		s = u'%META:TOPICINFO{author="adminToolCore-Twiki-module" date="'+str(int(time.time()))+u'"}%\n'
+		s+= u'%TABLE{ sort="on" tableborder="1" cellpadding="1" cellspacing="1" headerrows="1" footerrows="0" }%\n'
 		s+= u'| * %ICONURL{ipagSecours}%* | * %ICONURL{ipagExtincteur}%* | * %ICONURL{ipagEvacuation}%* '
 		s+= u'| * %ICONURL{ipagHS}%* | *NOM* | *Prénom* | *Équipe* | *Tél.* | ** | *Bureau* | *Autres* |\n'
 
@@ -237,6 +239,7 @@ class TWiki (object) :
 			l+= u'| <noautolink>'+u['first_name']+u'</noautolink> '
 			l+= u'| '
 			# team
+			
 			# telephone
 			l+= u'| '
 			if u['telephone'] is not None :
@@ -279,7 +282,7 @@ class TWiki (object) :
 
 		s+= u'---\n'
 		s+= u'<small> <font color="#808080">\n'
-		s+= u'_Dernière mise à jour : 11 Oct 2015_\n'
+		s+= u'_Dernière mise à jour : '+time.strftime('%d %B %Y')+u'_\n'
 		s+= u'</small>\n'
 		s+= u'\n'
 		s+= u'<!--\n'
