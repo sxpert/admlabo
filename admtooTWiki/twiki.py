@@ -294,7 +294,7 @@ class TWiki (object) :
 		s+= u'-->\n'
 
 		# upload the document to the twiki server
-		if self._copy_file_to_twiki_server (s, 'iso-8859-15', TWIKI_DATA, 'Ipag/Intranet/KifekoiTable2.txt') :
+		if self._copy_file_to_twiki_server (s, 'iso-8859-15', TWIKI_DATA, 'Ipag/Intranet/KifekoiTable.txt') :
 			# TODO: cleanup all UpdateKiFeKoi commands that are waiting in the list
 			return True
 
