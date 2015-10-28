@@ -240,7 +240,7 @@ class TWiki (object) :
 			l+= u'| '
 			
 			# team
-			if 'team' in u : 
+			if 'team' in u.keys() : 
 				if u['team'] is not None :
 					l+= u'%ICONURL{'+u['team']+'}% '
 			
