@@ -417,7 +417,8 @@ class User (models.Model) :
 			data.append (user)
 		return data
 
-	def update_kifekoi (self, request_user=None) :	
+	@staticmethod
+	def update_kifekoi (request_user=None) :	
 		# users list generated, insert the command
 		import command, json
 		c = command.Command ()
