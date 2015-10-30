@@ -84,6 +84,7 @@ function df_get_data (field, callback=undefined) {
 				case 'select': df_select_initialize (field, result); break;
 				case 'text' : df_text_initialize (field, result); break;
 				case 'multitext': df_multitext_initialize (field, result); break;
+				case 'photo': console.log ('initializing photo'); df_photo_initialize (field, result); break;
 			}
 		});
 }
@@ -132,6 +133,7 @@ function df_set_value (field) {
 				case 'display': 
 				case 'text': df_text_set_value (field, result); break;
 				case 'multitext' : df_multitext_initialize (field, result); break;
+				case 'photo' : df_photo_set_value (field, result); break;
 			}
 		});
 }
@@ -480,6 +482,57 @@ function df_multitext_add_option (e) {
 	li.append (b);
 	li.append (input);
 	li.insertBefore (mt.children('[data-control=multitext-append]'));
+}
+
+/*
+ *
+ * photo field
+ *
+ */
+
+function df_photo_file_selected (event, field) {
+	console.log ("file selected");
+	console.log (field);
+}
+
+function df_photo_select_file (event, field) {
+	console.log (field);
+	var f = $.find('form')[0];
+	var i = $(f).find('[type=file]')[0];
+	// register change event
+	$(i).off();
+	$(i).on('change', function (event) {
+		var f = field;
+		df_photo_file_selected (event, f);
+	});
+	$(window).focus(function () { console.log('window has focus');});
+	i.click();
+}
+
+function df_photo_set_value (field, data) {
+	var f = field.parents('form');
+	// find if there's already an file input
+	var i = f.find('[type=file]');
+	if (i.length===0) {
+		// add the file input
+		i = $('<input type="file" accept="image/*" style="display:none"/>');
+		f.append(i);
+	}
+	// display the photo
+	var d = $('<span>'+data+'</span>');
+	field.append(d);
+	// bind
+	field.find('[data-control=button]').on('click', function (event) {
+		var f = field;
+		df_photo_select_file(event, f);
+	});	
+}
+
+function df_photo_initialize (field, data) {
+	var f = field.parents('form');
+	var i = f.find('[type=file]')[0]
+	//console.log (i)
+	//$(i).trigger('click');
 }
 
 /*

@@ -4,6 +4,7 @@ from django.db.models import Q
 from django.shortcuts import render, redirect
 from .. import models
 from django.contrib.auth.decorators import login_required
+from decorators import *
 
 import logging
 logger=logging.getLogger('django')
@@ -14,11 +15,10 @@ logger=logging.getLogger('django')
 @login_required
 def Dashboard (request) :
 	logger.error (str(request.user))
-	if not request.user.is_staff :
+	if not admin_perms(request.user) :
 		logger.error ('user is not staff')
 		logger.error ('redirecting to new arrival form')
 		return redirect ('new-arrival-form')
-	logger.error ('user is of staff')
 	users = models.User.objects.all()
 	context = {
 		'users': users,
@@ -28,8 +28,6 @@ def Dashboard (request) :
 #==============================================================================
 # Dashboard bits
 # 
-
-from decorators import *
 
 #
 # list of newly declared users not yet taken care of

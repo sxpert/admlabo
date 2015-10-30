@@ -7,25 +7,28 @@
 <p>&lt; <a href="{% url 'dashboard' %}">retour au dashboard</a> &lt; <a href="{% url 'users' %}">retour à la liste des utilisateurs</a></p>
 <p>user view</p>
 <form action="." method="post">{% csrf_token %}
+<!-- user information -->
 <table>
 <tbody>
-<tr><th></th><td data-update="groups,mailinglists,main-team,secondary-teams" data-field="user_state" data-type="select"></td><tr>
+<tr><th></th>{% if perms.admtooCore.do_rh_tasks %}<td>{{edited_user.get_user_state_display}}</td>{%else%}<td data-update="groups,mailinglists,main-team,secondary-teams" data-field="user_state" data-type="select">{%endif%}</td><tr>
 <tr><th>Prénom</th><td>{{ edited_user.first_name }}</td><tr>
 <tr><th>Nom de Famille</th><td>{{ edited_user.last_name }}</td></tr>
-<tr><th>Statut</th><td data-field="userclass" data-type="select" data-update="groups,mailinglists,main-team,secondary-teams"></td></tr>
-<tr><th>Équipe principale</th><td data-field="main-team" data-type="select"></td></tr>
+<tr><th>Statut</th>{%if perms.admtooCore.do_rh_tasks%}<td>{{edited_user.userclass.fr}}{%else%}<td data-field="userclass" data-type="select" data-update="groups,mailinglists,main-team,secondary-teams">{%endif%}</td></tr>
+<tr><th>Équipe principale</th>{%if perms.admtooCore.do_rh_tasks%}<td>{%if edited_user.main_team%}{{edited_user.main_team}}{%else%}Pas d'équipe principale{%endif%}{%else%}<td data-field="main-team" data-type="select">{%endif%}</td></tr>
 <tr><th>Équipes secondaires</th><td data-field="secondary-teams" data-type="display" data-edit="no"></td></tr>
 <tr><th>Login</th><td>{{ edited_user.login }}</td></tr>
 <tr><th>Uid Number</th><td>{{ edited_user.uidnumber }}</td></tr>
-<tr><th>Login Shell</th><td data-field="loginshell" data-type="text"></td></tr>
+<tr><th>Login Shell</th>{%if perms.admtooCore.do_rh_tasks%}<td>{{edited_user.login_shell}}{%else%}<td data-field="loginshell" data-type="text">{%endif%}</td></tr>
 <tr><th>Arrival</th><td>{{ edited_user.arrival.isoformat }}</td></tr>
 <tr><th>Departure</th><td>{{ edited_user.departure.isoformat }}</td></tr>
 <tr><th>Room number</th><td>{% if edited_user.room %}{{ edited_user.room }}{% endif %}</td></tr>
 <tr><th>Telephone</th><td>{% if edited_user.telephone %}{{ edited_user.telephone }}{% endif %}</td></tr>
 <tr><th>Mail</th><td>{{ edited_user.mail }}</td></tr>
 <!--<tr><th>Mail Aliases</th><td data-field="mailaliases" data-type="multitext"></td></tr>-->
-<tr><th>Mailing lists</th><td data-field="mailinglists" data-type="multiselect"></td></tr>
-<tr><th>Groups</th><td data-field="groups" data-type="multiselect" data-update="main-team,secondary-teams"></td></tr>
+<tr><th>Mailing lists</th>{%if perms.admtooCore.do_rh_tasks%}<td><ul>{% for m in edited_user.all_mailinglists %}
+	<li>{{ m }}</li>{%endfor%}</ul>{%else%}<td data-field="mailinglists" data-type="multiselect">{%endif%}</td></tr>
+<tr><th>Groups</th>{% if perms.admtooCore.do_rh_tasks%}<td><ul>{%for m in edited_user.all_groups %}
+	<li>{{ m }}</li>{%endfor%}</ul>{%else%}<td data-field="groups" data-type="multiselect" data-update="main-team,secondary-teams">{%endif%}</td></tr>
 <tr><th>Machines</th><td><ul>{% for m in edited_user.machines.all %}
 	<li>{{ m.default_name }}<br/>{{ m.comment }}
 		<ul>{% for i in m.interfaces.all %}
@@ -37,6 +40,14 @@
 <tr><th>Responsable de</th><td data-field="managed" data-type="multiselect"></td></tr>
 <tr><th>Comptes applis</th><td>{% for k, v in edited_user.other_account_names %}
 <div><span class="application">{{k}}</span><span class="account">{{v}}</span></div>{% endfor %}</td></tr>
+</tbody>
+</table>
+<!-- photos and tags -->
+<table>
+<tbody>
+<tr><th rowspan=2>photo</th><td data-field="userphoto" data-type="photo"></td></tr>
+<tr><td>photo flag</td></tr>
+<tr><th>flags</th><td hmm>other flags</td></tr>
 </tbody>
 </table>
 </form>

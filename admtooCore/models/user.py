@@ -65,6 +65,9 @@ class User (models.Model) :
 	class Meta :
 		app_label = 'admtooCore'
 		ordering = ['login']
+		permissions = (
+			('do_rh_tasks', 'can change photos and flags'),
+		)
 
 	def __init__ (self, *args, **kwargs) :
 		super(User, self).__init__(*args, **kwargs)
@@ -198,6 +201,9 @@ class User (models.Model) :
 						mls.append (p)
 				else :
 					break
+		logger.error ('')
+		logger.error ('MAILING LISTS :')
+		logger.error (mls)
 		return mls
 				
 	def change_mailinglists (self, mailinglists) :
