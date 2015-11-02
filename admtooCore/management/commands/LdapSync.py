@@ -159,10 +159,12 @@ class LdapSync (object) :
 		if modified_users > 0 :
 			User.update_kifekoi()
 
-		# stats
-		print 'ADD '+str(added_users)+' users'
-		print 'MOD '+str(modified_users)+' users'
-		print 'DEL '+str(deleted_users)+' users'
+		# skip printing stats if nothing was done
+		if ((added_users > 0) or (modified_users > 0) or (deleted_users > 0)) :
+			print 'ADD '+str(added_users)+' users'
+			print 'MOD '+str(modified_users)+' users'
+			print 'DEL '+str(deleted_users)+' users'
+
 #
 # base django command line tool object.
 #
