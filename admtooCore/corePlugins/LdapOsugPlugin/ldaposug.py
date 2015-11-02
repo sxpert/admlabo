@@ -104,7 +104,11 @@ class Core_LdapOsug (object) :
 	def _user_get (self, uid) :
 		#self._log ('looking up user '+uid)
 		f = '(&(objectClass=inetOrgPerson)(uid='+uid+'))'
-		v = self._l.search_s (OSUG_LDAP_IPAG_BASE, ldap.SCOPE_SUBTREE, f)
+		try:
+			v = self._l.search_s (OSUG_LDAP_IPAG_BASE, ldap.SCOPE_SUBTREE, f)
+		except _l.SERVER_DOWN as e:
+			self._log ("the server is down...")
+			return None
 		u = self._ldap_clean_record (v)
 		if u is None :
 			self._log ("problem with data for user with uid '"+uid+"'")
