@@ -19,7 +19,7 @@
 		<li>Listes
 			<ul>
 				<li><a href="{% url 'users' %}">Liste des utilisateurs</a></li>
-{% if not perms.admtooCore.do_rh_tasks %}
+{% if user.is_staff %}
 				<li><a href="{% url 'groups' %}">Liste des groupes</a></li>
 				<li><a href="{% url 'mailinglist-list' %}">Liste des Mailing lists</a></li>
 				<li><a href="{% url 'mailalias-list' %}">Liste des alias de mail</a></li>
@@ -29,7 +29,7 @@
 	</ul>
 </div>
 <div id="blocks">
-{% if not perms.admtooCore.do_rh_tasks %}
+{% if user.is_staff %}
 <div class="ui-block" id="DBNewArrivals"></div>
 <div class="ui-block" id="DBUnknownUsers" data-sort-default="arrival"></div><br/>
 <div class="ui-block" id="DBReclaimMachines"></div>

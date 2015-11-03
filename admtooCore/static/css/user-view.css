@@ -12,3 +12,6 @@ table {
 .account {
 	display: inline-block;
 }
+.userpic {
+	height: 200pt;
+}

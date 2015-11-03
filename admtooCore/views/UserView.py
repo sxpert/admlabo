@@ -446,6 +446,22 @@ def user_view_userclass_field (request, userid, action) :
 	return data
 
 #----
+# user photo field
+#
+
+def user_view_userphoto_field (request, userid, action) :
+	data = {}
+	if action == 'value' :
+		if request.method == 'POST' :
+			# here we have only one file
+			if 'userphoto' in request.FILES :
+				f = request.FILES['userphoto']
+				data['name'] = f.name
+				data['size'] = f.size
+				data['content_type'] = f.content_type
+	return data	
+
+#----
 # main function
 #
 @admin_login
@@ -473,6 +489,9 @@ def user_view_field (request, user_id, action, fieldtype, fieldname) :
 		},
 		"display" : {
 			"secondary-teams" : user_view_secondary_teams_field
+		},
+		"photo": {
+			"userphoto" : user_view_userphoto_field
 		}
 	}
 

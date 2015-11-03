@@ -66,6 +66,8 @@ function df_ajax (method, url, data, callback) {
 		'dataType':	'json',
 		'url':		url,
 		'data':		data,
+		'processData': false,
+		'contentType': false,
 		'success':	callback,
 	});	
 }
@@ -84,7 +86,7 @@ function df_get_data (field, callback=undefined) {
 				case 'select': df_select_initialize (field, result); break;
 				case 'text' : df_text_initialize (field, result); break;
 				case 'multitext': df_multitext_initialize (field, result); break;
-				case 'photo': console.log ('initializing photo'); df_photo_initialize (field, result); break;
+				case 'photo': df_photo_initialize (field, result); break;
 			}
 		});
 }
@@ -101,8 +103,19 @@ function df_save_value (field) {
 		case 'select': data = df_select_get_value (field); break;
 		case 'text': data = df_text_get_value (field); break;
 		case 'multitext': data = df_multitext_get_value (field); break;
+		case 'photo': data = df_photo_get_value (field); break;
 	}
-	data = JSON.stringify (data);
+	// handle uploading binary files too
+	if ('_is_formdata' in data) {
+		if ('_formdata' in data) {
+			data = data['_formdata'];
+		} else {
+			console.log ('ERROR: can\'t find FormData object');
+			data = {};
+		}
+	} else {
+		data = JSON.stringify (data);
+	}
 	df_ajax ('POST', url, data,
 		function (result) {
 			console.log (result);
@@ -114,6 +127,7 @@ function df_save_value (field) {
 				case 'select': df_select_set_value (field, result); break;
 				case 'text': df_text_set_value (field, result); break;
 				case 'multitext': df_multitext_initialize (field, result); break;
+				case 'photo' : df_photo_set_value (field, result); break;
 			};
 			if (!e) 
 				df_update_fields (f_update);
@@ -490,37 +504,70 @@ function df_multitext_add_option (e) {
  *
  */
 
+function df_photo_create_img_element (field) {
+	var img = document.createElement ('img');
+	$(img).addClass('userpic');
+	$(img).attr('data-control', 'image-display');
+	field.append ($(img));
+	return img
+}
+
 function df_photo_file_selected (event, field) {
-	console.log ("file selected");
-	console.log (field);
+	var element = event.target
+	if (element.tagName === 'INPUT') {
+		console.log (element);
+		var files = element.files;
+		var selectedFile = files[0]
+		console.log (selectedFile);
+		// the img should be already created
+		var img = df_photo_create_img_element (field);
+		img.file = selectedFile;
+		var reader = new FileReader ();
+		reader.onload = (function (aImg) { return function (e) {aImg.src = e.target.result; }})(img);
+		reader.readAsDataURL (selectedFile);		
+		
+	} else {
+		console.log ('window');
+		df_set_edit_icon (field);
+		df_set_value (field);	
+	}
+	// remove event on window
+	$(window).off('focus');
+}
+
+// create the input element and add it to the field
+function df_photo_create_input (field) {
+	var i = $('<input data-control="file-selector" type="file" accept="image/*" style="display:none"/>');
+	field.append(i);
+	return i;
 }
 
 function df_photo_select_file (event, field) {
 	console.log (field);
 	var f = $.find('form')[0];
-	var i = $(f).find('[type=file]')[0];
+	// find if we have an input element.
+	var i = field.find('[type=file]')[0];
+	// if not, add it
+	if (i===undefined) {
+		i = df_photo_create_input (field);		
+	}
+	console.log (i);
 	// register change event
 	$(i).off();
 	$(i).on('change', function (event) {
 		var f = field;
 		df_photo_file_selected (event, f);
 	});
-	$(window).focus(function () { console.log('window has focus');});
+	$(window).focus(function (event) {
+		var f = field;
+		df_photo_file_selected (event, f);
+	});
 	i.click();
 }
 
 function df_photo_set_value (field, data) {
-	var f = field.parents('form');
-	// find if there's already an file input
-	var i = f.find('[type=file]');
-	if (i.length===0) {
-		// add the file input
-		i = $('<input type="file" accept="image/*" style="display:none"/>');
-		f.append(i);
-	}
-	// display the photo
-	var d = $('<span>'+data+'</span>');
-	field.append(d);
+	var img = df_photo_create_img_element (field);
+	
 	// bind
 	field.find('[data-control=button]').on('click', function (event) {
 		var f = field;
@@ -528,11 +575,32 @@ function df_photo_set_value (field, data) {
 	});	
 }
 
+function df_photo_get_value (field) {
+	console.log ('uploading file');
+	var i = field.find('[type=file]')[0];
+	if (i === undefined) {
+		console.log ('there\'s no input field to find');
+		return;
+	}
+	var files = i.files;
+	var data = {};
+	console.log (files.length);
+	if (files.length==1) {
+		var file = files[0];
+		console.log (file);
+		var fd = new FormData();
+		fd.append (field.attr('data-field'), file);
+		data['_is_formdata'] = true;
+		data['_formdata'] = fd
+	} else {
+		console.log ('no files selected');
+	}
+	return data;
+}
+
 function df_photo_initialize (field, data) {
 	var f = field.parents('form');
 	var i = f.find('[type=file]')[0]
-	//console.log (i)
-	//$(i).trigger('click');
 }
 
 /*
