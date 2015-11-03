@@ -481,7 +481,10 @@ def user_view_userphoto_field (request, userid, action) :
 					fdesc.close()
 					u.photo_path = f.name
 					u.save()
-	data['url'] = reverse('user-view-photo', args = (u.uidnumber, u.photo_path,))
+	if u.photo_path is None :
+		data['url'] = None
+	else :
+		data['url'] = reverse('user-view-photo', args = (u.uidnumber, u.photo_path,))
 	return data	
 
 #----
