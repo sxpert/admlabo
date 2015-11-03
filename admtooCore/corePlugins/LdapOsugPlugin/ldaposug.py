@@ -106,7 +106,7 @@ class Core_LdapOsug (object) :
 		f = '(&(objectClass=inetOrgPerson)(uid='+uid+'))'
 		try:
 			v = self._l.search_s (OSUG_LDAP_IPAG_BASE, ldap.SCOPE_SUBTREE, f)
-		except _l.SERVER_DOWN as e:
+		except self._l.SERVER_DOWN as e:
 			self._log ("the server is down...")
 			return None
 		u = self._ldap_clean_record (v)
