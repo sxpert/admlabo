@@ -26,6 +26,8 @@ urlpatterns = patterns( '',
 	url(r'^user/(?P<user_id>\d+)/view/$', views.user_view, name='user-view'),
 	url(r'^user/(?P<user_id>\d+)/view/(?P<action>[^/]*)/(?P<fieldtype>[^/]*)/(?P<fieldname>[^/]*)$', 
 		views.user_view_field, name='user_view_field'),
+	# photos
+	url(r'^user/photos/(?P<user_id>\d+)/(?P<fname>.*)$', views.user_view_photo, name='user-view-photo'),
 # Groups
 	url(r'^groups/', views.groups, name='groups'),
 	url(r'^group/new/$', views.group_new, name='group-new'),

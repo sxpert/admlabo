@@ -2,7 +2,7 @@
 
 import json
 from django.db import transaction, IntegrityError
-from django.http import HttpResponse
+from django.http import HttpResponse, FileResponse
 from django.shortcuts import render
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -451,15 +451,51 @@ def user_view_userclass_field (request, userid, action) :
 
 def user_view_userphoto_field (request, userid, action) :
 	data = {}
+	u = models.User.objects.get(uidnumber=userid)
 	if action == 'value' :
 		if request.method == 'POST' :
 			# here we have only one file
 			if 'userphoto' in request.FILES :
+				from django.conf import settings
+				import os
+				# get file, write it to disk
 				f = request.FILES['userphoto']
 				data['name'] = f.name
 				data['size'] = f.size
 				data['content_type'] = f.content_type
+				# generate file name
+				fname = os.path.join (str(u.uidnumber), f.name)
+				fdest = os.path.join(settings.USER_PHOTO_PATH, fname)
+				destdir = os.path.dirname(fdest)
+				try :
+					os.makedirs (destdir)
+				except OSError as e :
+					pass
+				# 2 paths depending on file size
+				if f.multiple_chunks() :
+					logger.error ('multiple chunks not handled yet')
+				else :
+					fdesc = open(fdest, 'wb')
+					d = f.read()
+					fdesc.write (d)
+					fdesc.close()
+					u.photo_path = f.name
+					u.save()
+	data['url'] = reverse('user-view-photo', args = (u.uidnumber, u.photo_path,))
 	return data	
+
+#----
+#
+#
+
+@admin_login
+def user_view_photo (request, user_id, fname) :
+	from django.conf import settings
+	import os
+	logger.error (user_id)
+	logger.error (fname)
+	fdest = os.path.join(settings.USER_PHOTO_PATH, user_id, fname)
+	return FileResponse(open(fdest, 'rb'))
 
 #----
 # main function

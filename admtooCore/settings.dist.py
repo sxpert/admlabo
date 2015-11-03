@@ -113,7 +113,7 @@ BACKUPPC_SERVER    = 'midgard'
 BACKUPPC_USER      = 'backuppc'
 BACKUPPC_GROUP     = 'services' 
 
-USER_PHOTO_PATH = os.path.join('data','photos')
+USER_PHOTO_PATH = os.path.join(os.sep, 'srv','data','photos')
 USER_DEPARTURE_SOON = -30
 USER_DEPARTURE_GONE = 60
 

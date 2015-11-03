@@ -6,10 +6,8 @@
 {% block content %}
 {% load is_only_rh %}
 <p>&lt; <a href="{% url 'dashboard' %}">retour au dashboard</a> &lt; <a href="{% url 'users' %}">retour à la liste des utilisateurs</a></p>
-<p>user view</p>
 <form action="." method="post">{% csrf_token %}
 <!-- user information -->
-{% if perms.admtooCore.do_rh_tasks %}<div>rh_tasks</div>{%else%}<div>is_staff</div>{%endif%}
 <table>
 <tbody>
 <tr><th></th>{% if user|is_only_rh %}<td>{{edited_user.get_user_state_display}}</td>{%else%}<td data-update="groups,mailinglists,main-team,secondary-teams" data-field="user_state" data-type="select">{%endif%}</td><tr>
