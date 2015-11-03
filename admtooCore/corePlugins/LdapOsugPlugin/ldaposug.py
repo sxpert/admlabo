@@ -108,7 +108,7 @@ class Core_LdapOsug (object) :
 			v = self._l.search_s (OSUG_LDAP_IPAG_BASE, ldap.SCOPE_SUBTREE, f)
 		except self._l.SERVER_DOWN as e:
 			self._log ("the server is down...")
-			return None
+			return False
 		u = self._ldap_clean_record (v)
 		if u is None :
 			self._log ("problem with data for user with uid '"+uid+"'")
@@ -126,6 +126,8 @@ class Core_LdapOsug (object) :
 			# raise exception
 			raise UserGone
 			return True # skip this entry, it's not going to work anyways
+		if u is False :
+			return False
 		dn, odata = u
 		ok = odata.keys()
 		#self._log (str(data))
