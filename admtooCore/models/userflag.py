@@ -5,6 +5,7 @@ logger=logging.getLogger('django')
 
 class UserFlag (models.Model) :
 	name = models.CharField (max_length=64, null=True, blank=True)
+	label = models.CharField (max_length=255, null=True, blank=True)
 
 	class Meta:
 		app_label = 'admtooCore'

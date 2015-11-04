@@ -488,6 +488,58 @@ def user_view_userphoto_field (request, userid, action) :
 	return data	
 
 #----
+# user flags
+#
+
+def user_view_checkbox_type_field (request, userid, fieldname, action) :
+	logger.error ('checkbox function')
+	u = models.User.objects.get(uidnumber=userid)
+	data = {}
+	if action == 'value' :
+		if request.method == 'POST' :	
+			reqd = json.loads(request.body)
+			logger.error (reqd)
+			if 'value' in reqd :
+ 				value = reqd['value']
+				try :
+					flag = models.UserFlag.objects.get(name=fieldname)
+				except models.UserFlag.DoesNotExist as e :
+					pass
+				else :
+					if value :
+						try :
+							f = u.flags.get(name=fieldname)
+						except models.UserFlag.DoesNotExist as e :
+							u.flags.add (flag)
+					else :
+						try :
+							f = u.flags.get(name=fieldname)
+						except models.UserFlag.DoesNotExist as e :
+							pass
+						else :
+							u.flags.remove (flag)
+			
+		logger.error (u.flags.all())
+		try :
+			f = u.flags.get(name=fieldname)
+		except models.UserFlag.DoesNotExist as e :
+			data['value'] = False
+			try :	
+				f = models.UserFlag.objects.get(name=fieldname)
+			except models.UserFlag.DoesNotExist as e :
+				f = None
+				logger.error ('FATAL: unable to find userflag '+fieldname)
+		else :
+			data['value'] = True 
+		
+		if (f.label is None) or (len(f.label)==0) :
+			data['label'] = f.name
+		else :
+			data['label'] = f.label
+
+	return data
+
+#----
 #
 #
 
@@ -531,14 +583,20 @@ def user_view_field (request, user_id, action, fieldtype, fieldname) :
 		},
 		"photo": {
 			"userphoto" : user_view_userphoto_field
-		}
+		},
+		"checkbox" : user_view_checkbox_type_field
 	}
 
+	import types
 	if fieldtype in mapping.keys() :
 		fields = mapping[fieldtype]
-		if fieldname in fields.keys() :
-			func = fields[fieldname]
-			data = func (request, user_id, action)	
+		if type(fields) is types.FunctionType :
+			logger.error ('function type. calling with fieldname directly')
+			data = fields (request, user_id, fieldname, action)
+		elif type(fields) is types.DictType: 
+			if fieldname in fields.keys() :
+				func = fields[fieldname]
+				data = func (request, user_id, action)	
 	
 	jsdata = json.dumps(data)
 	return HttpResponse(jsdata, content_type='application/json')

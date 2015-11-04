@@ -25,11 +25,17 @@ function data_field (event) {
 }
 
 function df_set_edit_icon (elem) {
+	var ec = elem.attr('data-edit-controls');
+	if ((ec!==undefined)&&((ec=="false")||(ec=="0"))) 
+		return;
 	elem.find('[data-control=button]').remove();
 	elem.prepend(icon_button('content/svg/design/ic_create_24px',df_start_edit));
 } 
 
 function df_set_save_icons (elem) {
+	var ec = elem.attr('data-edit-controls');
+	if ((ec!==undefined)&&((ec=="false")||(ec=="0"))) 
+		return;
 	elem.find('[data-control=button]').remove();
 	elem.prepend(icon_button('content/svg/design/ic_save_24px', df_save_edit));
 	elem.prepend(icon_button('content/svg/design/ic_clear_24px', df_clear_edit));
@@ -103,6 +109,7 @@ function df_save_value (field) {
 		case 'text': data = df_text_get_value (field); break;
 		case 'multitext': data = df_multitext_get_value (field); break;
 		case 'photo': data = df_photo_get_value (field); break;
+		case 'checkbox': data = df_checkbox_get_value (field); break;
 	}
 	// handle uploading binary files too
 	if ('_is_formdata' in data) {
@@ -117,7 +124,7 @@ function df_save_value (field) {
 	}
 	df_ajax ('POST', url, data,
 		function (result) {
-			console.log (result);
+			//console.log (result);
 			var e = ('errors' in result);
 			if (!e) 
 				df_set_edit_icon(field);
@@ -142,11 +149,12 @@ function df_set_value (field) {
 		function (result) {
 			switch (f_type) {
 				case 'multiselect' : df_multiselect_set_value (field, result); break;
-				case 'select': df_select_set_value (field, result); break;
-				case 'display': 
-				case 'text': df_text_set_value (field, result); break;
-				case 'multitext' : df_multitext_initialize (field, result); break;
-				case 'photo' : df_photo_set_value (field, result); break;
+				case 'select'      : df_select_set_value (field, result); break;
+				case 'display'     : 
+				case 'text'        : df_text_set_value (field, result); break;
+				case 'multitext'   : df_multitext_initialize (field, result); break;
+				case 'photo'       : df_photo_set_value (field, result); break;
+				case 'checkbox'    : df_checkbox_set_value (field, result); break;
 			}
 		});
 }
@@ -354,7 +362,7 @@ function df_select_get_value (field) {
 	var control = field.find('[data-control=select]');
 //	var sel = parseInt($(control[0].selectedOptions[0]).val());
 	var sel = $(control[0].selectedOptions[0]).val();
-	console.log (sel)
+	//console.log (sel)
 	if (sel.length==0)
 		sel = null;
 	var data;
@@ -422,13 +430,13 @@ function df_text_get_value (field) {
  */
 
 function df_multitext_initialize (field, data) {
-	console.log ('df_multitext_initialize');
-	console.log (data);
+	//console.log ('df_multitext_initialize');
+	//console.log (data);
 	var values = data['values'];
 	var errors = null;
 	if ('errors' in data)
 		errors = data['errors'];
-	console.log (values);
+	//console.log (values);
 	/* create or empty the existing container */
 	var ul = field.find('[data-control=multitext-list]');
 	if (ul.length==0)
@@ -569,7 +577,7 @@ function df_photo_select_file (event, field) {
 
 function df_photo_set_value (field, data) {
 	var img = df_photo_create_img_element (field);
-	console.log (data.url);
+	//console.log (data.url);
 	$(img).attr('src', data.url);
 	
 	// set event on pencil button
@@ -602,6 +610,48 @@ function df_photo_initialize (field, data) {
 	var i = f.find('[type=file]')[0]
 	var img = df_photo_create_img_element (field);
 	$(img).attr('src', data.url);
+}
+
+/*
+ * checkbox control
+ */
+
+function df_checkbox_get_checkbox_control (field) {
+	c = field.find('[data-control=checkbox]');
+	if (c.length==0) {
+		c = $('<input type="checkbox" data-control="checkbox">')
+		field.append(c)
+	}
+	return c;
+}
+
+function df_checkbox_get_label_control (field, value='') {
+	l = field.find('[data-control=label]');
+	if (l.length==0) {
+		l = $('<span data-control="label">')
+		t = l.text(value);
+		field.append(l)
+	}
+	return l;
+}
+
+function df_checkbox_change_state (event) {
+	field = data_field(event);
+	df_save_value (field);
+}
+
+function df_checkbox_set_value (field, data) {
+	c = df_checkbox_get_checkbox_control (field);
+	l = df_checkbox_get_label_control (field, data['label']);
+	c.prop('checked', data['value']);
+	c.on('change', df_checkbox_change_state);
+}
+
+function df_checkbox_get_value (field) {
+	c = df_checkbox_get_checkbox_control (field);
+	value = c.is(':checked');
+	data = { 'value': value };
+	return data;
 }
 
 /*
