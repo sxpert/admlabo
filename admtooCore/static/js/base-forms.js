@@ -25,13 +25,12 @@ function data_field (event) {
 }
 
 function df_set_edit_icon (elem) {
-	var data_control = elem.find('[data-control]')
-	data_control.remove();
+	elem.find('[data-control=button]').remove();
 	elem.prepend(icon_button('content/svg/design/ic_create_24px',df_start_edit));
 } 
 
 function df_set_save_icons (elem) {
-	elem.find('[data-control]').remove();
+	elem.find('[data-control=button]').remove();
 	elem.prepend(icon_button('content/svg/design/ic_save_24px', df_save_edit));
 	elem.prepend(icon_button('content/svg/design/ic_clear_24px', df_clear_edit));
 }
@@ -278,6 +277,8 @@ function df_multiselect_add_option (event) {
 }
 
 function df_multiselect_set_value (field, data) {
+	field.find('[data-control=selected-list]').remove();
+	field.find('[data-control=select-div]').remove();
 	var values = data['values'];
 	if (values===undefined) return;
 	var opt = [];
@@ -338,6 +339,7 @@ function df_select_initialize (field, data) {
 }
 
 function df_select_set_value (field, data) {
+	field.find('[data-control=select]').remove();
 	if (!('value' in data)) return;
 	var url = data['url']
 	var value = data['value']
@@ -403,6 +405,7 @@ function df_text_initialize (field, data) {
 }
 
 function df_text_set_value (field, data) {
+	field.find('[data-control=text]').remove();
 	if (!('value' in data)) return;
 	field.append ($('<span>'+data['value']+'</span>'));
 }
