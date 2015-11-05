@@ -446,6 +446,38 @@ def user_view_userclass_field (request, userid, action) :
 	return data
 
 #----
+# appspecname field
+#
+
+def user_view_appspecname_field (request, userid, action) :
+	import json
+	data = {}
+	u = models.User.objects.get(uidnumber=userid)
+	if action == 'options' : 
+		# add all keys
+		k = {}
+		keys = models.UserAppSpecName.objects.all()
+		for key in keys :
+			k[key.ref] = key.label
+		data['keys'] = k
+	if action == 'value' :
+		# handle POST
+		reqd = json.loads(request.body);
+		if 'values' in reqd :
+			values = reqd['values']
+			# should check all keys in here
+			u.appspecname = json.dumps(values)
+			u.save(request_user=request.user)
+
+	# generate current values
+	try :
+		val = json.loads(u.appspecname)
+	except ValueError as e :
+		val = {}
+	data['values'] = val
+	return data
+
+#----
 # user photo field
 #
 
@@ -581,10 +613,13 @@ def user_view_field (request, user_id, action, fieldtype, fieldname) :
 		"display" : {
 			"secondary-teams" : user_view_secondary_teams_field
 		},
-		"photo": {
-			"userphoto" : user_view_userphoto_field
+		"key-value" : {
+			"appspecname"     : user_view_appspecname_field
 		},
-		"checkbox" : user_view_checkbox_type_field
+		"photo": {
+			"userphoto"       : user_view_userphoto_field
+		},
+		"checkbox"            : user_view_checkbox_type_field
 	}
 
 	import types

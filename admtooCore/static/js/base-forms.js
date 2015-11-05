@@ -91,6 +91,7 @@ function df_get_data (field, callback=undefined) {
 				case 'select': df_select_initialize (field, result); break;
 				case 'text' : df_text_initialize (field, result); break;
 				case 'multitext': df_multitext_initialize (field, result); break;
+				case 'key-value' : df_keyvalue_edit_mode (field, result); break;
 				case 'photo': df_photo_initialize (field, result); break;
 			}
 		});
@@ -108,6 +109,7 @@ function df_save_value (field) {
 		case 'select': data = df_select_get_value (field); break;
 		case 'text': data = df_text_get_value (field); break;
 		case 'multitext': data = df_multitext_get_value (field); break;
+		case 'key-value': data = df_keyvalue_get_values (field); break;
 		case 'photo': data = df_photo_get_value (field); break;
 		case 'checkbox': data = df_checkbox_get_value (field); break;
 	}
@@ -129,11 +131,12 @@ function df_save_value (field) {
 			if (!e) 
 				df_set_edit_icon(field);
 			switch (f_type) {
-				case 'multiselect': df_multiselect_set_value (field, result); break;
-				case 'select': df_select_set_value (field, result); break;
-				case 'text': df_text_set_value (field, result); break;
-				case 'multitext': df_multitext_initialize (field, result); break;
-				case 'photo' : df_photo_set_value (field, result); break;
+				case 'multiselect' : df_multiselect_set_value (field, result); break;
+				case 'select'      : df_select_set_value (field, result); break;
+				case 'text'        : df_text_set_value (field, result); break;
+				case 'multitext'   : df_multitext_initialize (field, result); break;
+				case 'key-value'   : df_keyvalue_set_value (field, result); break;
+				case 'photo'       : df_photo_set_value (field, result); break;
 			};
 			if (!e) 
 				df_update_fields (f_update);
@@ -153,6 +156,7 @@ function df_set_value (field) {
 				case 'display'     : 
 				case 'text'        : df_text_set_value (field, result); break;
 				case 'multitext'   : df_multitext_initialize (field, result); break;
+				case 'key-value'   : df_keyvalue_set_value (field, result); break;
 				case 'photo'       : df_photo_set_value (field, result); break;
 				case 'checkbox'    : df_checkbox_set_value (field, result); break;
 			}
@@ -508,6 +512,215 @@ function df_multitext_add_option (e) {
 	li.append (input);
 	li.insertBefore (mt.children('[data-control=multitext-append]'));
 }
+
+/*
+ *
+ * key-value field
+ *
+ */
+
+function df_keyvalue_get_table (field) {
+	var t = field.find('[data-control=kv-table]');
+	if (t.length == 0) {
+		t = $('<table data-control="kv-table">');
+		// add table to field
+		field.append(t);
+	}
+	return t;
+}
+
+function df_keyvalue_get_row (table, key) {
+	var rows = table.find('tr[data-key]');
+	var r = undefined;
+	if (rows.length != 0) {
+		// find the row
+		for (var i=0; i<rows.length;i++) {
+			var row = $(rows[i]);
+			var row_key = row.attr('data-key');
+			if (row_key == key) {
+				r = row;
+				break;	
+			}
+		}
+	}
+	if (r===undefined) {
+		r = $('<tr>');
+	    r.attr('data-key',key);
+		h = $('<th>');
+		h.text(key);
+		r.append(h);
+		d = $('<td>');
+		r.append(d);
+		// append
+		var inserted = false;
+		if (rows.length!=0) {
+			for (var i=0; i<rows.length; i++) {
+				var row = $(rows[i]);
+				var row_key = row.attr('data-key');
+				if (key<row_key) {
+					r.insertBefore(row);
+					inserted = true;
+					break;
+				}
+			}
+		}
+		if (!inserted) table.append(r);
+	}
+	return r;
+}
+
+function df_keyvalue_add_item_to_select (select, key, name) {
+	var options = select.find('option');
+	for (var i=0; i<options.length;i++) if ($(options[i]).attr('value')==key) return;
+	// create option
+	var option = $('<option>');
+	option.attr('value', key);
+	option.text(name);
+	// insert option
+	for (var i=0; i<options.length;i++) {
+		var o = $(options[i]);
+		var ov = o.attr('value');
+		if (key<ov) {
+			option.insertBefore(o);
+			return;
+		}
+	}
+	select.append(option);
+}
+
+function df_keyvalue_remove_unused_items_from_select (select, used_keys) {
+	var options = select.find('option');
+	for (var i=0; i<options.length; i++) {
+		var o = $(options[i]);
+		var v = o.attr('value');
+		if (used_keys.indexOf(o.attr('value'))!=-1) {
+			o.remove();
+		}
+	}
+}
+
+function df_keyvalue_update_available_keys (select) {
+	var i = 0;
+	var table = $(select.parents('table')[0]);
+	var keydata = table.attr('data-keys');
+	var keys = JSON.parse(keydata);
+	var usedkeys = table.find('[data-key]');
+	var uk = []
+	for (i=0; i<usedkeys.length;i++) uk.push($(usedkeys[i]).attr('data-key'));
+	var ak = [];
+	var k = Object.keys(keys);
+	k.sort();
+	for (i=0; i<k.length;i++) if (!(k[i] in uk)) ak.push(k[i]);
+	for (i=0; i<ak.length;i++) df_keyvalue_add_item_to_select(select, ak[i], keys[ak[i]]);
+	df_keyvalue_remove_unused_items_from_select(select, uk);
+	var options = select.find('option');
+	var tfoot = $(select.parents('tfoot')[0]);
+	if (options.length==0) tfoot.hide();
+	else tfoot.show();
+}
+
+function df_keyvalue_add_footer (table, keys) {
+	//step 1 : add the list of keys to the table 
+	table.attr('data-keys', JSON.stringify(keys));
+	var footer = $('<tfoot>');
+	var row = $('<tr>');
+	var cell = $('<td>');
+	cell.attr('colspan', '2');
+	var select = $('<select>');
+	cell.append(select);
+	var button = icon_button ('content/svg/design/ic_add_24px', df_keyvalue_add_key);
+	cell.append(button)
+	row.append(cell);
+	footer.append(row);
+	table.append(footer);
+	df_keyvalue_update_available_keys (select);
+}
+
+// read only mode
+function df_keyvalue_set_pair_ro (table, key, value) {
+	var r = df_keyvalue_get_row(table, key);
+	var d = r.find('td');
+	d.empty();
+	d.text(value);
+}
+
+function df_keyvalue_set_pair_rw (table, key, value) {
+	var r = df_keyvalue_get_row(table, key);
+	var d = r.find('td');
+	d.empty()
+	var i = $('<input>');
+	i.attr('type', 'text');
+	i.attr('value', value);
+	d.append(i);
+	var button = icon_button ('content/svg/design/ic_remove_24px', df_keyvalue_delete_key);
+	d.append(button);
+}
+
+function df_keyvalue_add_key (event) {
+	// obtain selected key from select
+	var target = $(event.target);
+	var select = $(target.parents('td')[0]).find('select');
+	var table = $(target.parents('table')[0])
+	var selected = $(select.find(':selected')[0]);
+	df_keyvalue_set_pair_rw (table, selected.attr('value'), '');
+	df_keyvalue_update_available_keys(select);	
+}
+
+function df_keyvalue_delete_key (event) {
+	var target = $(event.target);
+	var select = $($(target.parents('table')[0]).find('select')[0]);
+	var row = $(target.parents('tr')[0]);
+	row.remove();
+	df_keyvalue_update_available_keys(select);
+}
+
+function df_keyvalue_set_value (field, data) {
+	// part 1: get all keys in a sorted array
+	var val = data['values'];
+	var k = Object.keys(val);
+	k.sort();
+	// part 2: insert all visible controls
+	var t = df_keyvalue_get_table(field);
+	for (var i=0; i<k.length;i++)
+		df_keyvalue_set_pair_ro (t, k[i], val[k[i]]);
+	// part 3: remove all keys not there
+	var rows = field.find('[data-key]');
+	for (var i=0; i<rows.length; i++) {
+		var row = $(rows[i]);
+		if (k.indexOf(row.attr('data-key'))==-1) row.remove();
+	}
+	// remove footer with select if there
+	field.find('tfoot').remove();
+}
+
+function df_keyvalue_get_values (field) {
+	var lines = field.find('[data-key]');
+	var data = {};
+	var values = {};
+	for (var i=0; i<lines.length;i++) {
+		var line = $(lines[i])
+		var key = line.attr('data-key');
+		var input = line.find('input');
+		var value = input.val().trim();
+		if (value.length>0) values[key] = value;
+	}
+	data['values'] = values;
+	
+	return data;
+}
+
+function df_keyvalue_edit_mode (field, data) {
+	var val = data['values'];
+	var k = Object.keys(val);
+	k.sort();
+	var t = df_keyvalue_get_table(field);
+	for (var i=0; i<k.length;i++)
+		df_keyvalue_set_pair_rw (t, k[i], val[k[i]]);
+	var keys = data['keys'];
+	// add footer with select
+	df_keyvalue_add_footer (t, keys);
+}
+
 
 /*
  *

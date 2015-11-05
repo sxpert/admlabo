@@ -18,4 +18,4 @@ from userdir import UserDir
 from emailalert import EmailAlert
 from emailalertmessage import EmailAlertMessage
 from userflag import UserFlag
-
+from userappspecname import UserAppSpecName

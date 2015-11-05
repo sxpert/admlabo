@@ -38,8 +38,8 @@
 	{% endfor %}</ul></td></tr>
 <tr><th>Responsable</th><td data-field="manager" data-type="select"></td></tr>
 <tr><th>Responsable de</th><td data-field="managed" data-type="multiselect"></td></tr>
-<tr><th>Comptes applis</th><td>{% for k, v in edited_user.other_account_names %}
-<div><span class="application">{{k}}</span><span class="account">{{v}}</span></div>{% endfor %}</td></tr>
+<tr><th>Comptes applis</th>{%if user|is_only_rh%}<td>{% for k, v in edited_user.other_account_names %}
+<div><span class="application">{{k}}</span><span class="account">{{v}}</span></div>{% endfor %}</td>{%else%}<td data-field="appspecname" data-type="key-value"></td>{%endif%}</tr>
 </tbody>
 </table>
 <!-- photos and tags -->

@@ -9,6 +9,8 @@ logger=logging.getLogger('django')
 
 # Register your models here.
 
+admin.site.register(UserAppSpecName)
+
 class UserForm (forms.ModelForm) :
 	class Meta:
 		model=User
