@@ -460,14 +460,20 @@ def user_view_appspecname_field (request, userid, action) :
 		for key in keys :
 			k[key.ref] = key.label
 		data['keys'] = k
-	if action == 'value' :
+	if (action == 'value') and (request.method == 'POST') :
 		# handle POST
-		reqd = json.loads(request.body);
-		if 'values' in reqd :
-			values = reqd['values']
-			# should check all keys in here
-			u.appspecname = json.dumps(values)
-			u.save(request_user=request.user)
+		try :
+			reqd = json.loads(request.body);
+		except ValueError as e :
+			logger.error ('unable to load json data')
+			logger.error (request.body);
+		else :
+			if 'values' in reqd :
+				values = reqd['values']
+				# should check all keys in here
+				# also generate all necessary updates
+				u.appspecname = json.dumps(values)
+				u.save(request_user=request.user)
 
 	# generate current values
 	try :
