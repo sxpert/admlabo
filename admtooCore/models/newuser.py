@@ -190,7 +190,12 @@ class NewUser (models.Model) :
 
 	def send_match_mail (self, request_user=None) :
 		maildata = {}
-		nu = NewUser.objects.get (pk=self.pk)
+		try :
+			nu = NewUser.objects.get (pk=self.pk)
+		except NewUser.DoesNotExist as e :
+			logger.error ("FATAL : unable to find user ??? "+self.first_name+" "+self.last_name)
+			
+			return
 		maildata['newuser'] = nu.serialize()
 		causes = ['UserMatch']
 		
