@@ -451,6 +451,7 @@ def user_view_userclass_field (request, userid, action) :
 
 def user_view_appspecname_field (request, userid, action) :
 	import json
+	import types
 	data = {}
 	u = models.User.objects.get(uidnumber=userid)
 	if action == 'options' : 
@@ -471,9 +472,41 @@ def user_view_appspecname_field (request, userid, action) :
 			if 'values' in reqd :
 				values = reqd['values']
 				# should check all keys in here
-				# also generate all necessary updates
+				data = {}
+				commands = []
+				for k in values.keys() :
+					v = values[k]
+					logger.error (k)
+					logger.error (v)
+					# find k in UserAppSpecName
+					try :
+						asnr = models.UserAppSpecName.objects.get(ref=k)
+					except models.UserAppSpecName.DoesNotExist as e :
+						logger.error (u'Skipping nonexistent key \''+unicode(k)+u'\'')
+					else :
+						tv = type(v)
+						if (tv is types.StringType) or (tv is types.UnicodeType) :
+							data[k] = v
+							# found a valid key and value, add the command
+							if asnr.command is not None :
+								commands.append(asnr.command)
+						else :
+							logger.error (u'wrong type for data \''+unicode(k)+u'\' => '+unicode(tv))
+				logger.error (data)
+				logger.error (commands)
 				u.appspecname = json.dumps(values)
 				u.save(request_user=request.user)
+				
+				# post commands 
+				cmddata = {}
+				cmddata['user'] = u.login
+				
+				for command in commands :
+					c = models.Command()
+					c.user = request.user
+					c.verb = command
+					c.data = json.dumps(cmddata)
+					c.save ()
 
 	# generate current values
 	try :

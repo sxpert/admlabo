@@ -155,7 +155,7 @@ class TWiki (object) :
 	#==========================================================================
 	# commands
 
-	def UpdateTWikiGroup (self, *args, **kwargs) :
+	def TWikiUpdateGroup (self, *args, **kwargs) :
 		_, command = args
 		if "logger" in kwargs.keys() :
 			logger = kwargs['logger']
@@ -164,6 +164,45 @@ class TWiki (object) :
 				self._logger = logger
 		c = json.loads (command.data)
 		return self._gen_group_config (c)
+
+	""" updates all twiki groups who the user belongs to
+	"""
+	def TWikiUpdateGroupsForUser (self, *args, **kwargs) :
+		import json
+		from admtooCore.models import User, Group, Command
+		_, command = args
+		if 'logger' in kwargs.keys() :
+			logger = kwargs['logger']
+			if logger is not None :
+				self._logger = logger
+		c = json.loads (command.data)
+		if 'user' in c.keys() :
+			user = c['user']
+			self._log('updating all twiki groups for user '+user)
+			u = User.objects.get(login=user)
+			self._log(u)
+			groups = u.all_groups()
+			self._log(groups)
+			twiki_groups = []
+			for g in groups :
+				try : 
+					asn = json.loads(g.appspecname)
+				except ValueError as e :
+					continue
+				else : 
+					if 'twiki' in asn.keys() :
+						twiki_groups.append (g)
+			self._log (twiki_groups)
+			for g in twiki_groups :
+				c = Command()
+				c.user = command.user
+				c.verb = 'TWikiUpdateGroup'
+				gd = g.prepare_group_data ()
+				c.data = json.dumps(gd)
+				c.in_cron = True
+				c.post()
+			return True
+		return False
 	
 	def UpdateGroup (self, *args, **kwargs) :
 		from admtooCore.models import command
@@ -181,10 +220,10 @@ class TWiki (object) :
 					if twiki_name is not None :
 						c = command.Command ()
 						c.user = cmd.user
-						c.verb = 'UpdateTWikiGroup'
+						c.verb = 'TWikiUpdateGroup'
 						c.data = cmd.data
 						c.in_cron = True
-						msg = 'SUCCES: post UpdateTWikiGroup command'
+						msg = 'SUCCES: post TWikiUpdateGroup command'
 						c.post ()
 					else: 
 						msg = 'ERROR: twiki_name is present but None'

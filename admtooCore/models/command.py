@@ -76,7 +76,7 @@ class Command (models.Model) :
 		# user dirs
 		elif self.verb=='CreateUserDir' :
 			return d['basedir']+'/'+d['uid']
-		elif self.verb=='UpdateTWikiGroup' :
+		elif self.verb=='TWikiUpdateGroup' :
 			if 'appSpecName' in d.keys() :
 				sp = d['appSpecName']
 				if sp is None :
