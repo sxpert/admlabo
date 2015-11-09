@@ -41,6 +41,9 @@ def analyze_radio (radio) :
 @login_required
 @csrf_protect
 def NewArrivalForm (request) :
+
+	other_office_max_length = models.NewUser._meta.get_field('other_office').max_length
+
 	# read form contents
 	newuser = {}
 	errors = {}
@@ -145,6 +148,9 @@ def NewArrivalForm (request) :
 		other_office = request.POST.get('other_office', '').strip()
 		if len(office)==0 and len(other_office)==0 :
 			errors['other_office'] = 'Ce champ ne peut être vide quand le bureau sélectionné est \'Autre\''
+		# should not happen
+		if len(other_office)>other_office_max_length :
+			errors['other_office'] = 'Valeur trop longue, '+str(other_office_max_length)+' maximum'
 		newuser['other_office'] = other_office
 
 		#======================================================================
@@ -352,6 +358,7 @@ def NewArrivalForm (request) :
 	# generate the form
 	context = {}
 	context['newuser'] = newuser
+	context['other_office_max_length'] = other_office_max_length
 	context['errors'] = errors
 	context['error_count'] = len(errors.keys())
 	context['allusers'] = models.User.objects.all()
