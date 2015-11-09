@@ -106,7 +106,52 @@ class Annuaire (object) :
 			sql+= ','.join(values)
 			sql+= ');'
 			self._log (sql)
-		
+
+			values = []
+
+			values.append (u.last_name)
+			values.append (u.first_name)
+			values.append (u.login)
+			mail = u.mail
+			if mail is None :
+				mail = ''
+			values.append (mail)		
+			telephone = u.telephone
+			if telephone is None :
+				telephone = ''
+			values.append (telephone[-5:])
+			values.append (telephone)
+			room = u.room
+			if room is None :
+				room = ''
+			values.append (room)
+			userclass = u.userclass
+			if userclass is None :
+				userclass = ''
+			else :	
+				userclass = userclass.ref
+			values.append (userclass)
+			teams = u.all_teams()
+			tm = []
+			for t in teams :	
+				tm.append (t.name)
+			for i in range (1,10) :
+				try :
+					t = tm[i]
+				except IndexError as e:
+					t = ''
+				values.append (t)
+			flags = u.flags.all()
+			tf = []
+			for f in flags :
+				tf.append (f.name)
+			if settings.FLAG_PHOTO_WEB in tf :
+				values.append (settings.FLAG_PHOTO_WEB)
+			else:	
+				values.append ('')
+			for i in range(1,3) :
+				values.append ('')
+			self._log (values)
 
 		else :	
 			# user is found
