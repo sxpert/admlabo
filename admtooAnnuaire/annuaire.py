@@ -253,6 +253,16 @@ class Annuaire (object) :
 		return True
 	
 	def _remove_users_not_in_list (self, user_list) :
+		self._connect()
+		sql = 'select id from '+ANNUAIRE_DB_TABLE+';'
+		cursor = self._db.cursor()
+		cursor.execute (sql)
+		users = cursor.fetchall()
+		del_users = []
+		for u in users :
+			if u[0] not in user_list :
+				del_users.append (u[0])
+		self._log (del_users)
 		pass
 
 	"""
