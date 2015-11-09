@@ -157,9 +157,12 @@ class Annuaire (object) :
 		else :	
 			# user is found
 			changes = {}
-			
-			if u.mail != user['email'] :
-				changes['email'] = u.mail
+		
+			mail = u.mail
+			if mail is None :
+				mail = ''	
+			if mail != user['email'] :
+				changes['email'] = mail
 			
 			telephone = u.telephone
 			if telephone is None : 
