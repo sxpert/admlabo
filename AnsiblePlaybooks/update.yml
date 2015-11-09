@@ -10,6 +10,9 @@
   - name : Service | stop the uwsgi service
     service : name=uwsgi state=stopped arguments=prod.admipag
 
+  - name : install mysql plugin
+    apt : name=python-mysqldb update-cache=yes state=latest
+
   - name : Git     | update the application source from git
     git : dest=/srv/prod.admipag repo=root@pxe:/srv/www/test.admipag key_file=/home/ansible/.ssh/id_ed25519 update=yes
 
