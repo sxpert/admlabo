@@ -135,6 +135,7 @@ class Annuaire (object) :
 			tm = []
 			for t in teams :	
 				tm.append (t.name)
+			tm.sort()
 			for i in range (1,10) :
 				try :
 					t = tm[i]
