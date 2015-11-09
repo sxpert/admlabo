@@ -95,7 +95,6 @@ class Annuaire (object) :
 
 		else :	
 			# user is found
-			self._log (user)
 			changes = {}
 			
 			if u.mail != user['email'] :
@@ -113,9 +112,13 @@ class Annuaire (object) :
 
 			if u.room != user['bureau'] :
 				changes['bureau'] = u.room
-	
-			if u.userclass.ref != user['statut'] :
-				changes['statut'] = u.userclass.ref
+
+			userclass = u.userclass
+			if userclass is None :
+				self._log (u'FATAL: user '+unicode(user_login)+u' has no userclass')
+				return false
+			if userclass.ref != user['statut'] :
+				changes['statut'] = userclass.ref
 
 			# hanle teams
 			teams = u.all_teams()
@@ -138,9 +141,6 @@ class Annuaire (object) :
 			for t in old_teams :
 				if t not in teams :
 					del_teams.append (t)
-			#self._log (u'teams     : '+unicode(teams))
-			#self._log (u'new_teams : '+unicode(new_teams))
-			#self._log (u'del_teams : '+unicode(del_teams))
 			
 			# if either new_teams or del_teams not empty, teams have changed...
 			if (len(new_teams) > 0) or (len(del_teams)>0) :	
