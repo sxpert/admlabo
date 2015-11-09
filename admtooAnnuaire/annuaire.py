@@ -110,6 +110,9 @@ class Annuaire (object) :
 			if telephone != user['telephone'] :
 				changes['telephone'] = telephone
 
+			room = u.room
+			if room is None :
+				room = ''F
 			if u.room != user['bureau'] :
 				changes['bureau'] = u.room
 
@@ -160,9 +163,7 @@ class Annuaire (object) :
 				fnames = []
 				for f in flags :
 					fnames.append (f.name)
-				self._log (fnames)
 				if settings.FLAG_PHOTO_WEB in fnames :
-					self._log ('flag_photo_web detected')
 					tags = settings.FLAG_PHOTO_WEB
 			if tags != user['tags'] : 
 				changes['tags'] = tags
