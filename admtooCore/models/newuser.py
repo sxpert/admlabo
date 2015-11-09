@@ -150,6 +150,10 @@ class NewUser (models.Model) :
 		data['departure'] = None
 		if self.departure is not None :
 			data['departure'] = self.departure.isoformat()
+	
+		data['obs_a'] = self.obs_a
+		data['phy_d'] = self.phy_d
+		data['osug_d'] = self.osug_d
 
 		data['comp_account'] = self.comp_account
 		data['os_type'] = self.os_type
