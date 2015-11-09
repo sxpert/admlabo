@@ -180,7 +180,7 @@ class NewUserAdmin (admin.ModelAdmin) :
 		( None,                   { 'fields': ( 'manager', 'user', )}),
 		( 'État Civil',           { 'fields': ( 'last_name', 'first_name', 'birthdate', 'citizenship', )}),
 		( 'Contact',              { 'fields': ( 'external_email', )}),
-		( 'Au sein de l\'IPAG',   { 'fields': ( 'status', 'study_level', 'ujf_student', 'team', 'office', 'other_office', )}),
+		( 'Au sein de l\'IPAG',   { 'fields': ( 'status', 'study_level', 'ujf_student', 'team', 'office', 'other_office', 'obs_a', 'phy_d', 'osug_d')}),
 		( 'Dates',                { 'fields': ( 'arrival', 'departure', )}),
 		( 'Moyens Informatiques', { 'fields': ( 'comp_account', 'os_type', 'specific_os', 'os_lang', 'comp_purchase', )}),
 		( 'Autres Accès',         { 'fields': ( 'ir_lab', 'workshop', 'chem_lab', )}),
