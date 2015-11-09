@@ -116,7 +116,7 @@ class Annuaire (object) :
 			userclass = u.userclass
 			if userclass is None :
 				self._log (u'FATAL: user '+unicode(user_login)+u' has no userclass')
-				return false
+				return False
 			if userclass.ref != user['statut'] :
 				changes['statut'] = userclass.ref
 
