@@ -182,10 +182,12 @@ class Annuaire (object) :
 
 			userclass = u.userclass
 			if userclass is None :
-				self._log (u'FATAL: user '+unicode(user_login)+u' has no userclass')
-				return False
-			if userclass.ref != user['statut'] :
-				changes['statut'] = userclass.ref
+				self._log (u'WARNING: user '+unicode(user_login)+u' has no userclass')
+				userclass = ''
+			else :
+				userclass = userclass.ref
+			if userclass != user['statut'] :
+				changes['statut'] = userclass
 
 			# hanle teams
 			teams = u.all_teams()
