@@ -248,6 +248,7 @@ class Annuaire (object) :
 				values.append (user_login)
 
 				cursor.execute (sql, values)
+		return True
 	
 	def _remove_users_not_in_list (self, user_list) :
 		pass
@@ -260,6 +261,7 @@ class Annuaire (object) :
 		users = []
 		for u in models.User.objects.filter (user_state=models.User.NORMAL_USER) :
 			users.append (u.login)
-			self._update_user (u.login)
+			if not self._update_user (u.login) :
+				return False
 		self._remove_users_not_in_list (users)
 
