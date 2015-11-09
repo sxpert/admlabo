@@ -34,7 +34,8 @@
 """
 
 
-import logging 
+import logging
+from django.conf import settings
 from config.annuaire import *
 import MySQLdb
 import types
@@ -46,11 +47,11 @@ class Annuaire (object) :
 
 	def _log (self, message) :
 		if self._logger is None :
-			logging.basicConfig (level=logging.DEBUG)
+			logging.basicConfig (level=logging.INFO)
 		if self._logger is not None :
 			self._logger.error (message)
 		else:
-			logging.debug (message)
+			logging.info (message)
 
 	def _connect (self) :
 		try :
@@ -75,9 +76,9 @@ class Annuaire (object) :
 		pass
 
 	def _update_user (self, user_login) :
+		self._log ('-----------------------------------------------------------------')
 		self._connect()
 		u = models.User.objects.get (login = user_login)
-		self._log(u)
 		sql = 'select * from '+ANNUAIRE_DB_TABLE+' where id=%s for update;'
 		cursor = self._db.cursor()
 		try :
@@ -99,13 +100,16 @@ class Annuaire (object) :
 			
 			if u.mail != user['email'] :
 				changes['email'] = u.mail
-
-			poste = u.telephone[-5:]
+			
+			telephone = u.telephone
+			if telephone is None : 
+				telephone = ''
+			poste = telephone[-5:]
 			if poste != user['poste'] :
 				changes['poste'] = poste
 
-			if u.telephone != user['telephone'] :
-				changes['telephone'] = u.telephone
+			if telephone != user['telephone'] :
+				changes['telephone'] = telephone
 
 			if u.room != user['bureau'] :
 				changes['bureau'] = u.room
@@ -125,7 +129,6 @@ class Annuaire (object) :
 				if (tn in user) and (user[tn] is not None) and (user[tn] != '') :
 					old_teams.append (user[tn])
 			old_teams.sort()
-			self._log (old_teams)
 			# search for teams not in old teams
 			new_teams = []
 			for t in teams :
@@ -135,51 +138,59 @@ class Annuaire (object) :
 			for t in old_teams :
 				if t not in teams :
 					del_teams.append (t)
-			self._log (new_teams)
-			self._log (del_teams)
+			#self._log (u'teams     : '+unicode(teams))
+			#self._log (u'new_teams : '+unicode(new_teams))
+			#self._log (u'del_teams : '+unicode(del_teams))
 			
 			# if either new_teams or del_teams not empty, teams have changed...
-			for i in range (1, 10) :
-				try :
-					t = teams[i]
-				except IndexError as e:
-					t = ''
-				changes['equipe'+str(i)] = t
+			if (len(new_teams) > 0) or (len(del_teams)>0) :	
+				for i in range (1, 10) :
+					try :
+						t = teams[i-1]
+					except IndexError as e:
+						t = ''
+					if t is None :
+						t = ''
+					changes['equipe'+str(i)] = t
 
 			flags = u.flags.all()
-			self._log (flags)
 			# some debugging needed
+			tags = ''
 			if len(flags) > 0 :
-				return False
+				fnames = []
+				for f in flags :
+					fnames.append (f.name)
+				self._log (fnames)
+				if settings.FLAG_PHOTO_WEB in fnames :
+					self._log ('flag_photo_web detected')
+					tags = settings.FLAG_PHOTO_WEB
+			if tags != user['tags'] : 
+				changes['tags'] = tags
 
-			self._log (changes)
-			
 			sql = 'update '+ANNUAIRE_DB_TABLE+' set '
 			fields = changes.keys()
-			self._log (fields)
 			fields.sort()
-			self._log (fields)
 			entries = []
 			values = []
 			for f in fields :
 				entries.append (f+'=%s')
 				values.append (changes[f])
-			self._log (entries)
-			self._log (values)
 
-			sql+=', '.join (entries)
-			sql+=' where id = %s ;'
-			values.append (user_login)
-			self._log (sql)
+			if (len(values) > 0) :
+				sql+=', '.join (entries)
+				sql+=' where id = %s ;'
+				values.append (user_login)
+				self._log (sql)
+				self._log (values)
 
-			cursor.execute (sql, values)
-			#self._db.commit ()
+				cursor.execute (sql, values)
+				#self._db.commit ()
 
 	"""
 	mise a jour complete de tout l'annuaire
 	"""
 	def AnnuaireUpdate (self, *args, **kwargs) :
 		self._connect ()
-		for u in models.User.objects.all () :
+		for u in models.User.objects.filter (user_state=models.User.NORMAL_USER) :
 			self._update_user (u.login)
 
