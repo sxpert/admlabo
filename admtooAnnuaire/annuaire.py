@@ -8,6 +8,8 @@
 # database					"annuaire_ipag"
 # injecte dans la table 	"annuaire"
 # 
+# NOTE: the mysql setup is too stupid to handle transactions properly
+#
 
 """
 | nom       | text        | NO   |     | NULL    |       | 		nom
@@ -79,7 +81,7 @@ class Annuaire (object) :
 		self._log ('-----------------------------------------------------------------')
 		self._connect()
 		u = models.User.objects.get (login = user_login)
-		sql = 'select * from '+ANNUAIRE_DB_TABLE+' where id=%s for update;'
+		sql = 'select * from '+ANNUAIRE_DB_TABLE+' where id=%s;'
 		cursor = self._db.cursor()
 		try :
 			cursor.execute (sql, (user_login,))
@@ -97,7 +99,7 @@ class Annuaire (object) :
 			teams = []
 			for i in range(1, 10) :
 				teams.append ('equipe'+str(i))
-			sql+=','.join (teams)+','
+			sql+=','.join (teams)
 			sql+= ',tags,champ2,champ3,champ4'
 			sql+= ') values ('
 			values = []
@@ -149,9 +151,10 @@ class Annuaire (object) :
 				values.append (settings.FLAG_PHOTO_WEB)
 			else:	
 				values.append ('')
-			for i in range(1,3) :
+			for i in range(0,3) :
 				values.append ('')
 			self._log (values)
+			cursor.execute (sql, values)
 
 		else :	
 			# user is found
@@ -245,7 +248,6 @@ class Annuaire (object) :
 				self._log (values)
 
 				cursor.execute (sql, values)
-				#self._db.commit ()
 
 	"""
 	mise a jour complete de tout l'annuaire
