@@ -112,7 +112,7 @@ class Annuaire (object) :
 
 			room = u.room
 			if room is None :
-				room = ''F
+				room = ''
 			if u.room != user['bureau'] :
 				changes['bureau'] = u.room
 
