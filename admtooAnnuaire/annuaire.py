@@ -263,7 +263,11 @@ class Annuaire (object) :
 			if u[0] not in user_list :
 				del_users.append (u[0])
 		self._log (del_users)
-		pass
+		for u in del_users :
+			sql = 'delete from '+ANNUAIRE_DB_TABLE+' where id=%s;'
+			self._log ('deleting user '+u)
+			cursor.execute (sql, [u])
+		return True
 
 	"""
 	mise a jour complete de tout l'annuaire
