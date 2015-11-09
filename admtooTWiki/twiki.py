@@ -120,7 +120,7 @@ class TWiki (object) :
 				s+= u'<!--\n'
 				s+= u'   * Set CACHEABLE = off\n'
 				s+= u'-->\n'
-				self._log (s)
+				#self._log (s)
 			
 				# copy the contents of s to the twiki system, so as to update the contents of the group
 				a = af.rem()
