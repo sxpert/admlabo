@@ -78,7 +78,6 @@ class Annuaire (object) :
 		pass
 
 	def _update_user (self, user_login) :
-		self._log ('-----------------------------------------------------------------')
 		self._connect()
 		u = models.User.objects.get (login = user_login)
 		sql = 'select * from '+ANNUAIRE_DB_TABLE+' where id=%s;'
@@ -92,7 +91,7 @@ class Annuaire (object) :
 		user = self._read_one(cursor)
 		if user is None :
 			# can't find user
-			self._log (u'unable to find user '+user_login);
+			self._log (u'adding user '+user_login);
 			# insert new user
 			sql = 'insert into '+ANNUAIRE_DB_TABLE+' ('
 			sql+= 'nom,prenom,id,email,poste,telephone,bureau,statut,'
@@ -107,7 +106,6 @@ class Annuaire (object) :
 				values.append('%s')
 			sql+= ','.join(values)
 			sql+= ');'
-			self._log (sql)
 
 			values = []
 
@@ -153,7 +151,6 @@ class Annuaire (object) :
 				values.append ('')
 			for i in range(0,3) :
 				values.append ('')
-			self._log (values)
 			cursor.execute (sql, values)
 
 		else :	
@@ -241,19 +238,24 @@ class Annuaire (object) :
 				values.append (changes[f])
 
 			if (len(values) > 0) :
+				self._log (u'modifying user '+user_login)
 				sql+=', '.join (entries)
 				sql+=' where id = %s ;'
 				values.append (user_login)
-				self._log (sql)
-				self._log (values)
 
 				cursor.execute (sql, values)
+	
+	def _remove_users_not_in_list (self, user_list) :
+		pass
 
 	"""
 	mise a jour complete de tout l'annuaire
 	"""
 	def AnnuaireUpdate (self, *args, **kwargs) :
 		self._connect ()
+		users = []
 		for u in models.User.objects.filter (user_state=models.User.NORMAL_USER) :
+			users.append (u.login)
 			self._update_user (u.login)
+		self._remove_users_not_in_list (users)
 
