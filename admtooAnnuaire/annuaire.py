@@ -92,6 +92,21 @@ class Annuaire (object) :
 			# can't find user
 			self._log (u'unable to find user '+user_login);
 			# insert new user
+			sql = 'insert into '+ANNUAIRE_DB_TABLE+' ('
+			sql+= 'nom,prenom,id,email,poste,telephone,bureau,statut,'
+			teams = []
+			for i in range(1, 10) :
+				teams.append ('equipe'+str(i))
+			sql+=','.join (teams)+','
+			sql+= ',tags,champ2,champ3,champ4'
+			sql+= ') values ('
+			values = []
+			for i in range(0, 21) :
+				values.append('%s')
+			sql+= ','.join(values)
+			sql+= ');'
+			self._log (sql)
+		
 
 		else :	
 			# user is found
