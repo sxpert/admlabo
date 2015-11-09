@@ -263,5 +263,7 @@ class Annuaire (object) :
 			users.append (u.login)
 			if not self._update_user (u.login) :
 				return False
-		self._remove_users_not_in_list (users)
+		if not self._remove_users_not_in_list (users) :
+			return False
+		return Trueif not 
 
