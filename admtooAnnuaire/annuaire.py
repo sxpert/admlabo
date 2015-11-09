@@ -265,5 +265,5 @@ class Annuaire (object) :
 				return False
 		if not self._remove_users_not_in_list (users) :
 			return False
-		return Trueif not 
+		return True 
 
