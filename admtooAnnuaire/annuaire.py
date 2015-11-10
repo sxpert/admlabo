@@ -79,7 +79,8 @@ class Annuaire (object) :
 		pass
 
 	def _update_user (self, user_login) :
-		self._connect()
+		if not self._connect() :
+			return False
 		u = models.User.objects.get (login = user_login)
 
 		# cleanup user data
@@ -179,7 +180,6 @@ class Annuaire (object) :
 	mise a jour complete de tout l'annuaire
 	"""
 	def AnnuaireUpdate (self, *args, **kwargs) :
-		self._connect ()
 		users = []
 		for u in models.User.objects.all () :
 			users.append (u.login)
