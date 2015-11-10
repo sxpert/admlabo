@@ -80,6 +80,37 @@ class Annuaire (object) :
 	def _update_user (self, user_login) :
 		self._connect()
 		u = models.User.objects.get (login = user_login)
+
+		# cleanup user data
+		email = u.mail if u.mail is not None else ''
+		telephone = u.telephone if u.telephone is not None else ''
+		poste = telephone[-5:]
+		bureau = u.room if u.room is not None else ''
+		statut = (u.userclass.fr if u.userclass.fr is not None else u.userclass.ref) if u.userclass is not None else ''
+		equipes = [x.name for x in u.all_teams()]
+		equipes.sort()
+		tags = [x.name for x in u.flags.all() if x.name==settings.FLAG_PHOTO_WEB]
+		tags = tags[0] if len(tags)>0 else ''
+
+		# generate user dictionnary
+		new = {}
+
+		new['nom']       = u.last_name.encode('utf-8')
+		new['prenom']    = u.first_name.encode('utf-8')
+		new['id']        = u.login
+		new['email']     = email
+		new['poste']     = poste
+		new['telephone'] = telephone	
+		new['bureau']    = bureau
+		new['statut']    = statut.encode('utf-8')
+		for i in range(0,9) :
+			new['equipe'+str(i+1)] = equipes[i] if i<len(equipes) else ''
+		new['tags']      = tags
+		for i in range(2,5) :
+			new['champ'+str(i)] = ''
+
+		# various things depending on status		
+
 		sql = 'select * from '+ANNUAIRE_DB_TABLE+' where id=%s;'
 		cursor = self._db.cursor()
 		try :
@@ -89,167 +120,40 @@ class Annuaire (object) :
 			self._db.rollback ()
 			return False
 		user = self._read_one(cursor)
+		fields = [x[0] for x in cursor.description]
+
 		if user is None :
 			# can't find user
 			self._log (u'adding user '+user_login);
 			# insert new user
 			sql = 'insert into '+ANNUAIRE_DB_TABLE+' ('
-			sql+= 'nom,prenom,id,email,poste,telephone,bureau,statut,'
-			teams = []
-			for i in range(1, 10) :
-				teams.append ('equipe'+str(i))
-			sql+=','.join (teams)
-			sql+= ',tags,champ2,champ3,champ4'
+			sql+= ','.join(fields)
 			sql+= ') values ('
-			values = []
-			for i in range(0, 21) :
-				values.append('%s')
-			sql+= ','.join(values)
+			sql+= ','.join(['%s' for i in range(0,21)])
 			sql+= ');'
-
-			values = []
-
-			values.append (u.last_name)
-			values.append (u.first_name)
-			values.append (u.login)
-			mail = u.mail
-			if mail is None :
-				mail = ''
-			values.append (mail)		
-			telephone = u.telephone
-			if telephone is None :
-				telephone = ''
-			values.append (telephone[-5:])
-			values.append (telephone)
-			room = u.room
-			if room is None :
-				room = ''
-			values.append (room)
-			userclass = u.userclass
-			if userclass is None :
-				userclass = ''
-			else :	
-				userclass = userclass.ref
-			values.append (userclass)
-			teams = u.all_teams()
-			tm = []
-			for t in teams :	
-				tm.append (t.name)
-			tm.sort()
-			for i in range (1,10) :
-				try :
-					t = tm[i]
-				except IndexError as e:
-					t = ''
-				values.append (t)
-			flags = u.flags.all()
-			tf = []
-			for f in flags :
-				tf.append (f.name)
-			if settings.FLAG_PHOTO_WEB in tf :
-				values.append (settings.FLAG_PHOTO_WEB)
-			else:	
-				values.append ('')
-			for i in range(0,3) :
-				values.append ('')
+			self._log (sql)
+			values = [new[i] for i in fields]
+			self._log (values)
 			cursor.execute (sql, values)
 
 		else :	
 			# user is found
-			changes = {}
-		
-			mail = u.mail
-			if mail is None :
-				mail = ''	
-			if mail != user['email'] :
-				changes['email'] = mail
-			
-			telephone = u.telephone
-			if telephone is None : 
-				telephone = ''
-			poste = telephone[-5:]
-			if poste != user['poste'] :
-				changes['poste'] = poste
-
-			if telephone != user['telephone'] :
-				changes['telephone'] = telephone
-
-			room = u.room
-			if room is None :
-				room = ''
-			if room != user['bureau'] :
-				changes['bureau'] = room
-
-			userclass = u.userclass
-			if userclass is None :
-				self._log (u'WARNING: user '+unicode(user_login)+u' has no userclass')
-				userclass = ''
-			else :
-				userclass = userclass.ref
-			if userclass != user['statut'] :
-				changes['statut'] = userclass
-
-			# hanle teams
-			teams = u.all_teams()
-			tm = []
-			for t in teams :
-				tm.append(t.name)
-			teams = tm
-			old_teams = []
-			for i in range(1,10) :
-				tn = 'equipe'+str(i)
-				if (tn in user) and (user[tn] is not None) and (user[tn] != '') :
-					old_teams.append (user[tn])
-			old_teams.sort()
-			# search for teams not in old teams
-			new_teams = []
-			for t in teams :
-				if t not in old_teams :
-					new_teams.append (t)
-			del_teams = []
-			for t in old_teams :
-				if t not in teams :
-					del_teams.append (t)
-			
-			# if either new_teams or del_teams not empty, teams have changed...
-			if (len(new_teams) > 0) or (len(del_teams)>0) :	
-				for i in range (1, 10) :
-					try :
-						t = teams[i-1]
-					except IndexError as e:
-						t = ''
-					if t is None :
-						t = ''
-					changes['equipe'+str(i)] = t
-
-			flags = u.flags.all()
-			# some debugging needed
-			tags = ''
-			if len(flags) > 0 :
-				fnames = []
-				for f in flags :
-					fnames.append (f.name)
-				if settings.FLAG_PHOTO_WEB in fnames :
-					tags = settings.FLAG_PHOTO_WEB
-			if tags != user['tags'] : 
-				changes['tags'] = tags
-
-			sql = 'update '+ANNUAIRE_DB_TABLE+' set '
-			fields = changes.keys()
-			fields.sort()
-			entries = []
-			values = []
-			for f in fields :
-				entries.append (f+'=%s')
-				values.append (changes[f])
-
-			if (len(values) > 0) :
-				self._log (u'modifying user '+user_login)
-				sql+=', '.join (entries)
-				sql+=' where id = %s ;'
-				values.append (user_login)
-
+			self._log (user_login)
+			changes = dict((key, new[key]) for key in fields if (new[key]!=user[key]))
+			if len(changes)>0 :
+				self._log ('modifying user : '+user_login)
+				self._log (len(changes))
+				self._log (changes)
+				keys = sorted(changes.keys())
+				values = [changes[k] for k in keys]
+				values.append(user_login)
+				self._log (keys)
+				self._log (values)
+				sql = 'update '+ANNUAIRE_DB_TABLE+' set '+','.join([k+'=%s' for k in keys])+' where id=%s;'
+				self._log (sql)
 				cursor.execute (sql, values)
+			# no changes required
+
 		return True
 	
 	def _remove_users_not_in_list (self, user_list) :
