@@ -87,8 +87,13 @@ class Annuaire (object) :
 		poste = telephone[-5:]
 		bureau = u.room if u.room is not None else ''
 		statut = (u.userclass.fr if u.userclass.fr is not None else u.userclass.ref) if u.userclass is not None else ''
-		equipes = [x.name for x in u.all_teams()]
-		equipes.sort()
+		equipes = sorted([x.name for x in u.all_teams()])	
+		self._log (u.main_team)
+		if u.main_team is not None:
+			self._log ('main_team '+u.main_team.name+' is not None')
+			del equipes[equipes.index(u.main_team.name)]
+			equipes.insert(0, u.main_team.name)
+		self._log(equipes)
 		tags = [x.name for x in u.flags.all() if x.name==settings.FLAG_PHOTO_WEB]
 		tags = tags[0] if len(tags)>0 else ''
 
