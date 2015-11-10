@@ -88,7 +88,7 @@ class Annuaire (object) :
 		telephone = u.telephone if u.telephone is not None else ''
 		poste = telephone[-5:]
 		bureau = u.room if u.room is not None else ''
-		statut = (u.userclass.fr if u.userclass.fr is not None else u.userclass.ref) if u.userclass is not None else ''
+		statut = u.userclass.ref if u.userclass is not None else ''
 		equipes = sorted([x.name for x in u.all_teams()])	
 		if u.main_team is not None:
 			del equipes[equipes.index(u.main_team.name)]
@@ -126,7 +126,7 @@ class Annuaire (object) :
 		user = self._read_one(cursor)
 		fields = [x[0] for x in cursor.description]
 
-		if u.user_state == u.NORMAL_USER :
+		if u.display_in_directory() :
 			if user is None :
 				# can't find user
 				self._log ('Annuaire: adding user '+user_login);

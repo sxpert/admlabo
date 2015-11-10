@@ -88,7 +88,7 @@ AUTH_LDAP_USER_FLAGS_BY_GROUP = {
 	"is_superuser": osug.OSUG_LDAP_IPAG_SERVICES_GROUP
 }
 AUTH_LDAP_ALWAYS_UPDATE_USER = True
-AITH_LDAP_FIND_GROUP_PERMS = True
+AUTH_LDAP_FIND_GROUP_PERMS = True
 
 import logging
 logger = logging.getLogger('django_auth_ldap')
@@ -118,6 +118,9 @@ USER_DEPARTURE_SOON = -30
 USER_DEPARTURE_GONE = 60
 
 GIDNUMBER_RANGES   = [[3000,3999],[5000,5999]]
+
+FLAG_PHOTO_WEB     = 'flag_photo_web'
+FLAG_ANNUAIRE      = 'flag_annuaire'
 
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases

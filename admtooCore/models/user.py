@@ -3,6 +3,7 @@ from django.db import models
 import netfields
 import logging
 logger=logging.getLogger('django')
+from django.conf import settings
 
 # other models used
 from group import Group
@@ -437,5 +438,19 @@ class User (models.Model) :
 		c.data = ''
 		c.save ()
 
-			
+	#==========================================================================
+	# method for the directory display
+
+	def display_in_directory (self) :
+		# is the user active in the lab
+		if self.user_state != User.NORMAL_USER :
+			return False
+		# can the user be normally displayed
+		if self.userclass and self.userclass.directory :
+			return True
+		# do we have flag_annuaire
+		flags = [f.name for f in self.flags.all()]
+		if settings.FLAG_ANNUAIRE in flags :
+			return True
+		return False
 	
