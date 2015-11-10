@@ -14,7 +14,7 @@
 <tr><th>Prénom</th><td>{{ edited_user.first_name }}</td><tr>
 <tr><th>Nom de Famille</th><td>{{ edited_user.last_name }}</td></tr>
 <tr><th>Statut</th>{%if user|is_only_rh %}<td>{{edited_user.userclass.fr}}{%else%}<td data-field="userclass" data-type="select" data-update="groups,mailinglists,main-team,secondary-teams">{%endif%}</td></tr>
-<tr><th>Équipe principale</th>{%if user|is_only_rh %}<td>{%if edited_user.main_team%}{{edited_user.main_team}}{%else%}Pas d'équipe principale{%endif%}{%else%}<td data-field="main-team" data-type="select">{%endif%}</td></tr>
+<tr><th>Équipe principale</th>{%if user|is_only_rh %}<td>{%if edited_user.main_team%}{{edited_user.main_team}}{%else%}Pas d'équipe principale{%endif%}{%else%}<td data-field="main-team" data-type="select" data-update="secondary-teams">{%endif%}</td></tr>
 <tr><th>Équipes secondaires</th><td data-field="secondary-teams" data-type="display" data-edit="no"></td></tr>
 <tr><th>Login</th><td>{{ edited_user.login }}</td></tr>
 <tr><th>Uid Number</th><td>{{ edited_user.uidnumber }}</td></tr>
