@@ -41,6 +41,7 @@ from django.conf import settings
 from config.annuaire import *
 import MySQLdb
 import types
+import json
 from admtooCore import models
 
 class Annuaire (object) :
@@ -127,7 +128,7 @@ class Annuaire (object) :
 		if u.user_state == u.NORMAL_USER :
 			if user is None :
 				# can't find user
-				self._log (u'adding user '+user_login);
+				self._log ('Annuaire: adding user '+user_login);
 				# insert new user
 				sql = 'insert into '+ANNUAIRE_DB_TABLE+' ('
 				sql+= ','.join(fields)
@@ -140,7 +141,7 @@ class Annuaire (object) :
 				# calculate changes
 				changes = dict((key, new[key]) for key in fields if (new[key]!=user[key]))
 				if len(changes)>0 :
-					self._log ('modifying user : '+user_login)
+					self._log ('Annuaire: modifying user : '+user_login)
 					keys = sorted(changes.keys())
 					values = [changes[k] for k in keys]
 					values.append(user_login)
@@ -149,11 +150,30 @@ class Annuaire (object) :
 				# no changes required
 		else :
 			if user is not None :
-				self._log ('deleting user : '+user_login)
+				self._log ('Annuaire: deleting user : '+user_login)
 				sql = 'delete from '+ANNUAIRE_DB_TABLE+' where id=%s;'
 				cursor.execute (sql, [user_login])
 
 		return True
+
+	def _init_logger (self, **kwargs) :
+		if 'logger' in kwargs.keys() :
+			logger = kwargs['logger']
+			if logger is not None :
+				self._logger = logger
+
+	"""
+	mise a jour d'un utilisateur particulier
+	"""
+	def UpdateUser (self, *args, **kwargs) :
+		_, command = args
+		self._init_logger(**kwargs)
+		c = json.loads(command.data)
+		if 'uid' in c.keys() :
+			uid = c['uid']
+			self._log ('Annuaire.UpdateUser (\''+uid+'\')')
+			return self._update_user(uid)
+		return False
 	
 	"""
 	mise a jour complete de tout l'annuaire
