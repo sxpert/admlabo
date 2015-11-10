@@ -88,12 +88,9 @@ class Annuaire (object) :
 		bureau = u.room if u.room is not None else ''
 		statut = (u.userclass.fr if u.userclass.fr is not None else u.userclass.ref) if u.userclass is not None else ''
 		equipes = sorted([x.name for x in u.all_teams()])	
-		self._log (u.main_team)
 		if u.main_team is not None:
-			self._log ('main_team '+u.main_team.name+' is not None')
 			del equipes[equipes.index(u.main_team.name)]
 			equipes.insert(0, u.main_team.name)
-		self._log(equipes)
 		tags = [x.name for x in u.flags.all() if x.name==settings.FLAG_PHOTO_WEB]
 		tags = tags[0] if len(tags)>0 else ''
 
@@ -127,68 +124,46 @@ class Annuaire (object) :
 		user = self._read_one(cursor)
 		fields = [x[0] for x in cursor.description]
 
-		if user is None :
-			# can't find user
-			self._log (u'adding user '+user_login);
-			# insert new user
-			sql = 'insert into '+ANNUAIRE_DB_TABLE+' ('
-			sql+= ','.join(fields)
-			sql+= ') values ('
-			sql+= ','.join(['%s' for i in range(0,21)])
-			sql+= ');'
-			self._log (sql)
-			values = [new[i] for i in fields]
-			self._log (values)
-			cursor.execute (sql, values)
-
-		else :	
-			# user is found
-			self._log (user_login)
-			changes = dict((key, new[key]) for key in fields if (new[key]!=user[key]))
-			if len(changes)>0 :
-				self._log ('modifying user : '+user_login)
-				self._log (len(changes))
-				self._log (changes)
-				keys = sorted(changes.keys())
-				values = [changes[k] for k in keys]
-				values.append(user_login)
-				self._log (keys)
-				self._log (values)
-				sql = 'update '+ANNUAIRE_DB_TABLE+' set '+','.join([k+'=%s' for k in keys])+' where id=%s;'
-				self._log (sql)
+		if u.user_state == u.NORMAL_USER :
+			if user is None :
+				# can't find user
+				self._log (u'adding user '+user_login);
+				# insert new user
+				sql = 'insert into '+ANNUAIRE_DB_TABLE+' ('
+				sql+= ','.join(fields)
+				sql+= ') values ('
+				sql+= ','.join(['%s' for i in range(0,21)])
+				sql+= ');'
+				values = [new[i] for i in fields]
 				cursor.execute (sql, values)
-			# no changes required
+			else :
+				# calculate changes
+				changes = dict((key, new[key]) for key in fields if (new[key]!=user[key]))
+				if len(changes)>0 :
+					self._log ('modifying user : '+user_login)
+					keys = sorted(changes.keys())
+					values = [changes[k] for k in keys]
+					values.append(user_login)
+					sql = 'update '+ANNUAIRE_DB_TABLE+' set '+','.join([k+'=%s' for k in keys])+' where id=%s;'
+					cursor.execute (sql, values)
+				# no changes required
+		else :
+			if user is not None :
+				self._log ('deleting user : '+user_login)
+				sql = 'delete from '+ANNUAIRE_DB_TABLE+' where id=%s;'
+				cursor.execute (sql, [user_login])
 
 		return True
 	
-	def _remove_users_not_in_list (self, user_list) :
-		self._connect()
-		sql = 'select id from '+ANNUAIRE_DB_TABLE+';'
-		cursor = self._db.cursor()
-		cursor.execute (sql)
-		users = cursor.fetchall()
-		del_users = []
-		for u in users :
-			if u[0] not in user_list :
-				del_users.append (u[0])
-		self._log (del_users)
-		for u in del_users :
-			sql = 'delete from '+ANNUAIRE_DB_TABLE+' where id=%s;'
-			self._log ('deleting user '+u)
-			cursor.execute (sql, [u])
-		return True
-
 	"""
 	mise a jour complete de tout l'annuaire
 	"""
 	def AnnuaireUpdate (self, *args, **kwargs) :
 		self._connect ()
 		users = []
-		for u in models.User.objects.filter (user_state=models.User.NORMAL_USER) :
+		for u in models.User.objects.all () :
 			users.append (u.login)
 			if not self._update_user (u.login) :
 				return False
-		if not self._remove_users_not_in_list (users) :
-			return False
 		return True 
 
