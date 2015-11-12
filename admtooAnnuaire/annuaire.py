@@ -228,8 +228,8 @@ class Annuaire (object) :
 		# remove the temp file
 		shutil.rmtree (os.path.join (os.sep, 'tmp', hostname))
 		# change owner of destination file
-		uid = pwd.getpwnam(PHOTO_FILE_OWNER)[2]
-		gid = grp.getgrnam(PHOTO_FILE_GROUP)[2]
+		uid = pwd.getpwnam(LOCAL_PHOTO_OWNER)[2]
+		gid = grp.getgrnam(LOCAL_PHOTO_GROUP)[2]
 		os.chown(dpath, uid, gid)
 		# change mode of destination file
 		os.chmod(dpath, int(PHOTO_FILE_MODE,8))

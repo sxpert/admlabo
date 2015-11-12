@@ -19,6 +19,8 @@ MINI_PHOTO_QUALITY = 80
 
 PHOTO_PATH_LARGE   = os.path.join (os.sep, 'var', 'www', 'annuaire_ipag', 'trombi-original')
 PHOTO_PATH_SMALL   = os.path.join (os.sep, 'var', 'www', 'annuaire_ipag', 'trombi300x225')
+LOCAL_PHOTO_OWNER  = 'www-data'
+LOCAL_PHOTO_GROUP  = 'www-data'
 
 		
 		
