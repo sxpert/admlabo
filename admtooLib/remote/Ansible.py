@@ -140,6 +140,51 @@ class Ansible (object) :
 	
 		return True
 
+	def fetch (self, fqdn, src, dest, fail_on_missing=True) :
+		hostname = self.getHostname (fqdn)
+
+		#assemble args
+		args = 'src='+src+' '
+		args+= 'dest='+dest+' '
+		args+= 'fail_on_missing='+('yes' if fail_on_missing else 'no')
+
+		runner = ar.Runner (
+			pattern     = hostname,
+			forks       = 1,
+			sudo        = True,
+			module_name = 'fetch',
+			module_args = args,
+			inventory   = self.inventory
+		)
+		results = runner.run ()
+
+		if 'contacted' not in results :
+			self.log ('FATAL: no \'contacted\' in results')
+			return False
+		contacted = results['contacted']
+		if hostname not in contacted :
+			self.log ('FATAL: can\'t find '+hostname+' in results')
+			if 'dark' in results :
+				dark = results['dark']
+				if hostname in dark :
+					host = dark[hostname] 
+					if 'msg' in host :
+						msg = host['msg']
+						self.log (msg)
+			return False
+		host = contacted[hostname]
+		if 'changed' not in host :
+			if 'msg' in host :
+				self.log (host['msg'])
+			self.log ('FATAL: unable to find \'changed\' in results')
+			return False
+		if host['changed'] :
+			pass
+		else :
+			self.log ('Source file is identical to destination')
+
+		return True
+
 	def addLineInFile (self, fqdn, dest, line, regexp) :
 		hostname = self.getHostname (fqdn)
 

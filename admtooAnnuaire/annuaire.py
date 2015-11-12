@@ -158,6 +158,10 @@ class Annuaire (object) :
 
 		return True
 
+	def _photo_local_path (self, user) :
+		photo_path = user.photo_path if user.photo_path is not None else user.login+'.jpg'
+		return os.path.join (settings.USER_PHOTO_PATH,str(user.uidnumber),photo_path)
+
 	def _update_photo (self, user_login) :
 		import os.path
 		u = models.User.objects.get (login = user_login)
@@ -190,6 +194,48 @@ class Annuaire (object) :
 		if not res :
 			a.log (u'FATAL: unable to copy minifile '+unicode(spath_mini)+u' to '+unicode(PHOTO_SERVER)+u':'+unicode(dpaths))
 			return False
+		return True
+
+	def _fetch_photo (self, user) :
+		if user.photo_path is not None :
+			self._log (u'SKIPPING '+unicode(user.login)+u' : already have a picture for user')
+			return True
+		self._log (u'obtaining photo for user '+unicode(user.login))
+		spath = os.path.join (PHOTO_PATH_LARGE, user.login+'.jpg')
+		dpath = self._photo_local_path (user) 
+		self._log (spath)
+		a = af.rem()
+		fqdn = 'ipag.obs.ujf-grenoble.fr'
+		hostname = a.getHostname(fqdn)
+		tpath = os.path.join (os.sep, 'tmp', hostname, spath[1:])
+		self._log (u'temporary_path '+unicode(tpath))
+		# grab file from server
+		res = a.fetch (fqdn, spath, os.path.join (os.sep, 'tmp'))
+		if not res :
+			a.log (u'FATAL: unable to fetch photo '+unicode(spath)+u' from server to copy it to '+unicode(tpath))
+			return False
+		# do stuff with file
+		self._log (u'moving file to '+unicode(dpath))
+		import shutil
+		import pwd, grp
+		# create destination directory
+		try :
+			os.makedirs (os.path.dirname(dpath))
+		except OSError as e :
+			pass
+		# move the file
+		shutil.move (tpath, dpath)
+		# remove the temp file
+		shutil.rmtree (os.path.join (os.sep, 'tmp', hostname))
+		# change owner of destination file
+		uid = pwd.getpwnam(PHOTO_FILE_OWNER)[2]
+		gid = grp.getgrnam(PHOTO_FILE_GROUP)[2]
+		os.chown(dpath, uid, gid)
+		# change mode of destination file
+		os.chmod(dpath, int(PHOTO_FILE_MODE,8))
+		# add file to user
+		user.photo_path = os.path.basename(dpath)
+		user._save()
 		return True
 
 	def _init_logger (self, **kwargs) :
@@ -235,4 +281,5 @@ class Annuaire (object) :
 			self._log ('Annuaire.UpdatePhoto (\''+uid+'\')')
 			return self._update_photo (uid)
 		return False
-		
+
+			
