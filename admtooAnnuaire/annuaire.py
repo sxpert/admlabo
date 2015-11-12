@@ -205,7 +205,7 @@ class Annuaire (object) :
 		dpath = self._photo_local_path (user) 
 		self._log (spath)
 		a = af.rem()
-		fqdn = 'ipag.obs.ujf-grenoble.fr'
+		fqdn = PHOTO_SERVER
 		hostname = a.getHostname(fqdn)
 		tpath = os.path.join (os.sep, 'tmp', hostname, spath[1:])
 		self._log (u'temporary_path '+unicode(tpath))
