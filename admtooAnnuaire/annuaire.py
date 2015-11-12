@@ -157,6 +157,17 @@ class Annuaire (object) :
 
 		return True
 
+	def _update_photo (self, user_login) :
+		import os.path
+		u = models.User.objects.get (login = user_login)
+		spath = os.path.join (settings.USER_PHOTO_PATH,str(u.uidnumber),u.photo_path)
+		self._log (spath)
+		dpathl = os.path.join (PHOTO_PATH_LARGE, u.login+'.jpg')
+		dpaths = os.path.join (PHOTO_PATH_SMALL, u.login+'.jpg')
+		self._log (dpathl)
+		self._log (dpaths)
+		return False
+
 	def _init_logger (self, **kwargs) :
 		if 'logger' in kwargs.keys() :
 			logger = kwargs['logger']
@@ -180,6 +191,7 @@ class Annuaire (object) :
 	mise a jour complete de tout l'annuaire
 	"""
 	def AnnuaireUpdate (self, *args, **kwargs) :
+		self._init_logger(**kwargs)
 		users = []
 		for u in models.User.objects.all () :
 			users.append (u.login)
@@ -187,3 +199,16 @@ class Annuaire (object) :
 				return False
 		return True 
 
+	"""
+	mise a jour de la photo d'un utilisateur
+	"""
+	def UpdatePhoto (self, *args, **kwargs) :
+		_, command = args
+		self._init_logger(**kwargs)
+		c = json.loads (command.data)
+		if 'uid' in c.keys () :
+			uid = c['uid']
+			self._log ('Annuaire.UpdatePhoto (\''+uid+'\')')
+			return self._update_photo (uid)
+		return False
+		

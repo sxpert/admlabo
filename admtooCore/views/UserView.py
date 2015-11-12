@@ -551,7 +551,16 @@ def user_view_userphoto_field (request, userid, action) :
 					fdesc.write (d)
 					fdesc.close()
 					u.photo_path = f.name
-					u.save()
+					u.save(request_user=request.user)
+					
+					import json
+					c = models.Command()
+					c.user = request.user
+					c.verb = "UpdatePhoto"
+					c.data = json.dumps({'uid':u.login})
+					c.in_cron = True
+					c.post ()
+
 	if u.photo_path is None :
 		data['url'] = None
 	else :
