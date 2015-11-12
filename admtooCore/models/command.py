@@ -62,6 +62,8 @@ class Command (models.Model) :
 		# user
 		if self.verb=='UpdateUser':
 			return d['uid']
+		elif self.verb == 'UpdatePhoto': 
+			return d['uid']
 		# groups
 		elif self.verb=='UpdateGroup':
 			return d['cn']
