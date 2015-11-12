@@ -397,9 +397,15 @@ class User (models.Model) :
 
 	@staticmethod
 	def generate_kifekoi_list () :
+		import datetime
+		today = datetime.date.today()
 		data = []
 		users = User.objects.filter(user_state=User.NORMAL_USER).order_by ('last_name', 'first_name')
 		for u in users :
+			# skip user if departure date is passed
+			if u.departure is not None :
+				if today > u.departure :
+					continue
 			user = {}
 			user['first_name'] = u.first_name
 			user['last_name'] = u.last_name
@@ -445,6 +451,12 @@ class User (models.Model) :
 		# is the user active in the lab
 		if self.user_state != User.NORMAL_USER :
 			return False
+		# check if today is later than the departure date
+		if self.departure is not None :
+			import datetime
+			today = datetime.date.today()
+			if today > self.departure :
+				return False
 		# can the user be normally displayed
 		if self.userclass and self.userclass.directory :
 			return True
