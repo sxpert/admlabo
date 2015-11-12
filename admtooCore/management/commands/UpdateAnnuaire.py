@@ -12,6 +12,8 @@ class UpdateAnnuaire (object) :
 		from ...plugins import plugins
 		a = plugins.Annuaire
 		a.AnnuaireUpdate ()
+		t = plugins.TWiki
+		t.UpdateKiFeKoi()
 
 
 from django.core.management.base import BaseCommand, CommandError
