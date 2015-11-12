@@ -13,6 +13,9 @@
   - name : install mysql plugin
     apt : name=python-mysqldb update-cache=yes state=latest
 
+  - name : install python imaging (PIL)
+    apt : name=python-imaging state=latest
+
   - name : Git     | update the application source from git
     git : dest=/srv/prod.admipag repo=root@pxe:/srv/www/test.admipag key_file=/home/ansible/.ssh/id_ed25519 update=yes
 

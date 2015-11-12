@@ -43,6 +43,7 @@ import MySQLdb
 import types
 import json
 from admtooCore import models
+import admtooLib.AdminFunctions as af
 
 class Annuaire (object) :
 	def __init__ (self) :
@@ -166,6 +167,29 @@ class Annuaire (object) :
 		dpaths = os.path.join (PHOTO_PATH_SMALL, u.login+'.jpg')
 		self._log (dpathl)
 		self._log (dpaths)
+		# copy the original file
+		a = af.rem()
+		res = a.copy (PHOTO_SERVER, PHOTO_FILE_OWNER, PHOTO_FILE_GROUP, spath, dpathl, PHOTO_FILE_MODE)
+		if not res :
+			a.log (u'FATAL: unable to copy file '+unicode(spath)+u' to '+unicode(PHOTO_SERVER)+u':'+unicode(dpathl))
+			return False
+		# resize the picture in a temp file
+		import tempfile
+		from PIL import Image
+		img = Image.open (spath)
+		hpercent = (float(MINI_PHOTO_HEIGHT) / float (img.size[1]))
+		wsize = int((float(img.size[0]) * float(hpercent)))
+		img = img.resize ((wsize, MINI_PHOTO_HEIGHT), Image.ANTIALIAS)
+		f = tempfile.NamedTemporaryFile ()
+		spath_mini = f.name
+		img.save(f, MINI_PHOTO_FORMAT, quality=MINI_PHOTO_QUALITY, optimize=True, progressive=True)
+		f.flush()
+		# copy the temp file
+		res = a.copy (PHOTO_SERVER, PHOTO_FILE_OWNER, PHOTO_FILE_GROUP, spath_mini, dpaths, PHOTO_FILE_MODE)
+		f.close()
+		if not res :
+			a.log (u'FATAL: unable to copy minifile '+unicode(spath_mini)+u' to '+unicode(PHOTO_SERVER)+u':'+unicode(dpaths))
+			return False
 		return False
 
 	def _init_logger (self, **kwargs) :
