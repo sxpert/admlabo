@@ -190,7 +190,7 @@ class Annuaire (object) :
 		if not res :
 			a.log (u'FATAL: unable to copy minifile '+unicode(spath_mini)+u' to '+unicode(PHOTO_SERVER)+u':'+unicode(dpaths))
 			return False
-		return False
+		return True
 
 	def _init_logger (self, **kwargs) :
 		if 'logger' in kwargs.keys() :
