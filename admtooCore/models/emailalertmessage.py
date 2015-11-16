@@ -9,6 +9,7 @@ logger=logging.getLogger('django')
 
 class EmailAlertMessage (models.Model) :
 	cause   = models.CharField(max_length=32, default='Unknown')
+	sender  = models.TextField(default='')
 	subject = models.TextField(default='')
 	msgtext = models.TextField(default='') 
 	msghtml = models.TextField(default='') 

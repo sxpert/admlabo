@@ -202,6 +202,7 @@ class EmailAlertMessageForm (forms.ModelForm) :
 
 	def __init__ (self, *args, **kwargs) :
 		super (EmailAlertMessageForm, self).__init__ (*args, **kwargs)
+		self.fields['sender'].widget.attrs.update({'style': 'font-family: monospace; width: 100em; height: 10ex;'}) 
 		self.fields['subject'].widget.attrs.update({'style': 'font-family: monospace; width: 100em; height: 10ex;'}) 
 		self.fields['msgtext'].widget.attrs.update({'style': 'font-family: monospace; width: 100em; height: 45ex;'}) 
 		self.fields['msghtml'].widget.attrs.update({'style': 'font-family: monospace; width: 100em; height: 45ex;'}) 

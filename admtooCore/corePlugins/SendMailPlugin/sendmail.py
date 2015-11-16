@@ -48,13 +48,22 @@ class Send_Mail (object) :
 			except models.EmailAlertMessage.DoesNotExist as e :
 				self._log ('sendMailForCondition FATAL: unable to find email message data for mailcondition : \''+str(mailcond)+'\'')
 				return False
-			# generate subject and content from templates
-			t = Template(m.subject)
+			# generate data from templates
 			c = Context(data)
+			# if available, generate sender from template
+			sender = m.sender.strip()
+			if len(sender) > 0 :
+				t = Template(m.sender)
+				sender = t.render (c)
+			else :
+				sender = 'django@admipag.obs.ujf-grenoble.fr' 
+			# generate subject from templates
+			t = Template(m.subject)
 			subject = t.render(c)
 			if settings.DEBUG : 
 				subject = '[TESTING] '+subject
 			self._log (subject)
+			# generate content from template
 			t = Template(m.msgtext)
 			msgtext = t.render(c)
 			t = Template(m.msghtml)
@@ -70,7 +79,7 @@ class Send_Mail (object) :
 				l.append ('raphael.jacquot@obs.ujf-grenoble.fr')
 			# send one mail per email address found
 			# the email down there should be l
-			res = self._send_mail ( subject, msgtext, 'django@admipag.obs.ujf-grenoble.fr', 
+			res = self._send_mail ( subject, msgtext, sender, 
 					 		  l, fail_silently=False, html_message=msghtml)
 			self._log (res)
 			return res
