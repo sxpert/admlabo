@@ -92,8 +92,15 @@ class Annuaire (object) :
 		statut = u.userclass.ref if u.userclass is not None else ''
 		equipes = sorted([x.name for x in u.all_teams()])	
 		if u.main_team is not None:
-			del equipes[equipes.index(u.main_team.name)]
-			equipes.insert(0, u.main_team.name)
+			n = u.main_team.name
+			# the main team may not be in the list ? what gives
+			try :
+				idx = equipes.index(n)
+			except ValueError as e :
+				self._log (u'main team \''+unicode(n)+'\' can\'t be found in list of teams '+unicode(equipes))
+			else :
+				del equipes[idx]
+			equipes.insert(0, n)
 		tags = [x.name for x in u.flags.all() if x.name==settings.FLAG_PHOTO_WEB]
 		tags = tags[0] if len(tags)>0 else ''
 
