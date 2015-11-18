@@ -14,8 +14,9 @@ logger=logging.getLogger('django')
 #
 @login_required
 def Dashboard (request) :
-	logger.error (str(request.user))
-	if not admin_perms(request.user) :
+	admin = is_admin(request.user)
+	logger.error (u"DASHBOARD : "+unicode(request.user)+u' '+unicode(admin))
+	if not admin :
 		logger.error ('user is not staff')
 		logger.error ('redirecting to new arrival form')
 		return redirect ('new-arrival-form')
