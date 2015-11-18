@@ -66,6 +66,29 @@ def associateUserWith (user, newuser_id, request_user=None, logins=None) :
 		user.group = models.Group.objects.get(name=settings.DEFAULT_USER_GROUP)
 	groups.append (user.group.gidnumber)
 
+	#logger.error ('>>>>>> INITIAL GROUP LIST')
+	#logger.error (groups)
+
+	# search for parent groups 
+	gr = []
+	for gidnumber in groups :
+		try : 
+			g = models.Group.objects.get (gidnumber=gidnumber)
+		except models.Group.DoesNotExist as e :	
+			pass
+		else :
+			tg = user._get_parent_group (g)
+			if tg is not None :
+				for pg in tg :
+					if pg not in gr :
+						gr.append (pg)
+	for g in gr :
+		if g.gidnumber not in groups :
+			groups.append (g.gidnumber)
+	#logger.error ('>>>>>> NEW GROUP LIST')
+	#logger.error (groups)
+
+
 	# set the main team (there's only one for a new user... simple)
 	user.main_team = nu.team
 
