@@ -577,13 +577,13 @@ class Core_LdapOsug (object) :
 	#
 
 	def _init_logger (self, **kwargs) :
-		self._log ('looking for logger variable')
+		#self._log ('looking for logger variable')
 		if 'logger' in kwargs.keys() :
-			self._log ('logger variable found')
+			#self._log ('logger variable found')
 			logger = kwargs['logger']
-			self._log (logger)
+			#self._log (logger)
 			if logger is not None :
-				self._log ('setting logger to '+str(logger))
+				#self._log ('setting logger to '+str(logger))
 				self._logger = logger
 
 	def GetUsers (self) :
