@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from datetime import date, timedelta
+from django.utils import timezone
 from django.db import models
 import logging
 logger=logging.getLogger('django')
@@ -48,6 +49,8 @@ class NewUser (models.Model) :
 		( OS_LANG_FR,	'Français'),
 		( OS_LANG_EN,	'Anglais'),
 	)
+
+	created   = models.DateTimeField (auto_now_add=True, default=timezone.now)
 	
 	# manager
 	manager = models.ForeignKey ('User', null=True, blank=True, related_name='Manager')
