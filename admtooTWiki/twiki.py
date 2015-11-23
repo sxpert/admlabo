@@ -63,19 +63,19 @@ class TWiki (object) :
 
 	def _gen_group_config (self, gdata) :
 		# generate list of users
-		self._log ("_gen_group_config")
+		#self._log ("_gen_group_config")
 		members = []
-		self._log (gdata.keys())
+		#self._log (gdata.keys())
 		if 'appSpecName' in gdata.keys() :
 			if gdata['appSpecName'] is None :
 				self._log ('appSpecName is None, this groups is not a twiki group')
 				# tell the caller that everything is fine, even if we didn't do anything
 				return True
 			asn = gdata['appSpecName']
-			self._log ("asn : "+str(asn))
+			#self._log ("asn : "+str(asn))
 			if ('twiki' in asn.keys()) and ('members' in gdata.keys()) :
 				twiki_group_name = asn['twiki']
-				self._log (twiki_group_name)
+				#self._log (twiki_group_name)
 				gdm = gdata['members']
 				for m in gdm :
 					n = None
