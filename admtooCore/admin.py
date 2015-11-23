@@ -177,7 +177,7 @@ admin.site.register(Office)
 
 class NewUserAdmin (admin.ModelAdmin) :
 	fieldsets = (
-		( None,                   { 'fields': ( 'manager', 'user', )}),
+		( None,                   { 'fields': ( 'created', 'manager', 'user', )}),
 		( 'État Civil',           { 'fields': ( 'last_name', 'first_name', 'birthdate', 'citizenship', )}),
 		( 'Contact',              { 'fields': ( 'external_email', )}),
 		( 'Au sein de l\'IPAG',   { 'fields': ( 'status', 'study_level', 'ujf_student', 'team', 'office', 'other_office', 'obs_a', 'phy_d', 'osug_d')}),
