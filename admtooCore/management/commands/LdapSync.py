@@ -128,29 +128,28 @@ class LdapSync (object) :
 					u.save()
 				
 
-			# check if we have already matched that user
+			match = False
 			try :
-				nu = NewUser.objects.get(user=u)
+				nu = NewUser.objects.get(first_name=u.first_name, last_name=u.last_name, user=None)
 			except NewUser.DoesNotExist as e :
-				# attempt to find a matching user
-				try :
-					nu = NewUser.objects.get(first_name=u.first_name, last_name=u.last_name)
-				except NewUser.DoesNotExist as e :
-					# can't find corresponding new user...
-					pass
-				else :
-					# apply automatic matching to the new user 
-					nu.user = u
-					nu.save()
-					# send mail indicating the user has been matched
-					nu.send_match_mail ()
+				# can't find such user
+				pass
 			except NewUser.MultipleObjectsReturned as e :
-				print (u'UNABLE TO MATCH, multiple newuser instances returned for user '+unicode(u.login))
-				nus = NewUser.objects.filter(user=u)
-				for nu in nus :
-					print (u'    '+unicode(nu.pk)+u' \''+unicode(nu.last_name)+u'\' \''+unicode(nu.first_name)+u'\' \''+unicode(nu.birthdate)+u'\'')
-							
-					
+				# more than one ??
+				#print (u'ERROR WHILE MATCHING, multiple newuser instances returned for user '+unicode(u.login))
+				#nus = NewUser.objects.filter(user=u)
+				#for nu in nus :
+				#	print (u'    '+unicode(nu.pk)+u' \''+unicode(nu.last_name)+u'\' \''+unicode(nu.first_name)+u'\' \''+unicode(nu.birthdate)+u'\'')
+				pass
+			else :
+				# we found one and only one
+				match = True
+
+			if match :
+				nu.user = u
+				nu.save ()
+				nu.send_match_mail ()
+
 		#
 		# remove users that can't be found...
 		for u in User.objects.all() :
