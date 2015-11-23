@@ -176,8 +176,11 @@ admin.site.register(UserClass, UserClassAdmin)
 admin.site.register(Office)
 
 class NewUserAdmin (admin.ModelAdmin) :
+	list_display = ('created', 'last_name', 'first_name', 'birthdate')
+	readonly_fields = ('created',)
 	fieldsets = (
-		( None,                   { 'fields': ( 'created', 'manager', 'user', )}),
+		( None,                   { 'fields': ( 'created', )}), 
+		( None,                   { 'fields': ( 'manager', 'user', )}),
 		( 'État Civil',           { 'fields': ( 'last_name', 'first_name', 'birthdate', 'citizenship', )}),
 		( 'Contact',              { 'fields': ( 'external_email', )}),
 		( 'Au sein de l\'IPAG',   { 'fields': ( 'status', 'study_level', 'ujf_student', 'team', 'office', 'other_office', 'obs_a', 'phy_d', 'osug_d')}),

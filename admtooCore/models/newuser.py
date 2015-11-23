@@ -50,6 +50,7 @@ class NewUser (models.Model) :
 		( OS_LANG_EN,	'Anglais'),
 	)
 
+	# creation datetime of the record
 	created   = models.DateTimeField (auto_now_add=True, default=timezone.now)
 	
 	# manager
