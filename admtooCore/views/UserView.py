@@ -543,23 +543,25 @@ def user_view_userphoto_field (request, userid, action) :
 				except OSError as e :
 					pass
 				# 2 paths depending on file size
+				fdesc = open(fdest, 'wb')
 				if f.multiple_chunks() :
-					logger.error ('multiple chunks not handled yet')
+					for chunk in f.chunks() :
+						fdesc.write (chunk)
 				else :
-					fdesc = open(fdest, 'wb')
 					d = f.read()
 					fdesc.write (d)
-					fdesc.close()
-					u.photo_path = f.name
-					u.save(request_user=request.user)
+				
+				fdesc.close()
+				u.photo_path = f.name
+				u.save(request_user=request.user)
 					
-					import json
-					c = models.Command()
-					c.user = request.user
-					c.verb = "UpdatePhoto"
-					c.data = json.dumps({'uid':u.login})
-					c.in_cron = True
-					c.post ()
+				import json
+				c = models.Command()
+				c.user = request.user
+				c.verb = "UpdatePhoto"
+				c.data = json.dumps({'uid':u.login})
+				c.in_cron = True
+				c.post ()
 
 	if u.photo_path is None :
 		data['url'] = None
