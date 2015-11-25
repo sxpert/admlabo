@@ -59,7 +59,7 @@ function df_clear_edit (event) {
 	df_set_value(p);
 }
 
-function df_ajax (method, url, data, callback) {
+function df_ajax (method, url, data, success, fail=undefined) {
 	var csrftoken = $.cookie ('csrftoken');
 	$.ajaxSetup ({
 		beforeSend: function (xhr, settings) {
@@ -73,7 +73,8 @@ function df_ajax (method, url, data, callback) {
 		'data':		data,
 		'processData': false,
 		'contentType': false,
-		'success':	callback,
+		'success':	success,
+		'error' : fail,
 	});	
 }
 
@@ -124,6 +125,14 @@ function df_save_value (field) {
 	} else {
 		data = JSON.stringify (data);
 	}
+	error = undefined;
+	switch (f_type) {
+		case 'photo' : 
+			error = function (x,s,e) {
+				df_photo_handle_error (field, x, s, e);
+			}; 
+			break;
+	}
 	df_ajax ('POST', url, data,
 		function (result) {
 			//console.log (result);
@@ -140,7 +149,7 @@ function df_save_value (field) {
 			};
 			if (!e) 
 				df_update_fields (f_update);
-		});
+		}, error);
 }
 
 function df_set_value (field) {
@@ -816,6 +825,15 @@ function df_photo_get_value (field) {
 		data['_formdata'] = fd
 	}
 	return data;
+}
+
+function df_photo_handle_error (field, x, s, e) {
+	if (x.status == 413) {
+		// photo is too large
+		alert ('La photo est trop grande, merci de la redimentionner');
+		df_set_edit_icon (field);
+		df_set_value (field);	
+	}
 }
 
 function df_photo_initialize (field, data) {

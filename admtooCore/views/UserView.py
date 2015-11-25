@@ -534,6 +534,13 @@ def user_view_userphoto_field (request, userid, action) :
 				data['name'] = f.name
 				data['size'] = f.size
 				data['content_type'] = f.content_type
+				if settings.DEBUG :
+					if hasattr(settings, 'MAX_UPLOAD_SIZE') :
+						if f.size > settings.MAX_UPLOAD_SIZE :
+							r = HttpResponse ()
+							r.status_code = 413
+							r.reason_phrase = 'REQUEST_ENTITY_TOO_LARGE'
+							return r
 				# generate file name
 				fname = os.path.join (str(u.uidnumber), f.name)
 				fdest = os.path.join(settings.USER_PHOTO_PATH, fname)
@@ -682,6 +689,9 @@ def user_view_field (request, user_id, action, fieldtype, fieldname) :
 			if fieldname in fields.keys() :
 				func = fields[fieldname]
 				data = func (request, user_id, action)	
+
+	if type(data) is HttpResponse :
+		return data
 	
 	jsdata = json.dumps(data)
 	return HttpResponse(jsdata, content_type='application/json')
