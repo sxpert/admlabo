@@ -274,17 +274,38 @@ class User (models.Model) :
 		while i < len(grouplist) :
 			grouplist[i] = int(grouplist[i])
 			i += 1
+
+		modgroups = []
+		# get the list of old groups, remove groups that are gone
+		oldlist = []
 		for g in self.groups.all() :
+			oldlist.append (g)
 			if g.gidnumber not in grouplist :
 				del_groups[g.gidnumber] = g.name
 				self.groups.remove(g)
-				g._update_ldap(user)
+				modgroups.append (g)
+		
+		# add groups from the new list
 		for g in grouplist :
 			g = Group.objects.get(gidnumber=g)
 			if (g is not None) and (g not in self.groups.all()) :
 				add_groups[g.gidnumber] = g.name
 				self.groups.add (g)
-				g._update_ldap(user)		
+				modgroups.append (g)
+		
+		# add the groups that have been removed but should be there because one of their descendants are in
+		current_groups = self.groups.all()
+		for g in self.all_groups () :
+			if g not in current_groups :
+				# add the group to the modlist
+				add_groups[g.gidnumber] = g.name
+				self.groups.add (g)
+				modgroups.append(g)
+					
+		# update all modified groups
+		logger.error (modgroups)
+		for g in modgroups :
+			g._update_ldap (user)
 		
 		# generate the usergrouphistory records
 		from usergrouphistory import UserGroupHistory
