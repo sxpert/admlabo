@@ -9,6 +9,7 @@ from django.conf import settings
 from group import Group
 from machine import Machine
 from userclass import UserClass
+from usergrouphistory import UserGroupHistory
 
 def userclass_default () :
 	return UserClass.objects.get(probie=True).pk
@@ -265,69 +266,133 @@ class User (models.Model) :
 				groups.append (g)
 		return groups
 
-	# la grouplist est un array de gidnumbers
-	def change_groups (self, grouplist, user=None) :
-		changed = False
-		add_groups = {}
-		del_groups = {}
-		i=0
-		while i < len(grouplist) :
-			grouplist[i] = int(grouplist[i])
-			i += 1
-
-		modgroups = []
-		# get the list of old groups, remove groups that are gone
-		oldlist = []
-		for g in self.groups.all() :
-			oldlist.append (g)
-			if g.gidnumber not in grouplist :
-				del_groups[g.gidnumber] = g.name
-				self.groups.remove(g)
-				modgroups.append (g)
-		
-		# add groups from the new list
-		for g in grouplist :
-			g = Group.objects.get(gidnumber=g)
-			if (g is not None) and (g not in self.groups.all()) :
-				add_groups[g.gidnumber] = g.name
-				self.groups.add (g)
-				modgroups.append (g)
-		
-		# add the groups that have been removed but should be there because one of their descendants are in
-		current_groups = self.groups.all()
-		for g in self.all_groups () :
-			if g not in current_groups :
-				# add the group to the modlist
-				add_groups[g.gidnumber] = g.name
-				self.groups.add (g)
-				modgroups.append(g)
-					
-		# update all modified groups
-		logger.error (modgroups)
-		for g in modgroups :
-			g._update_ldap (user)
-		
-		# generate the usergrouphistory records
-		from usergrouphistory import UserGroupHistory
+	"""
+	generate user group change entries
+	"""
+	def add_ugh_entry (self, mode, groups, user=None) :
 		import json
+		ugh = UserGroupHistory()
 		creator = None
 		if user is not None :
 			creator = User.objects.get (login=user)
-		if len(add_groups)>0 :
-			ugh = UserGroupHistory()
-			ugh.creator = creator
-			ugh.user = self
-			ugh.action = ugh.ACTION_ADD
-			ugh.data = json.dumps(add_groups)
-			ugh.save()
-		if len(del_groups)>0 :
-			ugh = UserGroupHistory()
-			ugh.creator = creator
-			ugh.user = self
-			ugh.action = ugh.ACTION_DEL
-			ugh.data = json.dumps(del_groups)
-			ugh.save()
-			
+		ugh.creator = creator
+		ugh.user = self
+		ugh.action = mode
+		# generate json block
+		group_info = {}
+		for g in groups :
+			group_info[g.gidnumber] = g.name	
+		ugh.data = json.dumps(group_info)
+		ugh.save()
+
+	"""
+	Removes the group from the user only if the user is not a member of a descendant group
+	The caller is to update the ldap group
+	"""
+	def remove_group (self, g, user=None) :
+		# get the object for the group
+		if type(g) is int :
+			try :
+				group = Group.objects.get (gidnumber = g)
+			except Group.DoesNotExist as e :
+				# the group can't be found
+				logger.error (u'ERROR: Unable to find group '+unicode(g))
+				return False
+		elif type(g) is Group :
+			group = g
+		else :
+			logger.error (u'ERROR: invalid value for group, integer or Group expected, got '+unicode(g))
+			return False
+		
+		# step 1 : find if this particular group has descendants
+		children = Group.objects.filter (parent=group)
+		logger.error (children)
+		
+		# find if user is a member of any children, if so, bail out
+		for g in self.groups.all() :
+			if g in children :
+				logger.error (u'ERROR: removing group : user '+unicode(self.login)+u' is member of '+unicode(g.name)+u' which is a children of '+unicode(group.name))
+				return False
+		
+		# we can safely remove user from group
+		self.groups.remove(group)
+		# generate an ugh entry
+		self.add_ugh_entry (UserGroupHistory.ACTION_DEL, [group], user)
+		return True
+		
+	"""
+	Adds the group for the user, adds all non present parent groups
+	The caller is responsible for udating the ldap group
+	"""
+	def add_group (self, g, user=None) :
+		added_groups = []
+		if type(g) is int :
+			# get the object for the group
+			try :
+				group = Group.objects.get (gidnumber = g)
+			except Group.DoesNotExist as e :
+				# can't find the group
+				logger.error (u'ERROR: Unable to find group '+unicode(g))
+				return False
+		elif type(g) is Group :
+			group = g
+		else :
+			logger.error (u'ERROR: invalid value for group, integer or Group expected, got '+unicode(g))
+			return False
+
+		# step 0: check if user is already a member
+		if group in self.groups.all() :
+			return False
+
+		# step 1: find all parents of this group
+		parents = self._get_parent_group (group)
+
+		# step 2: add the user to parents starting from the last one
+		for g in reversed(parents) :
+			logger.error (g)
+			if g not in self.groups.all() :
+				self.groups.add (g)
+				added_groups.append (g)
+				# update group in ldap
+				g._update_ldap (user)
+
+		# adds the target group
+		logger.error (u'Adding group '+unicode(group)+u' to user '+unicode(self))
+		self.groups.add (group)
+		added_groups.append (group)
+
+		self.add_ugh_entry (UserGroupHistory.ACTION_ADD, added_groups, user)
+
+		return True
+
+	# la grouplist est un array de gidnumbers
+	def change_groups (self, grouplist, user=None) :
+		changed = False
+		
+		# generate newgroups list
+		newgroups = []
+		for gidnumber in grouplist :
+			try :
+				g = Group.objects.get(gidnumber=int(gidnumber))
+			except Group.DoesNotExist as e :
+				logger.error (u'Can\'t find group with gidnumber'+unicode(gidnumber))
+			else :
+				newgroups.append(g)
+		
+		# oldgroups are normally sorted by parent-ness (with the most senior at the end)
+		oldgroups = self.groups.all()
+		logger.error (u'NEWGROUPS : '+unicode(newgroups))
+		logger.error (u'OLDGROUPS : '+unicode(oldgroups))
+	
+		for g in newgroups :
+			if g not in oldgroups :
+				if self.add_group (g, user) :
+					g._update_ldap (user)
+		for g in oldgroups :
+			if g not in newgroups :
+				if self.remove_group (g, user) :
+					g._update_ldap (user)
+
 		# remove the main team if not in grouplist anymore
 		if self.main_team is not None:
 			if self.main_team.gidnumber not in grouplist :

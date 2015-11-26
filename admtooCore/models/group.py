@@ -190,41 +190,25 @@ class Group (models.Model) :
 		m = []
 		for u in members :
 			m.append (int(u))
-		changed = False
-		# remove members not in list
-		for u in User.objects.filter(groups__name=self.name) :
-			if u.uidnumber not in m :
-				u.groups.remove (self)
-				changed = True
-				# add UserGroupHistory entry
-				ugh = UserGroupHistory()
-				ugh.creator = creator
-				ugh.user = u
-				ugh.action = ugh.ACTION_DEL
-				ugh.data = json.dumps ({ self.gidnumber : self.name })
-				ugh.save()
 
+		changed = False
+
+		# remove members not in list
+		for u in User.objects.filter(groups__gidnumber=self.gidnumber) :
+			if u.uidnumber not in m :
+				changed = changed or u.remove_group (self.gidnumber, user)
+		
 		# add new members 
 		for uidnumber in m :
 			try :
-				u = User.objects.get(uidnumber=uidnumber,groups__name=self.name)
+				u = User.objects.get(uidnumber=uidnumber) 
 			except User.DoesNotExist as e :
-				try :
-					u = User.objects.get(uidnumber=uidnumber)
-				except User.DoesNotExist as e :
-					# should not happen
-					pass
-				else :
-					u.groups.add(self)
-					changed = True
+				pass
+			else :
+				changed = changed or u.add_group(self.gidnumber, user)
 
-					# add UserGroupHistory entry
-					ugh = UserGroupHistory()
-					ugh.creator = creator
-					ugh.user = u
-					ugh.action = ugh.ACTION_ADD
-					ugh.data = json.dumps ({ self.gidnumber : self.name })
-					ugh.save()
+		logger.error (u'group '+unicode(self)+' has changed : '+unicode(changed))
+
 		if changed :
 			self._update_ldap(user)
 
