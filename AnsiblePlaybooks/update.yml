@@ -11,7 +11,7 @@
     service : name=uwsgi state=stopped arguments=prod.admipag
 
   - name : install mysql plugin
-    apt : name=python-mysqldb update-cache=yes state=latest
+    apt : name=python-mysqldb state=latest
 
   - name : install python imaging (PIL)
     apt : name=python-imaging state=latest
