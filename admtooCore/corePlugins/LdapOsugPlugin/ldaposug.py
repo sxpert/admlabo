@@ -798,13 +798,26 @@ class Core_LdapOsug (object) :
 		return False
 		
 
-	#	return self._RenameMail (OSUG_LDAP_IPAG_MAILINGLIST_OU, *args, **kwargs)
+	# return self._RenameMail (OSUG_LDAP_IPAG_MAILINGLIST_OU, *args, **kwargs)
 	
 	def UpdateMailingList (self, *args, **kwargs) :
 		return self._UpdateMail (OSUG_LDAP_IPAG_MAILINGLIST_OU, 'mailing list', *args, **kwargs)
 
 	def DeleteMailingList (self, *args, **kwargs) :
 		return self._DeleteMail (OSUG_LDAP_IPAG_MAILINGLIST_OU, *args, **kwargs)
+
+	"""
+	Checks coherency of the database and the LDAP server
+	"""
+	def _check_coherency (self) :
+		import inspect
+		self._log (unicode(self.__class__.__name__)+u'.'+unicode(inspect.stack()[0][3]))
+		
+		# step 1 : check if any groups in the ldap server should not be there
+		##ldapgroups = 
+		# step 2 : check if any groups in the database are not in the ldap server
+		# step 2.1 : check if any members in the group are not in the ldap group
+		# step 2.2 : check if any members in the group are extra in the ldap group
 
 if __name__ == '__main__' :
 	print ("LDAP OSUG TEST")

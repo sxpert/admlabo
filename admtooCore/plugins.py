@@ -16,7 +16,7 @@ class Plugins (object) :
 		sys.stdout.flush ()
 
 	def find_plugins (self) :
-		base = settings.BASE_DIR	
+		base = settings.BASE_DIR
 		# list directories in BASE_DIR
 		files = os.listdir(base)
 		dirs = []
@@ -40,9 +40,9 @@ class Plugins (object) :
 						plugin = m.admtooPlugin
 						# check if we have an actual object class
 						if type(plugin) is type :
-							# instanciate object		
+							# instanciate object
 							self.plugins.append (plugin())
-						else:	
+						else:
 							self._log ('we should have had a type here')
 					elif 'admtooPlugins' in dir(m) :
 						pluginlist = m.admtooPlugins
