@@ -25,30 +25,32 @@
 <h1>liste des utilisateurs</h1>
 <p>{{ users|length }} utilisateurs</p>
 <table>
-  <thead>
-    <tr>
-      <th>Nom de famille</th>
-      <th>Prénom</th>
-      <th>Adresse Mail</th>
-      <th>Login</th>
-      <th>Date de départ</th>
-      <th>Date de suspension</th>
-      <th>Équipe principale</th>
-    </tr>
-  </thead>
-  <tbody>
+	<thead>
+		<tr>
+			<th>Nom de famille</th>
+			<th>Prénom</th>
+			<th>Adresse Mail</th>
+			<th>Login</th>
+			<th>Date de départ</th>
+			<th>Date de suspension</th>
+			<th>Statut</th>
+			<th>Équipe principale</th>
+		</tr>
+	</thead>
+	<tbody>
 {% for user in users %}
-    <tr class="{{ user.account_status }}">
-		<td>{{ user.last_name }}</td>
-		<td>{{ user.first_name }}</td>
-		<td>{{ user.mail }}</td>
-		<td><a href="{% url 'user-view' user.uidnumber %}">{{ user.login }}</a></td>
-		<td>{{ user.departure|date:"c" }}</td>
-		<td>{{ user.suspend_date|date:"c" }}</td>
-        <td>{{ user.main_team.description }}</td>
-	</tr>
+    	<tr class="{{ user.account_status }}">
+			<td>{{ user.last_name }}</td>
+			<td>{{ user.first_name }}</td>
+			<td>{{ user.mail }}</td>
+			<td><a href="{% url 'user-view' user.uidnumber %}">{{ user.login }}</a></td>
+			<td>{{ user.departure|date:"c" }}</td>
+			<td>{{ user.suspend_date|date:"c" }}</td>
+			<td>{{ user.userclass.fr }}</td>
+    	    <td>{{ user.main_team.description }}</td>
+		</tr>
 {% endfor %}
-  </tbody>
+	</tbody>
 </table>
 <div id="legende">
 <div><div class="swatch user-departure-soon">&nbsp;</div> 30 jours avant le départ</div>
