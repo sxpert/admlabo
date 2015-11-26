@@ -51,11 +51,13 @@ class User (models.Model) :
 	NORMAL_USER    = 0
 	NEWIMPORT_USER = 1
 	DELETED_USER   = 2
+	ERROR_USER     = 3
 
 	USER_STATE_CHOICES = (
 		( NORMAL_USER,    'utilisateur actif'),
 		( NEWIMPORT_USER, 'utilisateur nouvellement importé'),
 		( DELETED_USER,   'utilisateur supprimé'),
+		( ERROR_USER,     'utilisateur créé par erreur'),
 	)
 	user_state	 = models.IntegerField(choices = USER_STATE_CHOICES, default=NORMAL_USER)
 
@@ -158,7 +160,7 @@ class User (models.Model) :
 			del kwargs['request_user']
 		super (User, self).save(*args, **kwargs)
 		user_state = int(self.user_state)
-		if not (user_state == self.DELETED_USER) :
+		if user_state not in (self.DELETED_USER, self.ERROR_USER) :
 			self._update_ldap(user)
 		else : 
 			# remove user from all groups it belongs to

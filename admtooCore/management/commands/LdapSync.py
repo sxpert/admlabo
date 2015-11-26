@@ -153,7 +153,7 @@ class LdapSync (object) :
 		#
 		# remove users that can't be found...
 		for u in User.objects.all() :
-			if u.user_state != User.DELETED_USER :
+			if u.user_state not in (User.DELETED_USER, User.ERROR_USER) :
 				lu = l.GetUser (u.login)
 				if lu is None :
 					u.user_state = User.DELETED_USER
