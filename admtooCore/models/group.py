@@ -202,16 +202,19 @@ class Group (models.Model) :
 		# remove members not in list
 		for u in User.objects.filter(groups__gidnumber=self.gidnumber) :
 			if u.uidnumber not in m :
-				changed = changed or u.remove_group (self.gidnumber, user)
+				ok = u.remove_group (self.gidnumber, user)
+				changed = changed or ok
 		
 		# add new members 
 		for uidnumber in m :
 			try :
 				u = User.objects.get(uidnumber=uidnumber) 
 			except User.DoesNotExist as e :
+				logger.error(u'Can\'t find user '+unicode(uidnumber))
 				pass
 			else :
-				changed = changed or u.add_group(self.gidnumber, user)
+				ok = u.add_group(self.gidnumber, user)
+				changed = (changed or ok)
 
 		logger.error (u'group '+unicode(self)+' has changed : '+unicode(changed))
 
