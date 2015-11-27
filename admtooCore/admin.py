@@ -191,7 +191,20 @@ class NewUserAdmin (admin.ModelAdmin) :
 		( None,                   { 'fields': ( 'comments', )}),)
 
 admin.site.register(NewUser, NewUserAdmin)
-admin.site.register(UserDir)
+
+class UserDirForm (forms.ModelForm) :
+	class Meta:
+		model = UserDir
+		fields = '__all__'
+
+	def __init__ (self, *args, **kwargs) :
+		super (UserDirForm, self).__init__ (*args, **kwargs)
+		self.fields['files'].widget.attrs.update({'style': 'font-family: monospace; width: 100em; height: 45ex;'}) 
+
+class UserDirAdmin (admin.ModelAdmin) :
+	form = UserDirForm
+
+admin.site.register(UserDir, UserDirAdmin)
 
 class EmailAlertAdmin (admin.ModelAdmin) :
 	list_display = ('cause', 'email')
