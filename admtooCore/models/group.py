@@ -73,7 +73,13 @@ class Group (models.Model) :
 			logger.error ('ERROR: new number is invalid')
 		self.gidnumber = new_gidnumber
 		# don't involve the external update mechanisms just yet, as nothing is filled in
-		super (Group, self).save ()
+		# this may fail with an IntegrityError
+		from django.db import IntegrityError
+		try :
+			super (Group, self).save ()
+		except IntegrityError as e :
+			logger.error (u'ERROR: attempt to create a group with an already existing name '+unicode(self.name))
+			ok = False
 		return ok
 
 	# 
