@@ -348,15 +348,16 @@ class User (models.Model) :
 
 		# step 1: find all parents of this group
 		parents = self._get_parent_group (group)
-
-		# step 2: add the user to parents starting from the last one
-		for g in reversed(parents) :
-			logger.error (g)
-			if g not in self.groups.all() :
-				self.groups.add (g)
-				added_groups.append (g)
-				# update group in ldap
-				g._update_ldap (user)
+		
+		if parents is not None :
+			# step 2: add the user to parents starting from the last one
+			for g in reversed(parents) :
+				logger.error (g)
+				if g not in self.groups.all() :
+					self.groups.add (g)
+					added_groups.append (g)
+					# update group in ldap
+					g._update_ldap (user)
 
 		# adds the target group
 		logger.error (u'Adding group '+unicode(group)+u' to user '+unicode(self))
