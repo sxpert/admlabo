@@ -35,7 +35,7 @@ def Dashboard (request) :
 #
 @admin_login
 def DBNewArrivals (request) :
-	newusers = models.NewUser.objects.filter(Q(user__user_state=models.User.NEWIMPORT_USER)|Q(user__isnull=True)).order_by('arrival')
+	newusers = models.NewUser.objects.filter(Q(user__user_state=models.User.NEWIMPORT_USER)|Q(user__isnull=True)).exclude(comp_account=False).order_by('arrival')
 	context = {
 		'nu' : newusers,
 	}
