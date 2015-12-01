@@ -16,6 +16,7 @@
 <div id="header">group view <button id="delete" name="action" value="delete">Supprimer le groupe</button></div>
 <table>
 <tbody>
+<tr><th>Nombre de membres</th><td data-field="members-number" data-type="display" data-edit="no"></td></tr>
 <tr><th>Nom de groupe</th><td data-field="name" data-type="text"></td><tr>
 <tr><th>Nom TWiki</th><td data-field="TWikiName" data-type="text"></td><tr>
 <tr><th>logo d'équipe TWiki</th><td data-field="TWikiTeamLogo" data-type="text"></td><tr>
@@ -23,7 +24,7 @@
 <tr><th>Type de groupe</th><td data-field="group-type" data-type="select"></td></tr>
 <tr><th>Description</th><td data-field="description" data-type="text"></td></tr>
 <tr><th>Groupe parent</th><td data-field="parent" data-type="select"></td></tr>
-<tr><th>Membres</th><td data-field="members" data-type="multiselect"></td></tr>
+<tr><th>Membres</th><td data-field="members" data-type="multiselect" data-update="members-number"></td></tr>
 </tbody>
 </table>
 </form>

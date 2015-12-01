@@ -143,6 +143,12 @@ def group_view_members_field (request, group_id, action) :
 		data['values'] = members		
 	return data
 
+def group_view_members_number_field (request, group_id, action) :
+	g = models.Group.objects.get(gidnumber=group_id)
+	data = {}
+	data['value'] = len(g.members())
+	return data
+
 def group_view_type_field (request, group_id, action) :
 	g = models.Group.objects.get(gidnumber=group_id) 
 	data = {}
@@ -227,6 +233,9 @@ def group_view_field (request, group_id, action, fieldtype, fieldname) :
 	if fieldtype == 'multiselect' :
 		if fieldname == 'members' :
 			data = group_view_members_field (request, group_id, action)
+	if fieldtype == 'display' :
+		if fieldname == 'members-number' : 
+			data = group_view_members_number_field (request, group_id, action)
 	if fieldtype == 'select' :
 		if fieldname == 'group-type': 
 			data = group_view_type_field (request, group_id, action)
