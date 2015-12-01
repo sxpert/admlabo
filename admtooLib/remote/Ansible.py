@@ -90,6 +90,66 @@ class Ansible (object) :
 
 		return True
 
+	
+	"""
+	use the home-made 'linux-quota' plugin to put quotas in
+	"""
+	def applyQuotas (self, fqdn, user, dirname, soft=0, hard=0, present=True) :
+		hostname = self.getHostname (fqdn)
+		
+		args = u'user='+unicode(user)+u' '
+		# should handle escaping ?
+		args+= u'dirname='+unicode(dirname)+u' '
+
+		# special case, both quota values at 0 == no quotas
+		if soft==0 and hard==0 :
+			present=False
+
+		if present :
+			state = u'present'
+			args+= u'state='+state+u' '
+			args+= u'soft='+unicode(soft)+u' '
+			args+= u'hard='+unicode(hard)+u' '
+		else :
+			state=u'absent'
+			args+= u'state='+state+u' '
+		
+		# add this scripts' directory in the ansible directory list
+		import os.path
+		path = os.path.dirname(__file__)
+		print (path)
+
+		runner = ar.Runner (
+			pattern= hostname,
+			forks = 1,
+			sudo = True,
+			module_path = path,
+			module_name = 'linux-quota.py',
+			module_args = args,
+			inventory = self.inventory
+		)
+		results = runner.run()
+		
+		print results
+		# error handling
+		if 'contacted' not in results :
+			self.log (u'FATAL: no \'contacted\' in results')
+			return False
+		contacted = results['contacted']
+		if hostname not in contacted :
+			self.log (u'FATAL: can\'t find '+unicode(hostname)+u' in results')
+			return False
+		host = contacted[hostname]
+		if 'state' not in host :
+			self.log (u'FATAL: can\'t find the state in the response')
+			return False
+		tstate = host['state']
+		if tstate != state :
+			self.log (u'FATAL: the state in the response does not correspond to the requested state')
+			return False
+
+		return True
+
 	def copy (self, fqdn, uid, gid, src, dest, modes) :
 		ansible.utils.VERBOSITY=4
 		hostname = self.getHostname (fqdn)

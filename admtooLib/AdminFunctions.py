@@ -23,28 +23,48 @@ def createDirectory (fqdn, dirname, uid, gid, modes, files) :
 	a.log ('répertoire créé, création des fichiers')
 	ok = True
 	a.log (files)
-	if (files is not None) and ('templates' in files) :
-		fls = files['templates']
-		a.log (fls)
-		for f in fls :
-			a.log (f)
-			if (not (( 'src' in f ) and ( 'dest' in f))) :
-				a.log ('can\'t find src AND dest')
-				ok = False
-				break
-			a.log ('lauching template')
-			if 'modes' not in f :
-				modes = '0600' # default value... only for the user
+	if files is not None :
+		# handle directory quotas
+		if 'quotas' in files :
+			q = files['quotas']
+			if 'soft' in q :
+				soft = int(q['soft'])
+			else:
+				soft = 0
+			if 'hard' in q :
+				hard = int(q['hard'])
 			else :
-				modes = f['modes']
-			# src and dest should be complet file names
-			src  = os.path.join(settings.ADMIN_FILES_DIR,f['src'])
-			dest = os.path.join(dirname,f['dest'])
-			if not a.copy (fqdn, uid, gid, src, dest, modes) :
-				a.log ('copy fail')
-				ok = False
-				break
-			a.log ('copy success')
+				hard = 0
+			if (hard!=0) or (soft!=0) :
+				# apply quota command
+				a.log (u'applying quota command : soft='+unicode(soft)+u', hard='+unicode(hard))
+				if not a.applyQuotas (fqdn, uid, dirname, soft, hard) :
+					a.log ('FATAL: unable to set quota on directory')
+					return False
+
+		# handle files to be copied
+		if 'templates' in files :
+			fls = files['templates']
+			a.log (fls)
+			for f in fls :
+				a.log (f)
+				if (not (( 'src' in f ) and ( 'dest' in f))) :
+					a.log ('can\'t find src AND dest')
+					ok = False
+					break
+				a.log ('lauching template')
+				if 'modes' not in f :
+					modes = '0600' # default value... only for the user
+				else :
+					modes = f['modes']
+				# src and dest should be complet file names
+				src  = os.path.join(settings.ADMIN_FILES_DIR,f['src'])
+				dest = os.path.join(dirname,f['dest'])
+				if not a.copy (fqdn, uid, gid, src, dest, modes) :
+					a.log ('copy fail')
+					ok = False
+					break
+				a.log ('copy success')
 	a.log (ok)
 	return ok
 
@@ -108,9 +128,18 @@ def setupBackupPc (fqdn, user, mtype) :
 	return False
 	
 if __name__ == '__main__' :
-	if __package__ is None :
-		from os import path
-		sys.path.append (path.dirname(path.dirname(path.abspath(__file__))))
-		from AdminTool import settings 
-	passwd = setupBackupPc ('gag8131.obs.ujf-grenoble.fr', 'jacquotr', MTYPE_WINDOWS)
-	sys.stderr.write (passwd+'\n')
+	#if __package__ is None :
+	#	from os import path
+	#	sys.path.append (path.dirname(path.dirname(path.abspath(__file__))))
+	#	from admtooCore import settings 
+	#passwd = setupBackupPc ('gag8131.obs.ujf-grenoble.fr', 'jacquotr', MTYPE_WINDOWS)
+	#sys.stderr.write (passwd+'\n')
+	#a = rem()
+	#print(a.applyQuotas ('ipag-stoc1.obs.ujf-grenoble.fr', 'ansible', '/user/homedir/ansible', 0, 0, True))
+	#print(a.applyQuotas ('ipag-stoc1.obs.ujf-grenoble.fr', 'ansible', '/user/homedir/ansible', 10485760, 11534336))
+	
+
+
+
+
+	pass
