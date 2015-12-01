@@ -226,21 +226,24 @@ function df_multiselect_initialize (field, data) {
 	for (var key in opt) {
 		var val = opt[key]; 
 		sopt.push ([key, val]);
-	} 
+	}
 	sopt.sort (function (a, b) { return a[1] > b[1]; });
 	var d = $('<div data-control="select-div"/>');
 	var b = icon_button ('content/svg/design/ic_add_24px', df_multiselect_add_option);
 	d.append (b);
-	var s = $('<select data-control="select-control">');
-	// add options in the select
-	for (var key in sopt) {
-		var k = sopt[key][0];
-		var v = sopt[key][1];
-		if ($.inArray(parseInt(k), sel)==-1) {
-			var o = $('<option value="'+k+'">'+v+'</option>');
-			s.append (o);
+	
+	var ts = '<select data-control="select-control">';
+	var k, v, key, o;
+	for (key in sopt) {
+		k = sopt[key][0];
+		v = sopt[key][1];
+		if (sel.indexOf(parseInt(k))==-1) {
+			ts+='<option value="'+k+'">'+v+'</option>';
 		}
 	}
+	ts+='</select>';
+	var s=$(ts);
+
 	d.append (s);
 	// append controls
 	field.append(u);
