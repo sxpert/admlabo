@@ -23,7 +23,10 @@ def GetUserInfo (request, uid) :
 	data = {}
 	data['uid'] = u.login
 	data['uidNumber'] = u.uidnumber
-	data['gidNumber'] = u.group.gidnumber
+	if u.group is not None :
+		data['gidNumber'] = u.group.gidnumber
+	else :
+		data['gidNumber'] = None
 	data['gecos'] = u.full_name()
 	data['loginShell'] = u.login_shell
 	data['email'] = u.mail
