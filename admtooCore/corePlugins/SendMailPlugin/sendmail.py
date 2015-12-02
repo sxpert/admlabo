@@ -73,7 +73,11 @@ class Send_Mail (object) :
 			l = []
 			for u in dest :
 				# should do templates here too
-				l.append (u.email)
+				self._log(u.email)
+				t = Template(u.email)
+				m = t.render(c)
+				self._log(m)
+				l.append (m)
 			self._log (str(l))
 			if settings.DEBUG :
 				l.append ('raphael.jacquot@obs.ujf-grenoble.fr')

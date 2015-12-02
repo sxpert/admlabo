@@ -9,7 +9,7 @@ logger=logging.getLogger('django')
 
 class EmailAlert (models.Model) :
 	cause = models.CharField(max_length=32, default='Unknown')
-	email = models.EmailField(max_length=254, default='user@example.com')
+	email = models.CharField(max_length=254, default='user@example.com')
 
 	class Meta:
 		app_label = 'admtooCore'
