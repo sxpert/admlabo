@@ -95,18 +95,21 @@ class SetQuota (object) :
 		lines = lines[2:]
 		for l in lines :
 			line = split_line(l)
-			if line[0] == fs :
-				# found the line, do something
-				q_info = {}
-				q_info['filesystem'] = line[0]
-				q_info['blocks']     = int(line[1])
-				q_info['soft']       = int(line[2])
-				q_info['hard']       = int(line[3])
-				q_info['grace']      = int(line[4])
-				q_info['i_soft']     = int(line[5])
-				q_info['i_hard']     = int(line[6])
-				q_info['i_grace']    = int(line[7])
-				return q_info
+			try :
+				if line[0] == fs :
+					# found the line, do something
+					q_info = {}
+					q_info['filesystem'] = line[0]
+					q_info['blocks']     = int(line[1])
+					q_info['soft']       = int(line[2])
+					q_info['hard']       = int(line[3])
+					q_info['grace']      = int(line[4])
+					q_info['i_soft']     = int(line[5])
+					q_info['i_hard']     = int(line[6])
+					q_info['i_grace']    = int(line[7])
+					return q_info
+				except IndexError as e :
+					self.module.fail_json (msg=unicode(e)+'\n'+unicode(line)
 		self.module.fail_json (msg=u'Unable to find quota information for user '+unicode(user)+u' on filesystem '+unicode(fs))
 
 	""" sets the new quota values """
