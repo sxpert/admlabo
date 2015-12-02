@@ -23,6 +23,7 @@ def GetUserInfo (request, uid) :
 	data['gidNumber'] = u.group.gidnumber
 	data['gecos'] = u.full_name()
 	data['loginShell'] = u.login_shell
+	data['email'] = u.mail
 	groups = {}
 	for g in u.all_groups() :
 		groups[g.name] = g.gidnumber
