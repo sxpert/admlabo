@@ -130,7 +130,7 @@ class Ansible (object) :
 		)
 		results = runner.run()
 		
-		print results
+		#print results
 		# error handling
 		if 'contacted' not in results :
 			self.log (u'FATAL: no \'contacted\' in results')
@@ -142,6 +142,7 @@ class Ansible (object) :
 		host = contacted[hostname]
 		if 'state' not in host :
 			self.log (u'FATAL: can\'t find the state in the response')
+			self.log (results)
 			return False
 		tstate = host['state']
 		if tstate != state :

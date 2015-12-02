@@ -1,7 +1,8 @@
 {% extends "ipag-base.html" %}
 {% load staticfiles %}
 {% block title %} - {% endblock %}
-{% block scripts %}<script src="{% static "js/base-forms.js" %}"></script>{% endblock %}
+{% block scripts %}<script src="{% static "js/base-forms.js" %}"></script>
+<script src="{% static "js/user-view.js"%}/"></script>{% endblock %}
 {% block css %}<link rel="stylesheet" type="text/css" href="{% static "css/user-view.css" %}"/>{% endblock %}
 {% block content %}
 {% load is_only_rh %}
@@ -60,5 +61,13 @@
 <tr><td data-field="coSeminaires" data-type="checkbox" data-edit-controls="false" ></td></tr>
 </tbody>
 </table>
+{% if user.is_staff %}
+<!-- actions -->
+<table>
+	<tbody>
+		<tr><td><button id="regen-dirs">regénérer les répertoires utilisateur</button></td></tr>
+	</tbody>
+</table>
+{% endif %}
 </form>
 {% endblock %}

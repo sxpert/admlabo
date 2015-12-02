@@ -641,6 +641,19 @@ def user_view_photo (request, user_id, fname) :
 	fdest = os.path.join(settings.USER_PHOTO_PATH, user_id, fname)
 	return FileResponse(open(fdest, 'rb'))
 
+@admin_login
+def user_view_action_regen_userdirectories (request, userid, action) :
+	logger.error (u're-create user directories for user '+unicode(userid))
+	try :
+		user = models.User.objects.get(uidnumber=userid)
+	except models.User.DoesNotExist as e :
+		logger.error (u'FATAL: unable to find user '+unicode(userid))
+		return False
+
+	models.userdir.generateDirs (user, request.user)
+	
+	return True
+
 #----
 # main function
 #
@@ -676,7 +689,10 @@ def user_view_field (request, user_id, action, fieldtype, fieldname) :
 		"photo": {
 			"userphoto"       : user_view_userphoto_field
 		},
-		"checkbox"            : user_view_checkbox_type_field
+		"checkbox"            : user_view_checkbox_type_field,
+		"dirs": {
+			"regen"           : user_view_action_regen_userdirectories,
+		}
 	}
 
 	import types
