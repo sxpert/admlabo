@@ -1,13 +1,33 @@
 # -*- coding: utf-8 -*-
 
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
-from admtooCore.models import Machine
+import admtooCore.models as models
 from admtooLib import AdminFunctions as af
 
 from dns import resolver, reversename
 import logging
 logger=logging.getLogger('django')
+
+#==============================================================================
+# get user info, used by the installation system
+#
+def GetUserInfo (request, uid) :
+	logger.error (uid)
+	
+	u = models.User.objects.get(login=uid)
+	
+	data = {}
+	data['uid'] = u.login
+	data['uidNumber'] = u.uidnumber
+	data['gidNumber'] = u.group.gidnumber
+	data['gecos'] = u.full_name()
+	data['loginShell'] = u.login_shell
+	groups = {}
+	for g in u.all_groups() :
+		groups[g.name] = g.gidnumber
+	data['groups'] = groups
+	return JsonResponse(data)
 
 #==============================================================================
 # application dashboard
@@ -43,7 +63,7 @@ def SetupBackupPC (request) :
 		return HttpResponse ('NOK: '+msg, 'text/plain', 412)
 
 	# find user
-	m = Machine.objects.get (default_name__fqdn=name)
+	m = models.Machine.objects.get (default_name__fqdn=name)
 	logger.error (m)
 	if m.owner is None :
 		# problem with owner

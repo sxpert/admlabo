@@ -5,6 +5,7 @@ import root_views
 
 urlpatterns = patterns('',
 	url(r'^$', root_views.MainIndex, name='main-index'), 
+	url(r'^API/GetUserInfo/(?P<uid>.+)$', root_views.GetUserInfo, name='get-user-info'),
 	url(r'^API/SetupBackupPC', root_views.SetupBackupPC, name='setup-backup-pc'),
     url(r'^admtooCore/', include('admtooCore.admtooCore_urls')),
     url(r'^admin/', include(admin.site.urls)),

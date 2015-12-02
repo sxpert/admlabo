@@ -41,6 +41,9 @@ def load_xmldb () :
 	return r
 		
 def find_user_for_machine (machine_name) :
+	if xmlroot is None :
+		syslog('FATAL: unable to load XML database')
+		return None
 	for host in xmlroot.iter('host') :
 		a = host.attrib
 		if "name" in a :	
