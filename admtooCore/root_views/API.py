@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
 from django.shortcuts import render, redirect
 import admtooCore.models as models
 from admtooLib import AdminFunctions as af
@@ -15,7 +15,10 @@ logger=logging.getLogger('django')
 def GetUserInfo (request, uid) :
 	logger.error (uid)
 	
-	u = models.User.objects.get(login=uid)
+	try :
+		u = models.User.objects.get(login=uid)
+	except models.User.DoesNotExist as e :
+		return HttpResponseNotFound(uid)
 	
 	data = {}
 	data['uid'] = u.login
