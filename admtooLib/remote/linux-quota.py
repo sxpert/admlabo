@@ -108,7 +108,7 @@ class SetQuota (object) :
 					q_info['i_hard']     = int(line[6])
 					q_info['i_grace']    = int(line[7])
 					return q_info
-				except IndexError as e :
+			except IndexError as e :
 					self.module.fail_json (msg=unicode(e)+'\n'+unicode(line)
 		self.module.fail_json (msg=u'Unable to find quota information for user '+unicode(user)+u' on filesystem '+unicode(fs))
 
