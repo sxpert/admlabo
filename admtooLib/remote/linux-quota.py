@@ -94,6 +94,9 @@ class SetQuota (object) :
 		# find get the quota lines
 		lines = lines[2:]
 		for l in lines :
+			l = l.strip()
+			if len(l) == 0 :
+				continue
 			line = split_line(l)
 			try :
 				if line[0] == fs :
@@ -110,7 +113,9 @@ class SetQuota (object) :
 					return q_info
 			except IndexError as e :
 				self.module.fail_json (msg=unicode(e)+'\n'+unicode(lines))
-		self.module.fail_json (msg=u'Unable to find quota information for user '+unicode(user)+u' on filesystem '+unicode(fs))
+		# if we get here, there are no quotas
+		return None
+		#self.module.fail_json (msg=u'Unable to find quota information for user '+unicode(user)+u' on filesystem '+unicode(fs))
 
 	""" sets the new quota values """
 	def set_quota (self, user, filesystem, soft, hard) :
