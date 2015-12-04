@@ -167,7 +167,7 @@ def mailinglist_view_userclass_field (request, ml_id, action) :
 	if action == 'options' :
 		# list all userclasses
 		uc = {}
-		userclasses = models.UserClass.objects.all ()
+		userclasses = models.UserClass.objects.filter(active=True)
 		for ucl in userclasses :
 			if ucl.fr is None :
 				uc[ucl.pk] = ucl.ref

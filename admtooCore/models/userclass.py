@@ -11,6 +11,7 @@ class UserClass (models.Model) :
 	probie    = models.BooleanField (default=False)
 	group     = models.ForeignKey ('Group', null=True, blank=True)
 	directory = models.BooleanField (default=True)
+	active    = models.BooleanField (default=True)
 
 	class Meta:
 		app_label = 'admtooCore'

@@ -364,7 +364,7 @@ def NewArrivalForm (request) :
 	context['allusers'] = models.User.objects.all()
 	context['DEFAULT_COUNTRY'] = settings.DEFAULT_COUNTRY
 	context['allcountries'] = models.Country.objects.all().order_by('citizenship')
-	context['alluserclasses'] = models.UserClass.objects.all().order_by('fr')
+	context['alluserclasses'] = models.UserClass.objects.filter(active=True).order_by('fr')
 	context['allteams'] = models.Group.objects.filter(group_type=models.Group.TEAM_GROUP).order_by('name')
 	context['alloffices'] = models.Office.objects.all()
 	context['allostypes'] = models.NewUser.NEWUSER_OS_CHOICES

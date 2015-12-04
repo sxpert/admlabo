@@ -404,7 +404,7 @@ def user_view_userclass_field (request, userid, action) :
 	if action == 'options' :
 		# list all options available
 		classes = {}
-		for uc in models.UserClass.objects.all() :	
+		for uc in models.UserClass.objects.filter(active=True) :	
 			n = uc.ref
 			if uc.fr is not None :
 				n = uc.fr
