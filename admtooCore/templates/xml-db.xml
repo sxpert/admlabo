@@ -25,7 +25,8 @@
 			<agalanLogin>{{ user.login }}</agalanLogin>
 			<uid>{{ user.uidnumber }}</uid>
 			<birthDate>{{ user.birthdate|date:"c" }}</birthDate>
-			<affiliation idref="unknown ?"/>
+			{% if user.departure %}<departureDate>{{ user.departure|date:"c" }}</departureDate>
+			{% endif %}<affiliation idref="unknown ?"/>
 			<userClassRef idref="{{ user.userclassref }}"/>
 			{% if user.manager %}<responsibleRef name="{{ user.manager.login }}"/>
 			{% endif %}<groupRefs>{% for group in user.all_groups %}
