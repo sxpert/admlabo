@@ -64,7 +64,7 @@ class UpdateLauncher (object) :
 				self.log ('FATAL: error while getting the number of commands to be run')
 				self.log (str(e))
 				return
-			self.log ("found "+str(nb_commands)+" to execute")
+			#self.log ("found "+str(nb_commands)+" to execute")
 			for c in commands :
 				try :					
 					func = getattr (plugins, c.verb) 
@@ -74,8 +74,8 @@ class UpdateLauncher (object) :
 					# stop right there !!
 					return
 				# we should have a plugins closure here
-				self.log ('command '+c.verb+' was found in plugins :')
-				self.log (func)
+				#self.log ('command '+c.verb+' was found in plugins :')
+				#self.log (func)
 				# if the command requires being run while in crontab,
 				# and we're not running from cron, skip it
 				if c.in_cron and (not self.in_cron) :
