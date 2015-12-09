@@ -3,6 +3,8 @@
 # @(#) - (C) 2011 CNRS/IPAG - Version 2.0 / FR.
 # @(#) - (C) 2012 CNRS/IPAG - Version 3.0 / FR. 
 # interactive bash case resolved
+# @(#) - (C) 2015 CNRS/IPAG - Version 3.1 / RJ.
+# change conflaog to confipag
 # @(#) - File's Localization : NFS $HOME on Workstation and servers
 
 # Do Not Remove
@@ -14,7 +16,7 @@ if [ -x "/etc/bashrc" ]; then
 fi
 
 if [ ! -z $PS1 ] ; then
-   source /conflaog/conf/.bashrc # interactive bash
+   source /confipag/conf/.bashrc # interactive bash
 fi
 	
 # Please, use this section below to meet your own needs
