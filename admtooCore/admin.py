@@ -176,10 +176,10 @@ admin.site.register(UserClass, UserClassAdmin)
 admin.site.register(Office)
 
 class NewUserAdmin (admin.ModelAdmin) :
-	list_display = ('last_name', 'first_name', 'birthdate', 'created')
+	list_display = ('last_name', 'first_name', 'birthdate', 'created', 'handled')
 	readonly_fields = ('created',)
 	fieldsets = (
-		( None,                   { 'fields': ( 'created', )}), 
+		( None,                   { 'fields': ( 'created', 'handled', )}), 
 		( None,                   { 'fields': ( 'manager', 'user', )}),
 		( 'État Civil',           { 'fields': ( 'last_name', 'first_name', 'birthdate', 'citizenship', )}),
 		( 'Contact',              { 'fields': ( 'external_email', )}),

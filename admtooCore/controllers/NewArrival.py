@@ -15,6 +15,8 @@ def associateUserWith (user, newuser_id, request_user=None, logins=None) :
 		nu.first_name = user.first_name
 	if nu.last_name != user.last_name :
 		nu.last_name = user.last_name
+	# set the new user as taken care of
+	nu.handled = True
 	nu.save ()
 	
 	# modify self with infos from nu

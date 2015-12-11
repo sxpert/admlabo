@@ -476,6 +476,15 @@ class User (models.Model) :
 			
 	
 	def default_twiki_account (self) :
+		# check if user already has a TWiki name
+		import json
+		try :
+			v = json.loads(self.appspecname)
+		except ValueError as e :
+			pass
+		else :
+			if 'twiki' in v :
+				return v['twiki']
 		#from admtooLib.twiki import TWiki
 		from ..plugins import plugins
 		t = plugins.TWiki

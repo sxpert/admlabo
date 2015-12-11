@@ -52,6 +52,7 @@ class NewUser (models.Model) :
 
 	# creation datetime of the record
 	created   = models.DateTimeField (auto_now_add=True, default=timezone.now)
+	handled   = models.BooleanField (default=False)
 	
 	# manager
 	manager = models.ForeignKey ('User', null=True, blank=True, related_name='Manager')

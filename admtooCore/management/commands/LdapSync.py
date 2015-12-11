@@ -130,7 +130,7 @@ class LdapSync (object) :
 
 			match = False
 			try :
-				nu = NewUser.objects.get(first_name=u.first_name, last_name=u.last_name, user=None)
+				nu = NewUser.objects.get(first_name=u.first_name, last_name=u.last_name, user=None, handled=False)
 			except NewUser.DoesNotExist as e :
 				# can't find such user
 				pass
