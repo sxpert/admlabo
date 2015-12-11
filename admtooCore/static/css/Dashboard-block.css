@@ -40,6 +40,9 @@ th {
 .found {
 	color: green;
 }
+.warning {
+	color: orange;
+}
 .notfound {
 	color: red;
 }
