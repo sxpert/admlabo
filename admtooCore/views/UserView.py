@@ -2,7 +2,7 @@
 
 import json
 from django.db import transaction, IntegrityError
-from django.http import HttpResponse, FileResponse
+from django.http import HttpResponse, FileResponse, HttpResponseNotFound
 from django.shortcuts import render
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -639,7 +639,12 @@ def user_view_photo (request, user_id, fname) :
 	logger.error (user_id)
 	logger.error (fname)
 	fdest = os.path.join(settings.USER_PHOTO_PATH, user_id, fname)
-	return FileResponse(open(fdest, 'rb'))
+	# check if file exists
+	try :
+		return FileResponse(open(fdest, 'rb'))
+	except IOError as e :
+		if e.errno == 2 :
+			return HttpResponseNotFound('')
 
 @admin_login
 def user_view_action_regen_userdirectories (request, userid, action) :
