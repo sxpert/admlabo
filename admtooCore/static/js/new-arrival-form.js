@@ -66,6 +66,40 @@ function toggle_os_type () {
 		tr.hide();
 }
 
+function check_presence_period () {
+	var show = true;
+	// get both dates
+	var a = $('[name=arrival]').val().trim();
+	var d = $('[name=departure]').val().trim();
+	// check if one of the dates is empty
+	if ((a.length>0)&&(d.length>0)) {
+		// check if dates are in the right order
+		var da = new Date(a);
+		var dd = new Date(d);
+		if (da>dd) 
+			alert ('Il y a un probleme dans vos dates:\nLa date de départ est antérieure a la date d\'arrivée');
+		else {
+			// calculate length of time period in days. date difference is in ms
+			var diff = (dd - da) / 86400000;
+			if (diff < 21) 
+				show = false;
+		}
+	}
+	var infosys = $($('#infosys')[0]);
+	var infosys_info = $($('#infosys-info')[0]);
+	var infosys_warn = $($('#infosys-warn')[0]);
+	if (show) {
+		infosys.show();
+		infosys_info.show();
+		infosys_warn.hide();
+	} else {
+		// difference is less than 3 weeks. no account can be produced
+		infosys.hide();
+		infosys_info.hide();
+		infosys_warn.show();
+	}
+}
+
 $(function() {
 	$("[name=birthdate]").datepicker({
 		showOn: "button",
@@ -85,19 +119,21 @@ $(function() {
 	toggle_statut();
 	toggle_office();
 	$("[name=arrival]").datepicker({
-		showOn: "button",
-		buttonImage: "/static/material-design-icons/action/svg/design/ic_event_24px.svg",
+		showOn:          "button",
+		buttonImage:     "/static/material-design-icons/action/svg/design/ic_event_24px.svg",
 		buttonImageOnly: true,
-		changeYear: true,
-		dateFormat: "yy-mm-dd",
-	});
+		changeYear:      true,
+		dateFormat:      "yy-mm-dd",
+		onSelect:        check_presence_period,
+	}).on('change', check_presence_period);
 	$("[name=departure]").datepicker({
-		showOn: "button",
-		buttonImage: "/static/material-design-icons/action/svg/design/ic_event_24px.svg",
+		showOn:          "button",
+		buttonImage:     "/static/material-design-icons/action/svg/design/ic_event_24px.svg",
 		buttonImageOnly: true,
-		changeYear: true,
-		dateFormat: "yy-mm-dd",
-	});
+		changeYear:      true,
+		dateFormat:      "yy-mm-dd",
+		onSelect:        check_presence_period,
+	}).on('change', check_presence_period);
 	$('[name=os_type]').change(function(ev) {
 		toggle_os_type();
 	});
@@ -105,4 +141,5 @@ $(function() {
     $('[name=comp_account]').click(function(ev) {
         toggle_comp_account();
     });
+	check_presence_period();
 });

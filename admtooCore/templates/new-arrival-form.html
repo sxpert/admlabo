@@ -121,14 +121,19 @@
 </tbody></table>
 
 <h3>Informatique</h3>
-<div class="warning">
+<div class="warning" id="infosys-warn">
+<p> Vous avez demandé un compte informatique pour une personne qui séjournera moins de 3 semaines à l'IPAG. Veuillez svp faire 
+valider cette demande en envoyant un mail 
+<a href="mailto:direction.ipag@obs.ujf-grenoble.fr?subject=compte%20informatique%20pour%20un%20séjour%20de%20moins%20de%20trois%20semaines&cc=resp-info.ipag@obs.ujf-grenoble.fr">ici</a></p>
+</div>
+<div class="warning" id="infosys-info">
 <ul><li>Une station de travail fixe ne sera installée que dans un <strong>bureau définitif</strong></li>
 <li>Les stagiaires <strong>doivent</strong> utiliser une station de travail libre service.<br/>
 	Consultez le tableau de réservation des places
 	<a href="http://ipag.osug.fr/twiki/bin/view/Ipag/Intranet/DisponibiliteSallesStagiairesVisu1An?skin=plain">stagiaire</a></li>
 <li><strong>Les équipements personnels ne sont pas autorisés sur le réseau de l'institut</strong></li></ul>
 </div>
-<table><tbody>
+<table id="infosys"><tbody>
 
 {% if errors.comp_account %}<tr><td colspan="2" class="form-error">{{ errors.comp_account }}</td></tr>{% endif %}
 <tr><th>Compte informatique&nbsp;<span class="must-have">●</span></th>
