@@ -111,7 +111,7 @@ class Core_LdapOsug (object) :
 			return False
 		u = self._ldap_clean_record (v)
 		if u is None :
-			self._log ("problem with data for user with uid '"+uid+"'")
+			self._log ("user with uid '"+uid+"' seems to have disappeared")
 			return None
 		return u
 
