@@ -90,6 +90,41 @@ class Ansible (object) :
 
 		return True
 
+	def destroyDirectory (self, fqdn, dirname) :
+		hostname = self.getHostname (fqdn)
+
+		args = 'path='+dirname+' '
+		args+= 'state=absent '
+	
+		runner = ar.Runner (
+			pattern     = hostname,
+			forks       = 1,
+			sudo        = True,
+			module_name = 'file',
+			module_args = args,
+			inventory   = self.inventory
+		)
+		results = runner.run ()
+
+		if 'contacted' not in results :
+			self.log ('FATAL: no \'contacted\' in results')
+			return False
+		contacted = results['contacted']
+		if hostname not in contacted :
+			self.log ('FATAL: can\'t find '+unicode(hostname)+' in results')
+			return False
+		host = contacted[hostname] 
+		if 'state'not in host :
+			self.log ('FATAL: can\'t find \'state\' in host')
+			self.log (unicode(host))
+			return False
+		state = host['state']
+
+		if state != 'absent' :
+			return False
+
+		return True
+	
 	
 	"""
 	use the home-made 'linux-quota' plugin to put quotas in

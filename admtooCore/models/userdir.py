@@ -57,9 +57,27 @@ class UserDir (models.Model) :
 		# the directories should be created by the cron job, 
 		# as it takes forever and requires root access
 		c.in_cron = True
-		c.save ()
+		c.post ()
+
+	def destroy (self, user, request_user) :
+		import command, json
+		
+		data = {}
+		data['machine'] = self.machine.default_name.fqdn
+		data['basedir'] = self.basedir
+		data['uid'] = user.login
+
+		c = command.Command ()
+		c.user = request_user
+		c.verb = "DestroyUserDir"
+		c.data = json.dumps(data)
+		c.in_cron = True
+		c.post()
 
 def generateDirs (user, request_user=None) :
 	for d in UserDir.objects.all () :
 		d.generate (user, request_user)
 
+def destroyDirs (user, request_user=None) :
+	for d in UserDir.objects.all () :
+		d.destroy (user,request_user)

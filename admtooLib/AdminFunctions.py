@@ -68,6 +68,20 @@ def createDirectory (fqdn, dirname, uid, gid, modes, files) :
 	a.log (ok)
 	return ok
 
+def destroyDirectory (fqdn, dirname, uid) :
+	a = rem()
+	# first, remove quotas
+	if not a.applyQuotas (fqdn, uid, dirname, 0, 0) :
+		# this is not really critical
+		a.log (u'WARNING: unable to reset quota on directory '+unicode(dirname)+u' for user '+unicode(uid))
+
+	# remove directory, it is not critical if this fails either
+	a.log ('removing directory '+unicode(dirname))
+	if not a.destroyDirectory (fqdn, dirname) :
+		a.log (u'WARNING: unable to destroy directory '+unicode(dirname))
+
+	return True
+
 # 
 # 
 #

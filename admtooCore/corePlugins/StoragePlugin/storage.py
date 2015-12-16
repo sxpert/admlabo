@@ -77,3 +77,49 @@ class Core_Storage (object) :
 		self._log ('FAIL')
 		return False
 
+	"""
+	This is almost identical to the previous command, except we destroy things
+	"""
+	def DestroyUserDir (self, *args, **kwargs) :
+		_, command = args
+		if 'logger' in kwargs.keys() :
+			logger = kwargs['logger']
+			if logger is not None :
+				self._logger = logger
+
+		c = json.loads(command.data)
+		ck = c.keys()
+		if 'machine' not in ck :
+			self._log ('missing \'machine\' name')
+			return False
+		machine = c['machine']
+		
+		# in debug mode, force the storage server from the settings
+		from django.conf import settings
+		if settings.DEBUG :
+			try :
+				settings.STORAGE_SERVER 
+			except NameError as e :
+				# skip...
+				self._log ('FATAL: we are in DEBUG mode and settings.STORAGE_SERVER is not defined')
+				return False
+			else :
+				self._log ('DEBUG MODE :\ndirectories should normally be removed from \''+machine+
+					'\'\nwill be removed from \''+settings.STORAGE_SERVER+'\' instead')
+				machine = settings.STORAGE_SERVER
+
+		if ('basedir' not in ck) and ('uid' not in ck) :
+			return False
+		dirname = c['basedir']+'/'+c['uid']
+		uid = c['uid']
+
+		# we have all we need to call the ansible stuff
+		from admtooLib import AdminFunctions as af
+		import os.path
+		created_ok = af.destroyDirectory (machine, dirname, uid)
+		if created_ok :
+			self._log (u'SUCCESS destroying directoy '+unicode(dirname))
+			return True
+		self._log (u'FAIL destroying directory '+unicode(dirname))
+
+		return False

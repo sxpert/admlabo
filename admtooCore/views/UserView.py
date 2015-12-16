@@ -659,6 +659,24 @@ def user_view_action_regen_userdirectories (request, userid, action) :
 	
 	return True
 
+@admin_login
+def user_view_action_destroy_user_data (request, userid, action) :
+	logger.error (u'destroy user data for user '+unicode(userid))
+	try :
+		user = models.User.objects.get(uidnumber=userid)
+	except models.User.DoesNotExist as e :
+		logger.error (u'FATAL: unable to find user '+unicode(userid))
+		return False
+
+	# remove all groups for user
+	user.change_groups([], request.user)
+	# remove user directories and quotas
+	models.userdir.destroyDirs (user, request.user)
+	# deactivate wikiname
+	# update directories
+
+	return True
+
 #----
 # main function
 #
@@ -697,6 +715,9 @@ def user_view_field (request, user_id, action, fieldtype, fieldname) :
 		"checkbox"            : user_view_checkbox_type_field,
 		"dirs": {
 			"regen"           : user_view_action_regen_userdirectories,
+		},
+		"user": {
+			"destroy"         : user_view_action_destroy_user_data,
 		}
 	}
 

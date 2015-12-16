@@ -78,6 +78,12 @@ class SetQuota (object) :
 			self.module.fail_json (msg=u'error while trying to get quota information for '+unicode(user)+u' on filesystem '+unicode(fs)+
 				u' error:'+unicode(e.returncode)+
 				u'\n'+unicode(e.output))
+
+		if len(out) == 0 :
+			# the quota command returned nothing. suspect there are no quotas setup
+			if self.state == 'absent' :
+				self.module.exit_json(changed=False, state=self.state)
+
 		# split lines and remove the 2 first lines
 		lines = out.split(u'\n')
 
@@ -86,7 +92,7 @@ class SetQuota (object) :
 		# find the ':' from the end and look for the next word
 		p = l0.rfind(':')
 		if p==-1 :
-			self.module.fail_json (msg='Fatal: malformed response from '+unicode(QUOTA_COMMAND))
+			self.module.fail_json (msg='Fatal: malformed response from '+unicode(QUOTA_COMMAND)+u'\nresponse length : '+unicode(len(out)))
 		resp = l0[p+1:].strip()
 		if resp == 'none' :
 			return None
