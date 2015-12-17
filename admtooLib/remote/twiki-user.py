@@ -176,6 +176,8 @@ class TWikiUser (object) :
 		up = self.is_user_present ()
 		if up is None :
 			self.module.fail_json(msg=u'error finding user '+unicode(self.user))
+		if up is False :
+			self.module.fail_json(msg=u'error: user '+unicode(self.user)+' does not exist')
 
 		changed = False
 

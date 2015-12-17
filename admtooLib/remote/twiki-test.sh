@@ -1,1 +1,1 @@
-ansible localhost -M . -m twiki-user.py -a 'user=RaphaelJacquot twikibase=/var/www/twiki state=inactive'
+ansible localhost -M . -m twiki-user.py -a 'user=RaphaelJacquote twikibase=/var/www/twiki state=inactive'

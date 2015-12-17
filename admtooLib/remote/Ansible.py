@@ -386,4 +386,16 @@ class Ansible (object) :
 		)
 		results = runner.run ()
 		self.log(unicode(results))
-		pass
+		if 'contacted' not in results :
+			self.log('FATAL: no \'contacted\' in results')
+			return False
+		contacted = results['contacted']
+		if hostname not in contacted :
+			self.log ('FATAL: can\'t find '+unicode(hostname)+' in results')
+			return False
+		host = contacted[hostname]
+		if 'failed' in host :
+			self.log ('Failed deactivating user '+unicode(twikiname)+' '+host['msg'])
+			return False
+		# if we are here, all is ok...
+		return True

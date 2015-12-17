@@ -237,6 +237,28 @@ class TWiki (object) :
 			
 		return True
 		
+	
+	def DisableUser (self, *args, **kwargs) :
+		from admtooCore.models import command
+		import json
+		_, cmd = args
+		
+		d = json.loads(cmd.data)
+		if 'appSpecName' in d.keys() :
+			asn = d['appSpecName']
+			if (asn is not None) and ('twiki' in asn.keys()) :
+				twiki_name = asn['twiki']
+				if twiki_name is not None :
+					a = af.rem()
+					return a.twikiUserInactive(TWIKI_SERVER,TWIKI_BASE,twiki_name)
+				else :
+					self._log ('the twiki variable is invalid (found None)')
+			else :
+				self._log('Unable to find twiki variable in the appSpecName parameter')
+		else :
+			self._log('Unable to find appSpecName data in the command')
+		return False
+
 	#
 	# launched from crontab
 	# 
