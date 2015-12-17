@@ -673,6 +673,7 @@ def user_view_action_destroy_user_data (request, userid, action) :
 	# remove user directories and quotas
 	models.userdir.destroyDirs (user, request.user)
 	# deactivate wikiname
+
 	# update directories
 
 	return True

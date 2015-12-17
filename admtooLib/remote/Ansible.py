@@ -51,6 +51,15 @@ class Ansible (object) :
 	#=================================================================================================
 	# actual ansible modules
 
+	"""
+	this module creates a directory
+	parameters are :
+		fqdn
+		dirname
+		uid
+		gid
+		modes
+	"""
 	def createDirectory (self, fqdn, dirname, uid, gid, modes) :
 		hostname = self.getHostname (fqdn)
 
@@ -344,4 +353,37 @@ class Ansible (object) :
 		res['stderr'] = host['stderr']
 		return res
 
+	#==========================================================================
+	#
+	# TWiki related plugins
+	#
 
+	def twikiUserActive (self, fqdn, twikibase, twikiname) :
+		pass
+
+	"""
+	Uses the homemade ansible plugin to remove the twiki user from active service
+		* copies the .htpasswd file to a 
+		* comments the users's line in the <twikibase>/data/.htpasswd file
+	"""
+	def twikiUserInactive (self, fqdn, twikibase, twikiname) :
+		hostname = self.getHostname (fqdn)
+
+		args = u'user='+unicode(twikiname)+u' '
+		args+= u'twikibase='+unicode(twikibase)+u' '
+		args+= u'state=inactive'
+
+		import os.path
+		path = os.path.dirname(__file__)
+		runner = ar.Runner (
+			pattern     = hostname,
+			forks       = 1,
+			sudo        = True,
+			module_path = path,
+			module_name = 'twiki-user.py',
+			module_args = args,
+			inventory   = self.inventory
+		)
+		results = runner.run ()
+		self.log(unicode(results))
+		pass
