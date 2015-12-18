@@ -474,6 +474,11 @@ class User (models.Model) :
 			an.append ((k, v[k],))
 		return an
 			
+
+	#==========================================================================
+	# TWiki related
+	# 
+
 	
 	def default_twiki_account (self) :
 		# check if user already has a TWiki name
@@ -490,6 +495,22 @@ class User (models.Model) :
 		t = plugins.TWiki
 		return t.gen_user_name (self.first_name, self.last_name)
 	
+	def disable (self, ru) :
+		import command, json
+		c = command.Command ()
+		if ru is None :
+			c.user = "(unknown)"
+		else :
+			c.user = unicode(ru)
+		c.verb = "DisableUser"
+		c.in_cron = True
+		try :
+			asn = json.loads(self.appspecname)
+		except ValueError as e:
+			asn = None
+		c.data = json.dumps ({'first_name': self.first_name, 'last_name': self.last_name, 'appSpecName': asn })
+		c.post ()
+
 	#==========================================================================
 	# generate a command to update the kifekoi 
 
@@ -536,11 +557,24 @@ class User (models.Model) :
 		if request_user is None :
 			c.user = "(Unknown)"
 		else :
-			c.user = str(request_user)
+			c.user = unicode(request_user)
 		c.verb = 'UpdateKiFeKoi'
 		c.in_cron = True
 		c.data = ''
-		c.save ()
+		c.post ()
+
+	@staticmethod
+	def update_annuaire (request_user=None) :
+		import command, json
+		c = command.Command()
+		if request_user is None :
+			c.user = '(unknown)'
+		else :
+			c.user = unicode(request_user)
+		c.verb = 'AnnuaireUpdate'
+		c.in_cron = True
+		c.data = ''
+		c.post ()
 
 	#==========================================================================
 	# method for the directory display

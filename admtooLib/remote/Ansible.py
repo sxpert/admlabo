@@ -161,7 +161,6 @@ class Ansible (object) :
 		# add this scripts' directory in the ansible directory list
 		import os.path
 		path = os.path.dirname(__file__)
-		print (path)
 
 		runner = ar.Runner (
 			pattern= hostname,
@@ -184,6 +183,12 @@ class Ansible (object) :
 			self.log (u'FATAL: can\'t find '+unicode(hostname)+u' in results')
 			return False
 		host = contacted[hostname]
+		if 'failed' in host :
+			msg = ''
+			if 'msg' in host :
+				msg = host['msg']
+			self.log (u'The plugin encountered an issue : '+unicode(msg))
+			return False
 		if 'state' not in host :
 			self.log (u'FATAL: can\'t find the state in the response')
 			self.log (results)
@@ -385,7 +390,7 @@ class Ansible (object) :
 			inventory   = self.inventory
 		)
 		results = runner.run ()
-		self.log(unicode(results))
+		#self.log(unicode(results))
 		if 'contacted' not in results :
 			self.log('FATAL: no \'contacted\' in results')
 			return False

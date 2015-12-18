@@ -244,20 +244,35 @@ class TWiki (object) :
 		_, cmd = args
 		
 		d = json.loads(cmd.data)
+
+		fname = None
+		if 'first_name' in d.keys() :
+			fname = d['first_name']
+		lname = None
+		if 'last_name' in d.keys() :
+			lname = d['last_name']
+		
+		asn = None
 		if 'appSpecName' in d.keys() :
 			asn = d['appSpecName']
-			if (asn is not None) and ('twiki' in asn.keys()) :
-				twiki_name = asn['twiki']
-				if twiki_name is not None :
-					a = af.rem()
-					return a.twikiUserInactive(TWIKI_SERVER,TWIKI_BASE,twiki_name)
-				else :
-					self._log ('the twiki variable is invalid (found None)')
-			else :
-				self._log('Unable to find twiki variable in the appSpecName parameter')
+
+		twiki = None
+		if type(asn) is dict :
+			if 'twiki' in asn.keys() :
+				twiki = asn['twiki'].strip()
+				if len(twiki) == 0 :
+					twiki = None
+
+		if twiki is None :
+			twiki = self.gen_user_name (fname, lname)
+
+		a = af.rem()
+		res = a.twikiUserInactive(TWIKI_SERVER,TWIKI_BASE,twiki)
+		if res :
+			self._log(u'Successfully disabled twiki user '+unicode(twiki))
 		else :
-			self._log('Unable to find appSpecName data in the command')
-		return False
+			self._log(u'Problem disabling twiki user '+unicode(twiki))
+		return res
 
 	#
 	# launched from crontab

@@ -74,6 +74,8 @@ def destroyDirectory (fqdn, dirname, uid) :
 	if not a.applyQuotas (fqdn, uid, dirname, 0, 0) :
 		# this is not really critical
 		a.log (u'WARNING: unable to reset quota on directory '+unicode(dirname)+u' for user '+unicode(uid))
+	else :
+		a.log (u'Quotas were sucessfully reset for user '+unicode(uid)+' on directory '+unicode(dirname))
 
 	# remove directory, it is not critical if this fails either
 	a.log ('removing directory '+unicode(dirname))
