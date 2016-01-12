@@ -131,7 +131,7 @@ def NewArrivalForm (request) :
 						age_str = age_arr[0]+', '+age_arr[1]+' et '+age_arr[2]
 					errors['birthdate'] = 'Non Alain, ton nouvel arrivant ne peut pas être agé de seulement '+age_str+'. Il doît etre majeur !!'
 
-				errors['birthdate'] = 'la date de naissance est invalide, l\'utilisateur doit être majeur'+str(request.user) 
+				errors['birthdate'] = 'la date de naissance est invalide, l\'utilisateur doit être majeur' 
 		newuser['birthdate'] = birthdate
 
 		#
