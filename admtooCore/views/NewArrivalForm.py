@@ -5,7 +5,8 @@ from .. import models
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.conf import settings
-
+import logging
+logger = logging.getLogger(__name__)
 #
 # utility functions
 #
@@ -18,12 +19,13 @@ from django.conf import settings
 # declared
 #
 
+import math
 import re
+import datetime
 DATE_RE = re.compile('\d{4}-\d{2}-\d{2}')
 
 def date_invalid (strdate) :
 	try:
-		import datetime
 		d = datetime.datetime.strptime(strdate, '%Y-%m-%d')
 	except ValueError :
 		return True
@@ -85,6 +87,51 @@ def NewArrivalForm (request) :
 		# check date validity
 		elif date_invalid (birthdate) :
 			errors['birthdate'] = 'La date de naissance est invalide'
+		# test person's age
+		else :
+			bd = datetime.datetime.strptime(birthdate, '%Y-%m-%d')
+			age = datetime.datetime.today() - bd
+			year_length = 365.25
+			months_per_year = 12
+			month_length = year_length / months_per_year
+			age_years = age.days / year_length
+			age_months = math.fmod (age.days / month_length, months_per_year)
+			age_days = math.fmod (age.days,  month_length)
+			age_years = int(math.floor(age_years))
+			age_months = int(math.floor (age_months))
+			age_days = int(math.floor (age_days))
+			errors['birthdate'] = str(age_years)+' '+str(age_months)+' '+str(age_days)
+			try :
+				min_age = USER_MIN_AGE
+			except NameError as e :
+				# log warning
+				logger.error ('unable to find \'USER_MIN_AGE\' variable in settings, using default value')
+				min_age = 18
+			if age_years < min_age :
+				u = str(request.user) 
+				if u == 'heriquea' :
+					age_arr = []
+					if age_years > 0 :
+						if age_years == 1 :
+							age_arr.append (str(age_years)+' an')
+						else :
+							age_arr.append (str(age_years)+' ans')
+					if age_months > 0 :
+						age_arr.append (str(age_months)+' mois')
+					if age_days > 0 :
+						if age_days == 1 :
+							age_arr.append (str(age_days)+' jour')
+						else :
+							age_arr.append (str(age_days)+' jours')
+					if len(age_arr) == 1:
+						age_str = age_arr[0]
+					elif len(age_arr) == 2 :
+						age_str = age_arr[0]+' et '+age_arr[1]
+					else :
+						age_str = age_arr[0]+', '+age_arr[1]+' et '+age_arr[2]
+					errors['birthdate'] = 'Non Alain, ton nouvel arrivant ne peut pas être agé de seulement '+age_str+'. Il doît etre majeur !!'
+				else :
+					errors['birthdate'] = 'la date de naissance est invalide, l\'utilisateur doit être majeur'+str(request.user) 
 		newuser['birthdate'] = birthdate
 
 		#
