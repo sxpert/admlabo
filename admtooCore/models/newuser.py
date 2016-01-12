@@ -144,7 +144,10 @@ class NewUser (models.Model) :
 		data['study_level'] = self.study_level
 		data['ujf_student'] = self.ujf_student
 		data['team'] = { 'name': self.team.name }
-		data['office'] = str(self.office)
+		office = str(self.office)
+		if self.office is None :
+			office = None
+		data['office'] = office
 		data['other_office'] = self.other_office
 		
 		data['arrival'] = None
