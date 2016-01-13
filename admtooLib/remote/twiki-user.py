@@ -139,7 +139,7 @@ class TWikiUser (object) :
 	def read_htpasswd_file (self) :
 		try :
 			f = open(self.htpasswd, 'rU')
-		except IOError as e :
+		except IOError:
 			self.fail (u'unable to open '+unicode(fname))
 		self.twu = TWikiUserEntries ()
 		for line in f :
