@@ -175,8 +175,16 @@ class TWikiUser (object) :
 		# 1. find if the user is present in the current 
 		up = self.is_user_present ()
 		if up is None :
+			# can't find user...
+			if self.state == 'inactive' :
+				# we wanted the user gone... all is fine then
+				self.module.exit_json(changed=False, msg=u'couldn\'find matching user', state=self.state)
 			self.module.fail_json(msg=u'error finding user '+unicode(self.user))
 		if up is False :
+			# user does not exist
+			if self.state == 'inactive' :
+				# we wanted the user gone, all is fine too here
+				self.module.exit_json(changed=False, msg=u'couldn\'find matching user', state=self.state)
 			self.module.fail_json(msg=u'error: user '+unicode(self.user)+' does not exist')
 
 		changed = False
