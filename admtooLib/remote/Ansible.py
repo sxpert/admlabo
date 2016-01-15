@@ -396,6 +396,7 @@ class Ansible (object) :
 			return False
 		contacted = results['contacted']
 		if hostname not in contacted :
+			self.log (str(results))
 			self.log ('FATAL: can\'t find '+unicode(hostname)+' in results')
 			return False
 		host = contacted[hostname]
