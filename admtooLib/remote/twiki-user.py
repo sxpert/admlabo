@@ -217,7 +217,7 @@ class TWikiUser (object) :
 				# it's not as clean, but it will have to do !
 				if sys.version_info < (2, 6) :
 					f = open (self.htpasswd, 'w')
-					f.write(unicode(self.twu)
+					f.write(unicode(self.twu))
 					f.close()
 				else :
 					f = tempfile.NamedTemporaryFile(delete=False)
