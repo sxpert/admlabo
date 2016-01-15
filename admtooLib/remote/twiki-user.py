@@ -213,13 +213,20 @@ class TWikiUser (object) :
 				shutil.copy2(self.htpasswd,self.htpasswd+'.'+d)
 				os.chown(htpasswd_backup, uid, gid) 
 				# 2. generate new file
-				f = tempfile.NamedTemporaryFile(delete=False)
-				tempname = f.name
-				f.write(unicode(self.twu))
-				f.close()
-				os.chown(tempname, uid, gid)
-				os.chmod(tempname, modes)
-				os.rename(tempname, self.htpasswd)
+				# python < 2.6 doesn't support the delete option
+				# it's not as clean, but it will have to do !
+				if sys.version_info < (2, 6) :
+					f = open (self.htpasswd, 'w')
+					f.write(unicode(self.twu)
+					f.close()
+				else :
+					f = tempfile.NamedTemporaryFile(delete=False)
+					tempname = f.name
+					f.write(unicode(self.twu))
+					f.close()
+					os.chown(tempname, uid, gid)
+					os.chmod(tempname, modes)
+					os.rename(tempname, self.htpasswd)
 				
 
 		# exit indicating if there was some change
