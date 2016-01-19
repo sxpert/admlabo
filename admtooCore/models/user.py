@@ -251,7 +251,7 @@ class User (models.Model) :
 			logger.error (unicode(self.login)+u' not member of '+unicode(not_member)+u', fixing') 
 			for g in not_member :
 				#logger.error (u'adding group '+unicode(g)+u' to user '+unicode(self.login))
-				self.add_group(g, '(models.user.all_groups - autofix)')
+				self.add_group(g, None)
 
 		return gr
 	
