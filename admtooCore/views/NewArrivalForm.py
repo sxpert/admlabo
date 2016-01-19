@@ -100,7 +100,7 @@ def NewArrivalForm (request) :
 			age_years = int(math.floor(age_years))
 			age_months = int(math.floor (age_months))
 			age_days = int(math.floor (age_days))
-			errors['birthdate'] = str(age_years)+' '+str(age_months)+' '+str(age_days)
+			#errors['birthdate'] = str(age_years)+' '+str(age_months)+' '+str(age_days)
 			try :
 				min_age = USER_MIN_AGE
 			except NameError as e :
