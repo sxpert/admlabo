@@ -240,6 +240,19 @@ class User (models.Model) :
 				for pg in tg :
 					if pg not in gr :
 						gr.append(pg)
+		
+		# check if user belongs to all listed groups
+		# logs an alert otherwise
+		not_member = []
+		for g in gr :
+			if g not in self.groups.all() :
+				not_member.append(g)
+		if len(not_member)>0 :
+			logger.error (unicode(self.login)+u' not member of '+unicode(not_member)+u', fixing') 
+			for g in not_member :
+				#logger.error (u'adding group '+unicode(g)+u' to user '+unicode(self.login))
+				self.add_group(g, '(models.user.all_groups - autofix)')
+
 		return gr
 	
 	def unique_groups (self) :
