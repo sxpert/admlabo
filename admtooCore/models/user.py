@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from django.db import models
+from django.db import models, IntegrityError
 import netfields
 import logging
 logger=logging.getLogger('django')
@@ -367,9 +367,15 @@ class User (models.Model) :
 			for g in reversed(parents) :
 				logger.error (g)
 				if g not in self.groups.all() :
-					self.groups.add (g)
-					added_groups.append (g)
-					# update group in ldap
+					# catch potential exception on fail to add group
+					try :
+						self.groups.add (g)
+					except IntegrityError as e :
+						# log that something happened
+						logger.error (u'WARNING: user '+unicode(self.login)+u' was already in group '+unicode(g))
+					else :
+						added_groups.append (g)
+					# update group in ldap, whatever happened
 					g._update_ldap (user)
 
 		# adds the target group
