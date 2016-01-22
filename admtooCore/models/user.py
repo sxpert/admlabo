@@ -380,8 +380,12 @@ class User (models.Model) :
 
 		# adds the target group
 		logger.error (u'Adding group '+unicode(group)+u' to user '+unicode(self))
-		self.groups.add (group)
-		added_groups.append (group)
+		try:
+			self.groups.add (group)
+		except IntegrityError as e :
+			logger.error (u'WARNING: user '+unicode(self.login)+u' was already in group '+unicode(g))
+		else :
+			added_groups.append (group)
 
 		self.add_ugh_entry (UserGroupHistory.ACTION_ADD, added_groups, user)
 
