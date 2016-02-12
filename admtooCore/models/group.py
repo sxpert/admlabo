@@ -136,6 +136,9 @@ class Group (models.Model) :
 	def prepare_group_data (self) :
 		members = self.member_logins()
 		g = {}
+		if len(self.name) == 0 :
+			logger.error(u'group has no name yet, skipping')
+			return None
 		g['cn']          = self.name
 		g['gidNumber']   = self.gidnumber
 		g['description'] = self.description
@@ -151,7 +154,9 @@ class Group (models.Model) :
 		# get members list
 		g = self.prepare_group_data()
 		#logger.error ("saving group to ldap, members list : "+str(g['members']))
-
+		if g is None :
+			logger.error(u'no group data generated, skipping')
+			return
 		import command, json
 		c = command.Command ()
 		if user is None :

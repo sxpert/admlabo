@@ -629,6 +629,13 @@ class Core_LdapOsug (object) :
 		cn = None
 		if 'cn' in ck :
 			cn = c['cn']
+		if cn is None :
+			self._log(u'can\'t find cn, skipping and marking command in error')
+			return False
+		if len(cn) == 0 :
+			self._log(u'cn has null length, skipping and marking command done')
+			return True
+
 		gidNumber = None
 		if 'gidNumber' in ck :
 			gidNumber = c['gidNumber']
