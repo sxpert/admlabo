@@ -31,6 +31,12 @@ def date_invalid (strdate) :
 		return True
 	return False
 
+def period_duration (start, finish) :
+	s = datetime.datetime.strptime(start, '%Y-%m-%d')
+	f = datetime.datetime.strptime(finish, '%Y-%m-%d')
+	td = f - s 
+	return td.days
+
 def analyze_radio (radio) :
 	if len(radio)==0 :
 		return None
@@ -257,45 +263,61 @@ def NewArrivalForm (request) :
 
 		#======================================================================
 		#
-	
-		#
-		comp_account = request.POST.get('comp_account', '').strip()
-		# should be "0" or "1"
-		if len(comp_account)==0 :
-			errors['comp_account'] = 'Une option doit être sélectionnée'
-		newuser['comp_account'] = comp_account
 
-		#
-		os_type = request.POST.get('os_type', '').strip()
-		if len(os_type) == 0 :
-			errors['os_type'] = "Le type de station de travail ne peut être vide"
-		try :
-			os_type = int(os_type)
-		except ValueError as e:
-			pass
-		newuser['os_type'] = os_type
-	
-		#
-		specific_os = request.POST.get('specific_os', '').strip()
-		newuser['specific_os'] = specific_os
+		if arrival != '' and departure != '' :
+			duration = period_duration (arrival, departure)
+		else :
+			duration = None
 
-		#
-		os_lang = request.POST.get('os_lang', '').strip()
-		if len(os_lang) == 0 :
-			errors['os_lang'] = "La langue de la station de travail ne peut être vide"
-		try :
-			os_lang = int(os_lang)
-		except ValueError as e :
-			pass
-		newuser['os_lang'] = os_lang
+		if duration is not None and duration < 21 :
 
-		#
-		comp_purchase = request.POST.get('comp_purchase', '').strip()
-		# should be "0" or "1"
-		if comp_account == '0' :
+			comp_account = '0'
+			os_type = '0'
+			specific_os = ''
+			os_lang = '0'
 			comp_purchase = '0'
-		if len(comp_purchase)==0 :
-			errors['comp_purchase'] = 'Une option doit être sélectionnée'
+
+		else : 
+
+			#
+			comp_account = request.POST.get('comp_account', '').strip()
+			# should be "0" or "1"
+			if len(comp_account)==0 :
+				errors['comp_account'] = 'Une option doit être sélectionnée'
+
+			#
+			os_type = request.POST.get('os_type', '').strip()
+			if len(os_type) == 0 :
+				errors['os_type'] = "Le type de station de travail ne peut être vide"
+			try :
+				os_type = int(os_type)
+			except ValueError as e:
+				pass
+	
+			#
+			specific_os = request.POST.get('specific_os', '').strip()
+
+			#
+			os_lang = request.POST.get('os_lang', '').strip()
+			if len(os_lang) == 0 :
+				errors['os_lang'] = "La langue de la station de travail ne peut être vide"
+			try :
+				os_lang = int(os_lang)
+			except ValueError as e :
+				pass
+
+			#
+			comp_purchase = request.POST.get('comp_purchase', '').strip()
+			# should be "0" or "1"
+			if comp_account == '0' :
+				comp_purchase = '0'
+			if len(comp_purchase)==0 :
+				errors['comp_purchase'] = 'Une option doit être sélectionnée'
+
+		newuser['comp_account'] = comp_account
+		newuser['os_type'] = os_type
+		newuser['specific_os'] = specific_os
+		newuser['os_lang'] = os_lang
 		newuser['comp_purchase'] = comp_purchase
 
 		#======================================================================
