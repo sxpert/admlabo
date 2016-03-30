@@ -37,14 +37,14 @@ urlpatterns = patterns( '',
 # MailingLists
 	url(r'^mailinglists/$', views.mailinglist_list, name='mailinglist-list'),
 	url(r'^mailinglist/new/$', views.mailinglist_new, name='mailinglist-new'),
-	url(r'^mailinglist/(?P<ml_id>[a-z0-9_]+)/view/$', views.mailinglist_view, name='mailinglist-view'),
-	url(r'^mailinglist/(?P<ml_id>[a-z0-9_]+)/view/(?P<action>[^/]*)/(?P<fieldtype>[^/]*)/(?P<fieldname>[^/]*)$', 
+	url(r'^mailinglist/(?P<ml_id>[a-z0-9_-]+)/view/$', views.mailinglist_view, name='mailinglist-view'),
+	url(r'^mailinglist/(?P<ml_id>[a-z0-9_-]+)/view/(?P<action>[^/]*)/(?P<fieldtype>[^/]*)/(?P<fieldname>[^/]*)$', 
 		views.mailinglist_view_field, name='mailinglist_view_field'),
 # MailAliases
 	url(r'^mailaliases/$', views.mailalias_list, name='mailalias-list'),
 	url(r'^mailalias/new/$', views.mailalias_new, name='mailalias-new'),
-	url(r'^mailalias/(?P<alias>[a-z0-9_]+)/view/$', views.mailalias_view, name='mailalias-view'),
-	url(r'^mailalias/(?P<alias>[a-z0-9_]+)/view/(?P<action>[^/]*)/(?P<fieldtype>[^/]*)/(?P<fieldname>[^/]*)$', 
+	url(r'^mailalias/(?P<alias>[a-z0-9_-]+)/view/$', views.mailalias_view, name='mailalias-view'),
+	url(r'^mailalias/(?P<alias>[a-z0-9_-]+)/view/(?P<action>[^/]*)/(?P<fieldtype>[^/]*)/(?P<fieldname>[^/]*)$', 
 		views.mailalias_view_field, name='mailalias_view_field'),
 #
 # machines management

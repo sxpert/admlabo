@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import json
+import json, re
 from django.db import transaction, IntegrityError
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
@@ -54,22 +54,26 @@ def mailalias_new (request) :
 			alias = request.POST['alias']
 			if type(alias) is unicode :
 				pass
-			# maybe other types need handled ?
-			# try to create the new ma record
-			# step 1, check if this ma exists already
-			try :
-				ma = models.MailAlias.objects.get(alias=alias)
-			except models.MailAlias.DoesNotExist as e :
-				logger.error ('mail alias \''+alias+'\' does not exist, creating')
-				# step 2 : create new mailing list record
-				ma = models.MailAlias()
-				ma.alias = alias
-				ma.save(request_user=request.user)
-				# step 3 : redirect to view mailinglist
-				return redirect ('mailalias-view', alias=ma.alias)
-			else :
-				logger.error ('ERROR: alias \''+alias+'\' already exists')
-				error = 'Un alias de mail avec ce nom existe déja'
+			if re.match('^[a-z0-9_-]+$',alias) is None:
+				logger.error ('ERROR: alias \''+alias+'\' contains wrong characters')
+				error = 'l\'identifiant d\'alias ne peut comporter que a-z 0-9 _ et -'
+			else:
+				# maybe other types need handled ?
+				# try to create the new ma record
+				# step 1, check if this ma exists already
+				try :
+					ma = models.MailAlias.objects.get(alias=alias)
+				except models.MailAlias.DoesNotExist as e :
+					logger.error ('mail alias \''+alias+'\' does not exist, creating')
+					# step 2 : create new mailing list record
+					ma = models.MailAlias()
+					ma.alias = alias
+					ma.save(request_user=request.user)
+					# step 3 : redirect to view mailinglist
+					return redirect ('mailalias-view', alias=ma.alias)
+				else :
+					logger.error ('ERROR: alias \''+alias+'\' already exists')
+					error = 'Un alias de mail avec ce nom existe déja'
 	context = {
 		'action' : 'new',
 		'error'  : error,  

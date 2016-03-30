@@ -7,7 +7,7 @@
 <table>
   <tbody>
 {% for ma in mailaliases %}
-    <tr><td><a href="{% url 'mailalias-view' ma.alias %}">{{ ma.description }}<tr>
+    <tr><td><a href="{% url 'mailalias-view' ma.alias %}">{% if ma.description %}{{ ma.description }}{% else %}{{ma.alias}}{% endif %}<tr>
 {% endfor %}
   </tbody>
 </table>
