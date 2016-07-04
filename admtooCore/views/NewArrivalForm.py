@@ -264,7 +264,7 @@ def NewArrivalForm (request) :
 		#======================================================================
 		#
 
-		if arrival != '' and departure != '' :
+		if (arrival is not None) and (arrival != '') and (departure is not None) and (departure != '') :
 			duration = period_duration (arrival, departure)
 		else :
 			duration = None
