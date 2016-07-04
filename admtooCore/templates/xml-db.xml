@@ -25,6 +25,7 @@
 			<agalanLogin>{{ user.login }}</agalanLogin>
 			<uid>{{ user.uidnumber }}</uid>
 			<birthDate>{{ user.birthdate|date:"c" }}</birthDate>
+			<arrivalDate>{{ user.arrival|date:"c" }}</arrivalDate>
 			{% if user.departure %}<departureDate>{{ user.departure|date:"c" }}</departureDate>
 			{% endif %}<affiliation idref="unknown ?"/>
 			<userClassRef idref="{{ user.userclassref }}"/>
