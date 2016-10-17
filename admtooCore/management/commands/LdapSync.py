@@ -102,7 +102,12 @@ class LdapSync (object) :
 				if 'roomNumber' in lu :
 					ldap_room = lu['roomNumber']
 					if u.room != ldap_room :
-						print "room in ldap "+str(ldap_room)+" is different from room in database "+str(u.room)
+						try :
+							print "room in ldap "+unicode(ldap_room)+" is different from room in database "+unicode(u.room)
+						except UnicodeEncodeError as e:
+							print "UNICODE ENCODE ERROR :"
+							print ldap_room
+							print u.room
 						u.room = ldap_room
 						modified = True
 				else :
