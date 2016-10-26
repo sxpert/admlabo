@@ -32,8 +32,11 @@ def date_invalid (strdate) :
 	return False
 
 def period_duration (start, finish) :
-	s = datetime.datetime.strptime(start, '%Y-%m-%d')
-	f = datetime.datetime.strptime(finish, '%Y-%m-%d')
+	try: 
+		s = datetime.datetime.strptime(start, '%Y-%m-%d')
+		f = datetime.datetime.strptime(finish, '%Y-%m-%d')
+	except ValueError as e:
+		return None
 	td = f - s 
 	return td.days
 
@@ -63,7 +66,8 @@ def NewArrivalForm (request) :
 		#
 		
 		#
-		manager = request.POST.get('manager')
+	except ValueError as e:
+		return None	manager = request.POST.get('manager')
 		if manager is not None :
 			manager = int(manager)
 		newuser['manager'] = manager
