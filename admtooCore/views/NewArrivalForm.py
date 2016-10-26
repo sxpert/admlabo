@@ -115,27 +115,27 @@ def NewArrivalForm (request) :
 				min_age = 18
 			if age_years < min_age :
 				u = str(request.user) 
-				if u == 'heriquea' :
-					age_arr = []
-					if age_years > 0 :
-						if age_years == 1 :
-							age_arr.append (str(age_years)+' an')
-						else :
-							age_arr.append (str(age_years)+' ans')
-					if age_months > 0 :
-						age_arr.append (str(age_months)+' mois')
-					if age_days > 0 :
-						if age_days == 1 :
-							age_arr.append (str(age_days)+' jour')
-						else :
-							age_arr.append (str(age_days)+' jours')
-					if len(age_arr) == 1:
-						age_str = age_arr[0]
-					elif len(age_arr) == 2 :
-						age_str = age_arr[0]+' et '+age_arr[1]
-					else :
-						age_str = age_arr[0]+', '+age_arr[1]+' et '+age_arr[2]
-					errors['birthdate'] = 'Non Alain, ton nouvel arrivant ne peut pas être agé de seulement '+age_str+'. Il doît etre majeur !!'
+				#if u == 'heriquea' :
+				#	age_arr = []
+				#	if age_years > 0 :
+				#		if age_years == 1 :
+				#			age_arr.append (str(age_years)+' an')
+				#		else :
+				#			age_arr.append (str(age_years)+' ans')
+				#	if age_months > 0 :
+				#		age_arr.append (str(age_months)+' mois')
+				#	if age_days > 0 :
+				#		if age_days == 1 :
+				#			age_arr.append (str(age_days)+' jour')
+				#		else :
+				#			age_arr.append (str(age_days)+' jours')
+				#	if len(age_arr) == 1:
+				#		age_str = age_arr[0]
+				#	elif len(age_arr) == 2 :
+				#		age_str = age_arr[0]+' et '+age_arr[1]
+				#	else :
+				#		age_str = age_arr[0]+', '+age_arr[1]+' et '+age_arr[2]
+				#	errors['birthdate'] = 'Non Alain, ton nouvel arrivant ne peut pas être agé de seulement '+age_str+'. Il doît etre majeur !!'
 
 				errors['birthdate'] = 'la date de naissance est invalide, l\'utilisateur doit être majeur' 
 		newuser['birthdate'] = birthdate
