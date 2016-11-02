@@ -238,6 +238,9 @@ class Core_LdapOsug (object) :
 			else :
 				self._log ('No gidnumber to try, aborting')
 				return None
+		except ldap.SERVER_DOWN:
+			self._log ('LDAP server not responding, aborting')
+			return None
 		if len(v) > 1 :
 			self._log ('too many values returned, only one expected')
 			self._log (str(v))
