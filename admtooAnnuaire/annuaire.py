@@ -172,6 +172,9 @@ class Annuaire (object) :
 	def _update_photo (self, user_login) :
 		import os.path
 		u = models.User.objects.get (login = user_login)
+		if u.photo_path is None or len(u.photo_path) == 0:
+			self._log (u"FATAL: no file name given for photo")
+			return False
 		spath = os.path.join (settings.USER_PHOTO_PATH,str(u.uidnumber),u.photo_path)
 		self._log (spath)
 		dpathl = os.path.join (PHOTO_PATH_LARGE, u.login+'.jpg')
@@ -187,7 +190,12 @@ class Annuaire (object) :
 		# resize the picture in a temp file
 		import tempfile
 		from PIL import Image
-		img = Image.open (spath)
+		try :
+			img = Image.open (spath)
+		except IOError as e :
+			if e.errno == 21 :
+				a.log (u"FATAL: the file corresponds to a directory, no picture")
+				return False
 		hpercent = (float(MINI_PHOTO_HEIGHT) / float (img.size[1]))
 		wsize = int((float(img.size[0]) * float(hpercent)))
 		img = img.resize ((wsize, MINI_PHOTO_HEIGHT), Image.ANTIALIAS)
