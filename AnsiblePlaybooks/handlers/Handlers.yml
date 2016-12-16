@@ -1,0 +1,15 @@
+- name: restart zabbix
+  sudo: yes
+  service: name=zabbix-agent state=restarted
+
+- name: restart firewall
+  sudo: yes
+  command: /usr/local/bin/global-iptables.sh -q -s
+
+- name: restart dataeng
+  sudo: yes
+  service: name=dataeng state=restarted
+
+- name: restart dsm_om_connsvc
+  sudo: yes
+  service: name=dsm_om_connsvc state=restarted

@@ -1,0 +1,5 @@
+AnsibleHomeDirectory: /home/sysipag
+AnsibleUser: sysipag
+AnsibleGroup: sysipag
+AnsibleUid: 1001
+ConfFiles: /srv/prod.admipag/ConfFiles

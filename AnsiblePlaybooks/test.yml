@@ -1,0 +1,15 @@
+- hosts: '{{ Hosts }}'
+  vars_files:
+    - DefaultVars.yml
+  tasks:
+    - include_vars: DebianVars.yml
+      when: (ansible_distribution == "Debian" and ansible_distribution_major_version == "8")
+    - name: "create directory"
+      sudo: yes
+      file: state=directory recurse=yes path=/etc/ansible/facts.d 
+    - name: "install test file"
+      sudo: yes
+      template: src={{ConfFiles}}/facts.d/ipmi.fact dest=/etc/ansible/facts.d backup=yes 
+    - name: "create file"
+      sudo: yes
+      file: path=/tmp/{{TestFile}} state=touch

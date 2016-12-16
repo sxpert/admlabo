@@ -1,0 +1,69 @@
+---
+# 
+# Install Zabbix Agent on Debian servers
+#
+
+- hosts: '{{ Hosts }}'
+
+  vars:
+  vars_files: 
+    - vars/DefaultVars.yml
+ 
+  handlers:
+    - include: handlers/Handlers.yml
+  
+  tasks:
+    - include_vars: vars/DebianVars.yml
+      when: (ansible_distribution == "Debian")
+    - include_vars: vars/CentosVars.yml
+      when: (ansible_distribution == "CentOS")
+
+    - name: Download zabbix repository package
+      sudo: yes
+      get_url: url=http://repo.zabbix.com/zabbix/2.4/debian/pool/main/z/zabbix-release/zabbix-release_2.4-1+wheezy_all.deb 
+        dest=/root/zabbix-release_2.4-1+wheezy_all.deb 
+      environment:
+        http_proxy: http://www-cache.ujf-grenoble.fr:3128
+        https_proxy: https://www-cache.ujf-grenoble.fr:3128
+
+    - name: Install zabbix repository package
+      sudo: yes
+      apt: deb=/root/zabbix-release_2.4-1+wheezy_all.deb
+
+    - name: Install libcurl3-gnutls package
+      sudo: yes
+      apt: name=libcurl3-gnutls state=present
+
+    - name: Install zabbix agent
+      sudo: yes
+      apt: pkg='{{item}}' update_cache=yes
+      with_items:
+        - zabbix-agent
+
+    - name: Modify a few parameters in zabbix conf file
+      sudo: yes
+      lineinfile: dest=/etc/zabbix/zabbix_agentd.conf regexp='{{ item.regexp }}' line='{{ item.line }}' backrefs=yes state=present backup=yes
+      with_items:
+        - { regexp: '^Server=127.0.0.1' , line: 'Server=152.77.135.106' }
+        - { regexp: '^Hostname=Zabbix server' , line: '#Hostname=Zabbix server' }
+        - { regexp: '^ServerActive=127.0.0.1' , line: '#ServerActive=127.0.0.1' }
+      notify: 
+        - restart zabbix
+
+    - name: Check zabbix.list exist
+      stat: path=/etc/apt/sources.list.d/zabbix.list
+      register: zabbix_stat
+
+    - name: Disable zabbix repository
+      sudo: yes
+      command: mv /etc/apt/sources.list.d/zabbix.list /etc/apt/sources.list.d/zabbix.list.disabled
+      when: zabbix_stat.stat.exists
+
+    - name: Modify firewall rules
+      sudo: yes
+      lineinfile: dest=/usr/local/bin/local-iptables-rules.sh line='{{ item.line }}' backup=yes
+      with_items:
+        - { line: "# ouverture 10050 zabbix agent (Added bye Ansible)" }
+        - { line: "$IPTABLES -A INPUT -p tcp -m tcp -s 152.77.135.106 --sport 1024:65535 -d $IP --dport 10050 -j ACCEPT" }
+      notify:
+        - restart firewall

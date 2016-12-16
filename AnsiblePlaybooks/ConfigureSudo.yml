@@ -1,0 +1,21 @@
+# 
+# Configure sudo   
+#
+
+- hosts: '{{ Hosts }}'
+  vars_files:
+    - DefaultVars.yml
+  tasks:
+    - include_vars: DebianVars.yml
+      when: (ansible_distribution == "Debian") 
+    - include_vars: CentosVars.yml
+      when: (ansible_distribution == "CentOS") 
+
+    - name: "Add commentary line to sudoers if it doesnt exist"
+      sudo: yes
+      lineinfile: dest=/etc/sudoers line="# Allow members of group ipag-pos-service to execute any command" validate='visudo -cf %s' backup=yes
+
+    - name: "Add line to sudoers if it doesnt exist"
+      sudo: yes
+      lineinfile: dest=/etc/sudoers line="%ipag-pos-service   ALL=(ALL:ALL) ALL" validate='visudo -cf %s' backup=yes
+

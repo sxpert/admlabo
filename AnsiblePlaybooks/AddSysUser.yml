@@ -1,0 +1,24 @@
+# 
+# Create ansible user and copy root@admipag public key 
+#
+
+- hosts: '{{ Hosts }}'
+  vars_files:
+    - DefaultVars.yml
+  tasks:
+    - include_vars: DebianVars.yml
+      when: (ansible_distribution == "Debian") 
+    - include_vars: CentosVars.yml
+      when: (ansible_distribution == "CentOS") 
+
+    - name: "Add User sysipag"
+      sudo: yes
+      user: name={{AnsibleUser}} uid={{AnsibleUid}} groups={{SudoGroup}} shell=/bin/bash home={{AnsibleHomeDirectory}}  
+
+    - name: "Modify ~sysipag permissions"
+      sudo: yes
+      file: path={{AnsibleHomeDirectory}} mode=700
+
+    - name: "Copy SSH key"
+      sudo: yes
+      authorized_key: user={{AnsibleUser}} key="{{ lookup('file', '/srv/prod.admipag/ConfFiles/PubKeys/admtoo.pub') }}" manage_dir=yes
