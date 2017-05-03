@@ -1,0 +1,29 @@
+---
+#
+# Remove Zabbix Agent on Debian servers
+#
+
+- hosts: '{{ Hosts }}'
+
+  vars:
+  vars_files:
+    - vars/DefaultVars.yml
+
+  handlers:
+    - include: handlers/Handlers.yml
+
+  tasks:
+    - include_vars: vars/DebianVars.yml
+      when: (ansible_distribution == "Debian")
+    - include_vars: vars/CentosVars.yml
+      when: (ansible_distribution == "CentOS")
+
+    - name: Remove "zabbix-agent" package
+      sudo: yes
+      apt: name=zabbix-agent state=absent purge=yes 
+
+    - name: Remove "zabbix-release" package
+      sudo: yes
+      apt: name=zabbix-release state=absent purge=yes
+        
+

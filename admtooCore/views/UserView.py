@@ -526,6 +526,7 @@ def user_view_userphoto_field (request, userid, action) :
 	if action == 'value' :
 		if request.method == 'POST' :
 			# here we have only one file
+			# TODO: accepts any file, should be changed to only accept jpeg
 			if 'userphoto' in request.FILES :
 				from django.conf import settings
 				import os

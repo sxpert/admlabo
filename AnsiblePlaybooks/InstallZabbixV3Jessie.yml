@@ -1,6 +1,6 @@
 ---
 # 
-# Install Zabbix Agent on Debian servers
+# Install Zabbix Agent V3 on Debian Jessie
 #
 
 - hosts: '{{ Hosts }}'
@@ -18,17 +18,18 @@
     - include_vars: vars/CentosVars.yml
       when: (ansible_distribution == "CentOS")
 
-    - name: Download zabbix agent package
+    - name: Download "zabbix-release"  package
       sudo: yes
-      get_url: 
-        url=http://repo.zabbix.com/zabbix/3.2/debian/pool/main/z/zabbix-release/zabbix-release_3.2-1+jessie_all.deb 
-        dest=/root/zabbix-release_3.2-1+jessie_all.deb
+      get_url: url=http://repo.zabbix.com/zabbix/3.2/debian/pool/main/z/zabbix-release/zabbix-release_3.2-1+jessie_all.deb dest=/root/zabbix-release_3.2-1+jessie_all.deb
+      environment:
+        http_proxy: http://www-cache.ujf-grenoble.fr:3128
+        https_proxy: https://www-cache.ujf-grenoble.fr:3128
 
-    - name: Install zabbix release package
+    - name: Install "zabbix-release" package
       sudo: yes
-      apt: deb=/root/zabbix-release_3.2-1+jessie_all.deb update_cache=yes
+      apt: deb=/root/zabbix-release_3.2-1+jessie_all.deb
 
-    - name: Install Zabbix agent package
+    - name: Install "zabbix-agent" package
       sudo: yes
       apt: name=zabbix-agent state=latest update_cache=yes
 
@@ -39,17 +40,15 @@
         - { regexp: '^Server=127.0.0.1' , line: 'Server=152.77.135.106' }
         - { regexp: '^Hostname=Zabbix server' , line: '#Hostname=Zabbix server' }
         - { regexp: '^ServerActive=127.0.0.1' , line: '#ServerActive=127.0.0.1' }
+        - { regexp: '^# EnableRemoteCommands=0' , line: 'EnableRemoteCommands=1' }
       notify: 
         - restart zabbix
 
-    - name: Check zabbix.list exist
-      stat: path=/etc/apt/sources.list.d/zabbix.list
-      register: zabbix_stat
-
-    - name: Disable zabbix repository
-      sudo: yes
-      command: mv /etc/apt/sources.list.d/zabbix.list /etc/apt/sources.list.d/zabbix.list.disabled
-      when: zabbix_stat.stat.exists
+#    - name: Check zabbix.list exist
+#    - name: Disable zabbix repository
+#      sudo: yes
+#      command: mv /etc/apt/sources.list.d/zabbix.list /etc/apt/sources.list.d/zabbix.list.disabled
+#      when: zabbix_stat.stat.exists
 
 #    - name: Modify firewall rules
 #      sudo: yes
