@@ -38,8 +38,18 @@
 
 import logging
 from django.conf import settings
-from config.annuaire import *
-import MySQLdb
+
+try:
+	from config.annuaire import *
+except ImportError as e:
+	logging.error("unable to import Annuaire module configuration... skipping")
+	
+try:
+	import MySQLdb
+except:
+	logging.error("unable to import MySQLdb module")
+	MySQLdb = False
+
 import types
 import json
 from admtooCore import models
@@ -58,6 +68,9 @@ class Annuaire (object) :
 			logging.info (message)
 
 	def _connect (self) :
+		if not MySQLdb:
+			self._log(u"FATAL: no mysql found")
+			return False
 		try :
 			self._db = MySQLdb.connect (host=ANNUAIRE_DB_SERVER, db=ANNUAIRE_DB_NAME, user=ANNUAIRE_DB_USER, passwd=ANNUAIRE_DB_PASS)
 		except MySQLdb.Error as e :
@@ -262,7 +275,10 @@ class Annuaire (object) :
 	"""
 	mise a jour d'un utilisateur particulier
 	"""
-	def UpdateUser (self, *args, **kwargs) :
+	def UpdateUser (self, *args, **kwargs):
+		if not MySQLdb:
+			self._log ("Annuaire.UpdateUser : MYSQL not loaded - skipping")
+			return False
 		_, command = args
 		self._init_logger(**kwargs)
 		c = json.loads(command.data)
@@ -276,6 +292,9 @@ class Annuaire (object) :
 	mise a jour complete de tout l'annuaire
 	"""
 	def AnnuaireUpdate (self, *args, **kwargs) :
+		if not MySQLdb:
+			self._log ("Annuaire.UpdateUser : MYSQL not loaded - skipping")
+			return False
 		self._init_logger(**kwargs)
 		users = []
 		for u in models.User.objects.all () :
@@ -288,6 +307,9 @@ class Annuaire (object) :
 	mise a jour de la photo d'un utilisateur
 	"""
 	def UpdatePhoto (self, *args, **kwargs) :
+		if not MySQLdb:
+			self._log ("Annuaire.UpdateUser : MYSQL not loaded - skipping")
+			return False
 		_, command = args
 		self._init_logger(**kwargs)
 		c = json.loads (command.data)
