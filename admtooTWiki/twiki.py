@@ -3,7 +3,11 @@
 import os, sys, json
 import admtooLib.AdminFunctions as af
 # twiki config should be in config sub module...
-from .config.twiki import *
+try:
+	from .config.twiki import *
+except ImportError as e:
+	import logging
+	logging.error("unable to import TWiki module configuration... skipping")
 
 class TWiki (object) :
 	
