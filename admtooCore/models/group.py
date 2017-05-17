@@ -107,7 +107,8 @@ class Group (models.Model) :
 	def destroy (self, user=None) :
 		# get members list
 		g = self.prepare_group_data()
-		logger.error ("destroying group : "+str(g['members']))
+		if g is not None:
+			logger.error ("destroying group : "+str(g['members']))
 
 		import command, json
 		c = command.Command ()
