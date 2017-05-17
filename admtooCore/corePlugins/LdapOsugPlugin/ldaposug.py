@@ -28,12 +28,14 @@ class Core_LdapOsug (object) :
 		l.set_option (ldap.OPT_X_TLS_DEMAND, True)
 		try :
 			l.start_tls_s ()
-		except ldap.SERVER_DOWN as e :
+		except ldap.SERVER_DOWN as e:
 			self._log ('LdapOsug Fatal: unable to contact LDAP server')
 			sys.exit (1)
-		except ldap.CONNECT_ERROR as e :
+		except ldap.CONNECT_ERROR as e:
 			self._log ('LdapOsug FATAL: unable to starttls')
 			sys.exit (1)
+		except ldap.PROTOCOL_ERROR as e:
+			self._log ('LdapOsug WARNING: tls not supported')
 		l.simple_bind_s (OSUG_LDAP_ROOT, OSUG_LDAP_PASS)
 		self._l = l
 

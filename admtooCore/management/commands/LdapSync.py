@@ -14,6 +14,7 @@ class LdapSync (object) :
 	def run (self) :
 		l = plugins.Core_LdapOsug
 		users = l.GetUsers()
+		print users
 		added_users = 0
 		modified_users = 0
 		deleted_users = 0
