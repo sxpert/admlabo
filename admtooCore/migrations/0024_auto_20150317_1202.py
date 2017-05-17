@@ -19,7 +19,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='command',
             name='modified',
-            field=models.DateTimeField(auto_now=True, auto_now_add=True, null=True),
+            field=models.DateTimeField(auto_now_add=True, null=True),
             preserve_default=True,
         ),
     ]

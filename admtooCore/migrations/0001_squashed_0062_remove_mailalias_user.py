@@ -196,7 +196,7 @@ class Migration(migrations.Migration):
                 ('verb', models.CharField(max_length=64)),
                 ('data', models.TextField()),
                 ('done', models.BooleanField(default=False)),
-                ('modified', models.DateTimeField(auto_now=True, auto_now_add=True, null=True)),
+                ('modified', models.DateTimeField(auto_now=True, null=True)),
             ],
             options={
             },
