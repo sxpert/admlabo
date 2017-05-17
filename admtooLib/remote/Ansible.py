@@ -1,8 +1,20 @@
 # -*- coding: utf-8 -*-
 import os
 import subprocess, sys
-import ansible 
-import ansible.runner as ar
+import ansible
+
+ANSIBLE_API_VERSION = None
+
+import logging
+logging.basicConfig()
+logger = logging.getLogger(__name__)
+
+try:
+	import ansible.runner as ar
+except:
+	logger.error("Unable to import ansible.runner API - suspect API v2")
+else: 
+	ANSIBLE_API_VERSION = 1
 
 #==================================================================================================
 #
