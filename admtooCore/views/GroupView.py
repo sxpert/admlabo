@@ -71,6 +71,17 @@ def group_view_name_field (request, group_id, action) :
 		data['value'] = d
 	return data
 
+def group_view_gidNumber_field (request, group_id, action):
+	g = models.Group.objects.get(gidnumber=group_id)
+	data = {}
+	if action == 'value' and request.method == 'POST':
+		pass
+	d = g.gidnumber
+	if d is None: # should not happen
+		d = ''
+	data['value'] = d
+	return data
+
 # 
 # TWikiName
 
@@ -244,7 +255,8 @@ def group_view_field (request, group_id, action, fieldtype, fieldname) :
 	if fieldtype == 'text' :
 		if fieldname == 'name' :
 			data = group_view_name_field (request, group_id, action)
-
+		if fieldname == 'gidNumber': 
+			data = group_view_gidNumber_field (request, group_id, action)
 		# only temporary
 		if fieldname == 'TWikiName' :
 			data = group_view_appspecname_variable_field (request, group_id, action, 'twiki')
