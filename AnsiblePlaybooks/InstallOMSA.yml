@@ -17,30 +17,15 @@
       sudo: yes
       shell: /bin/echo "deb http://linux.dell.com/repo/community/deb/latest /" >> /etc/apt/sources.list.d/dell.list
 
-#    - name: add Dell apt-key
-#      sudo: yes
-#      apt_key: keyserver=pool.sks-keyservers.net id=1285491434D8786F
-
-    - name: Download libssl package
+    - name: Add Dell repo keys
       sudo: yes
-      get_url: url=http://snapshot.debian.org/archive/debian/20110406T213352Z/pool/main/o/openssl098/libssl0.9.8_0.9.8o-7_amd64.deb  
-        dest=/root/libssl0.9.8_0.9.8o-7_amd64.deb 
-      environment:
-        http_proxy: http://www-cache.ujf-grenoble.fr:3128
-
-    - name: Install libssl package
-      sudo: yes
-      apt: deb=/root/libssl0.9.8_0.9.8o-7_amd64.deb
-
+      apt_key: url=hkp://pool.sks-keyservers.net:80 id=1285491434D8786F state=present
+ 
     - name: Install Dell utils
       sudo: yes
-      apt: pkg='{{item}}' update_cache=yes force=yes
+      apt: pkg='{{item}}' update_cache=yes force=yes install_recommends=yes
       with_items:
-        - srvadmin-base
-        - srvadmin-rac5
-        - srvadmin-idrac7
-        - srvadmin-webserver
-        - srvadmin-storageservices
+        - srvadmin-all
       notify:
         - restart dataeng
         - restart dsm_om_connsvc

@@ -42,14 +42,14 @@
       notify: 
         - restart zabbix
 
-    - name: Check zabbix.list exist
-      stat: path=/etc/apt/sources.list.d/zabbix.list
-      register: zabbix_stat
+#    - name: Check zabbix.list exist
+#      stat: path=/etc/apt/sources.list.d/zabbix.list
+#      register: zabbix_stat
 
-    - name: Disable zabbix repository
-      sudo: yes
-      command: mv /etc/apt/sources.list.d/zabbix.list /etc/apt/sources.list.d/zabbix.list.disabled
-      when: zabbix_stat.stat.exists
+#    - name: Disable zabbix repository
+#      sudo: yes
+#      command: mv /etc/apt/sources.list.d/zabbix.list /etc/apt/sources.list.d/zabbix.list.disabled
+#      when: zabbix_stat.stat.exists
 
 #    - name: Modify firewall rules
 #      sudo: yes
