@@ -1,9 +1,10 @@
 function icon_path (icon) {
-	return '/static/material-design-icons/'+icon+'.svg';
+	return '/static/material-design-icons/content/svg/design/ic_'+icon+'_24px.svg';
 }
 
 function icon_button (icon, func) {
-	var button = $('<img src="'+icon_path(icon)+'" style="float:right" data-control="button"/>');
+	//var button = $('<img src="'+icon_path(icon)+'" style="float:right" data-control="button"/>');
+	var button = $('<span style="float:right" data-control="button" class="material-icons">'+icon+'</span>');
 	// attach the event
 	button.on('click', func);
 	return button;
@@ -29,7 +30,8 @@ function df_set_edit_icon (elem) {
 	if ((ec!==undefined)&&((ec=="false")||(ec=="0"))) 
 		return;
 	elem.find('[data-control=button]').remove();
-	elem.prepend(icon_button('content/svg/design/ic_create_24px',df_start_edit));
+	//elem.prepend(icon_button('content/svg/design/ic_create_24px',df_start_edit));
+	elem.prepend(icon_button('create',df_start_edit));
 } 
 
 function df_set_save_icons (elem) {
@@ -37,8 +39,10 @@ function df_set_save_icons (elem) {
 	if ((ec!==undefined)&&((ec=="false")||(ec=="0"))) 
 		return;
 	elem.find('[data-control=button]').remove();
-	elem.prepend(icon_button('content/svg/design/ic_save_24px', df_save_edit));
-	elem.prepend(icon_button('content/svg/design/ic_clear_24px', df_clear_edit));
+	//elem.prepend(icon_button('content/svg/design/ic_save_24px', df_save_edit));
+	elem.prepend(icon_button('save', df_save_edit));
+	//elem.prepend(icon_button('content/svg/design/ic_clear_24px', df_clear_edit));
+	elem.prepend(icon_button('clear', df_clear_edit));
 }
 
 function df_start_edit (event) {
@@ -217,7 +221,8 @@ function df_multiselect_initialize (field, data) {
 		var val = sopt[o][1];
 		var l = $('<li data-value="'+key+'">'+val+'</li>');
 		// remove button
-		var b = icon_button ('content/svg/design/ic_remove_24px', df_multiselect_remove_option);
+		//var b = icon_button ('content/svg/design/ic_remove_24px', df_multiselect_remove_option);
+		var b = icon_button ('remove', df_multiselect_remove_option);
 		l.prepend(b);
 		u.append(l);
 	}
@@ -229,7 +234,8 @@ function df_multiselect_initialize (field, data) {
 	}
 	sopt.sort (function (a, b) { return a[1] > b[1]; });
 	var d = $('<div data-control="select-div"/>');
-	var b = icon_button ('content/svg/design/ic_add_24px', df_multiselect_add_option);
+	//var b = icon_button ('content/svg/design/ic_add_24px', df_multiselect_add_option);
+	var b = icon_button ('add', df_multiselect_add_option);
 	d.append (b);
 	
 	var ts = '<select data-control="select-control">';
@@ -286,7 +292,8 @@ function df_multiselect_add_option (event) {
 	var control = field.find('[data-control=selected-list]');
 	var list = control.children();
 	var newitem = $('<li data-value="'+key+'">'+value+'</li>');
-	var b = icon_button ('content/svg/design/ic_remove_24px', df_multiselect_remove_option);
+	//var b = icon_button ('content/svg/design/ic_remove_24px', df_multiselect_remove_option);
+	var b = icon_button ('remove', df_multiselect_remove_option);
 	newitem.prepend(b);
 	var found = false;
 	for (var i=0; i<list.length;i++) {
@@ -464,14 +471,16 @@ function df_multitext_initialize (field, data) {
 		console.log (k);
 		var li = $('<li data-control="multitext-entry">');
 		if (errors) {
-			var b = icon_button ('content/svg/design/ic_remove_24px', df_multitext_remove_option);
+			//var b = icon_button ('content/svg/design/ic_remove_24px', df_multitext_remove_option);
+			var b = icon_button ('remove', df_multitext_remove_option);
 			var input = $('<input type="text" data-control="multitext-input">');
 			input.val(values[k]);
 			li.append(b);
 			li.append(input);
 			if (errors && (errors[k]!=null)) {
 				console.log (errors[k]);
-				var error = $('<img src="'+icon_path('content/svg/design/ic_report_24px')+'" data-control="button"/>');
+				//var error = $('<img src="'+icon_path('content/svg/design/ic_report_24px')+'" data-control="button"/>');
+				var error = $('<img src="'+icon_path('report')+'" data-control="button"/>');
 				error.attr('title', errors[k]);
 				li.append (error);
 			} 
@@ -481,7 +490,8 @@ function df_multitext_initialize (field, data) {
 	}
 	if (errors) {
 		var li = $('<li data-control="multitext-append">');
-		var b = icon_button ('content/svg/design/ic_add_24px', df_multitext_add_option);
+		//var b = icon_button ('content/svg/design/ic_add_24px', df_multitext_add_option);
+		var b = icon_button ('add', df_multitext_add_option);
 		li.append(b);
 		ul.append(li);
 	}
@@ -518,7 +528,8 @@ function df_multitext_add_option (e) {
 	var mt = $(e.target).parents('[data-control=multitext-list]');
 	/* generate new entry */
 	var li = $('<li data-control="multitext-entry">');
-	var b = icon_button ('content/svg/design/ic_remove_24px', df_multitext_remove_option);
+	//var b = icon_button ('content/svg/design/ic_remove_24px', df_multitext_remove_option);
+	var b = icon_button ('remove', df_multitext_remove_option);
 	var input = $('<input type="text" data-control="multitext-input">');
 	li.append (b);
 	li.append (input);
@@ -640,7 +651,8 @@ function df_keyvalue_add_footer (table, keys) {
 	cell.attr('colspan', '2');
 	var select = $('<select>');
 	cell.append(select);
-	var button = icon_button ('content/svg/design/ic_add_24px', df_keyvalue_add_key);
+	//var button = icon_button ('content/svg/design/ic_add_24px', df_keyvalue_add_key);
+	var button = icon_button ('add', df_keyvalue_add_key);
 	cell.append(button)
 	row.append(cell);
 	footer.append(row);
@@ -664,7 +676,8 @@ function df_keyvalue_set_pair_rw (table, key, value) {
 	i.attr('type', 'text');
 	i.attr('value', value);
 	d.append(i);
-	var button = icon_button ('content/svg/design/ic_remove_24px', df_keyvalue_delete_key);
+	//var button = icon_button ('content/svg/design/ic_remove_24px', df_keyvalue_delete_key);
+	var button = icon_button ('remove', df_keyvalue_delete_key);
 	d.append(button);
 }
 
