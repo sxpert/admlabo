@@ -21,7 +21,7 @@ logger=logging.getLogger('django')
 
 class Command (models.Model) :
 	created   = models.DateTimeField (auto_now_add=True)
-	modified  = models.DateTimeField (auto_now=True, auto_now_add=True, null=True)
+	modified  = models.DateTimeField (auto_now_add=True, null=True)
 	user      = models.CharField (max_length=64)
 	verb      = models.CharField (max_length=64)
 	data      = models.TextField (default='', blank=True) # could be some soft of json field
