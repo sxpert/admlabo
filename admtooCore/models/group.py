@@ -39,44 +39,41 @@ class Group(models.Model):
 
     #
     # finds an available gidnumber within the permitted range
+    def _get_next_available_group_id(self):
+        last_group = Group.objects.all().aggregate(Max('gidnumber'))['gidnumber__max']
+        LOGGER.error('current max gidnumber '+str(last_group))
+        group_id = last_group+1
+        LOGGER.error('selected next gidnumber '+str(group_id))
+        return group_id
+
     @transaction.atomic
     def create_new(self):
         # step 1: check for ranges
-        LOGGER.error('identifying new group id')
-        last_group = Group.objects.all().aggregate(Max('gidnumber'))['gidnumber__max']
-        LOGGER.error(type(last_group))
-        LOGGER.error('current max gidnumber '+str(last_group))
-        new_gidnumber = last_group+1
-        LOGGER.error('selected next gidnumber '+str(new_gidnumber))
-        # check if the new number is within the range
         try:
             ranges = settings.GIDNUMBER_RANGES
         except AttributeError as e:
-            # ranges are not defined, assume all are authorized
-            return True
-        if type(ranges) is not list:
-            LOGGER.error('ERROR: settings.GIDNUMBER_RANGES should be an array of 2 values arrays')
-            # consider things ok though
-            return True
-        LOGGER.error(ranges)
-        # if no ranges defined, consider everything ok
-        if len(ranges) <= 0:
-            return True
-        ok = False
-        for r in ranges:
-            if type(r) is not list:
-                LOGGER.error(u'ERROR: settings.GIDNUMBER_RANGES should '
-                             u'be an array of 2 values arrays')
-                # skip this element
-                continue
-            d, u = r
-            if (d <= new_gidnumber) and (new_gidnumber <= u):
-                ok = True
-        if ok:
-            LOGGER.error('number is in range')
+            # ranges are not defined, consider any gid number is valid
+            LOGGER.error('ranges are not defined, finding new group id')
+            group_id = self._get_next_available_group_id()
         else:
-            LOGGER.error('ERROR: new number is invalid')
-        self.gidnumber = new_gidnumber
+            # ranges are defined, find a gidnumber within them
+            if not isinstance(ranges, list):
+                LOGGER.error(u'ERROR: settings.GIDNUMBER_RANGES should be a list '
+                             u'of 2-values arrays')
+                # things are wrong...
+                return False
+            # only look for group ids in ranges when ranges are defined
+            if len(ranges) > 0:
+                LOGGER.error(ranges)
+                group_id_found = False
+                # find appropriate group_id
+                for range in ranges:
+                    pass 
+            else:
+                LOGGER.error(u'There are no ranges defined in the list')
+                group_id = self._get_next_available_group_id()
+
+        self.gidnumber = group_id
         # don't involve the external update mechanisms just yet, as nothing is filled in
         # this may fail with an IntegrityError
         from django.db import IntegrityError
@@ -254,7 +251,6 @@ class Group(models.Model):
 
     # find the groups wiki_team_name
     def wiki_teamlogo(self):
-        import json
         try:
             asn = json.loads(self.appspecname)
         except ValueError as e:
