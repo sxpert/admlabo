@@ -41,7 +41,7 @@ def group_new (request) :
 		return redirect ('group-view', group_id=g.gidnumber)
 	else :
 		# show the list again with an error in context
-		return redirect ('group-list')
+		return redirect ('groups')
 
 
 #------------------------------------------------------------------------------
