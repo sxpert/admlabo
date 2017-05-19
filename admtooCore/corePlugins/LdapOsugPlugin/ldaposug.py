@@ -274,7 +274,9 @@ class Core_LdapOsug (object) :
 		if description is not None :
 			if type(description) is unicode :
 				description = description.encode ('utf8')
-			ml['description'] = [description]
+			# skip description if it's an empty string (we get errors otherwise)
+			if len(description) > 0:
+				ml['description'] = [description]
 		# add users
 		if members is not None :
 			if type(members) is not list :
@@ -603,6 +605,10 @@ class Core_LdapOsug (object) :
 		self._init_logger(**kwargs)
 		import json
 		c = json.loads (command.data)
+		if c is None:
+			# nothing to be done...
+			self._log("data is None, nothing to be done !!")
+			return True
 		ck = c.keys ()
 		cn = None
 		if 'cn' in ck :
