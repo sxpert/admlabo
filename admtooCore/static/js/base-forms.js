@@ -139,7 +139,17 @@ function df_save_value (field) {
 	}
 	df_ajax ('POST', url, data,
 		function (result) {
-			//console.log (result);
+			if ('redirect' in result) { 
+				if (typeof(history.pushState != "undefined")) {
+					var obj = { Title: document.title, Url: result.redirect };
+					history.pushState (obj, obj.Title, obj.Url);  
+				} else {
+					console.log (result);
+					// fallback, this reloads the page...
+					$(location).attr('href',result.redirect);
+					return;
+				}
+			}	
 			var e = ('errors' in result);
 			if (!e) 
 				df_set_edit_icon(field);
@@ -436,9 +446,22 @@ function df_text_initialize (field, data) {
 }
 
 function df_text_set_value (field, data) {
-	field.find('[data-control=text]').remove();
-	if (!('value' in data)) return;
-	field.append ($('<span>'+data['value']+'</span>'));
+	if ('errors' in data) { 
+		errors = data['errors'];
+		console.log(errors);
+		var input_field = field.find('[data-control=text]');
+		var error = $('<span/>');
+		error.addClass('material-icons');
+		error.attr('data-control','button');
+		error.attr('title', errors);
+		error.text('error');
+		error.css('color','red');
+		error.insertBefore(input_field);
+	} else {
+		field.find('[data-control=text]').remove();
+		if (!('value' in data)) return;
+		field.append ($('<span>'+data['value']+'</span>'));
+	}
 }
 
 function df_text_get_value (field) {
