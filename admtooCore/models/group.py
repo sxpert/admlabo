@@ -65,25 +65,41 @@ class Group(models.Model):
             # only look for group ids in ranges when ranges are defined
             if len(ranges) > 0:
                 LOGGER.error(ranges)
-                group_id_found = False
+                group_id = None
                 # find appropriate group_id
-                for range in ranges:
-                    pass 
+                for group_range in ranges:
+                    groups_in_range = Group.objects.filter(gidnumber__gte=group_range[0],
+                                                           gidnumber__lte=group_range[1])
+                    last_group = groups_in_range.aggregate(Max('gidnumber'))['gidnumber__max']
+                    if last_group is None:
+                        # did not find any group in the range
+                        group_id = group_range[0]
+                        break
+                    if last_group == group_range[1]:
+                        #print "group_id %d would be outside the range - "\
+                        #      "looking for another"%(last_group+1)
+                        continue
+                    # we found a valid last_group in this range
+                    group_id = last_group + 1
+                    break
+                if group_id is None:
+                    # no available group number was found in the range
+                    return False
+                #print "selected group_id %s"%(str(group_id))
             else:
                 LOGGER.error(u'There are no ranges defined in the list')
                 group_id = self._get_next_available_group_id()
-
         self.gidnumber = group_id
         # don't involve the external update mechanisms just yet, as nothing is filled in
+        # at this point, only the gidnumber is specified
         # this may fail with an IntegrityError
         from django.db import IntegrityError
         try:
             super(Group, self).save()
-        except IntegrityError as e:
-            LOGGER.error(u'ERROR: attempt to create a group with an '
-                         u'already existing name '+unicode(self.name))
-            ok = False
-        return ok
+        except IntegrityError as error:
+            LOGGER.error(error)
+            return False
+        return True
 
     #
     # removes a group
