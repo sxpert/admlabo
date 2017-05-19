@@ -68,10 +68,13 @@ class Command (models.Model) :
 		elif self.verb=='UpdateGroup':
 			return d['cn']
 		elif self.verb=='DestroyGroup':
-			if (d['cn'] is not None) and (len(d['cn'])>0) :
-				return d['cn']
-			else :
-				return str(d['gidNumber'])
+			if d is not None:
+				if (d['cn'] is not None) and (len(d['cn'])>0) :
+					return d['cn']
+				else :
+					return str(d['gidNumber'])
+			else:
+				return "Group info is None (should not happen)"
 		# mail alias
 		elif self.verb=='UpdateMailAlias':
 			return d['alias']
