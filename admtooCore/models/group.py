@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 
 import logging
+import json
+import netfields
 from django.db import models, transaction
 from django.db.models import Max
 from django.conf import settings
-import json
-import netfields
 
 LOGGER = logging.getLogger('django')
 
