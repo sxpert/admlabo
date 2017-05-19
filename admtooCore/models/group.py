@@ -101,6 +101,41 @@ class Group(models.Model):
             return False
         return True
 
+    @transaction.atomic    
+    def change_gidNumber(self, new_gidNumber, user=None):
+        """
+        Changes the gidNumber of the group, after making sure we don't already
+        have a group existing with that particular number
+        returns True if the number could be changed
+        False when the new number already existed
+        """
+        from .user import User
+        try:
+            new_group = Group.objects.get(gidnumber=new_gidNumber)
+        except Group.DoesNotExist as error:
+            # group not found... we can set the new group
+            LOGGER.error('new gidNumber %d is valid'%(new_gidNumber))
+            # copy self to a new group object, with the new number
+            new_group = Group()
+            new_group.gidnumber = new_gidNumber
+            new_group.name = self.name
+            new_group.group_type = self.group_type
+            new_group.parent = self.parent
+            new_group.description = self.description
+            new_group.appspecname = self.appspecname
+            old_gidNumber = self.gidnumber
+            old_members_list = self.members()
+            old_members = []
+            for member in old_members_list:
+                old_members.append(member.uidnumber)
+            self.delete(user)
+            # internal save
+            super(Group, new_group).save()
+            new_group.set_members(old_members, user)
+            return True
+        LOGGER.error('new gidNumber %d is invalid'%(new_gidNumber))
+        return False
+
     #
     # removes a group
     #
