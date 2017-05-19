@@ -1,31 +1,37 @@
 # -*- coding: utf-8 -*-
 
 import json
-from django.http import HttpResponse
-from django.shortcuts import render, redirect
-from django.core.urlresolvers import reverse
+import logging
+
+from django.conf import settings
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.core.urlresolvers import reverse
+from django.http import HttpResponse
+from django.shortcuts import redirect, render
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
-from .. import models
+
 from decorators import *
 
-import logging
+from .. import models
+
 logger = logging.getLogger('django_auth_ldap')
 
 #
 # details of one particular group
 #
+
+
 @admin_login
-def group_view (request, group_id) :
-	g = models.Group.objects.get(gidnumber = group_id)
+def group_view(request, group_id):
+	g = models.Group.objects.get(gidnumber=group_id)
 	action = request.POST.get('action', '').strip()
-	if action == 'delete' :
-		logger.error ('destroying group '+str(g.gidnumber))
-		g.destroy (request.user)
-		return redirect ('groups')
+	if action == 'delete':
+		logger.error('destroying group ' + str(g.gidnumber))
+		g.destroy(request.user)
+		return redirect('groups')
 
 	context = {
-		'group' : g,
+		'group': g,
 	}
 	return render(request, 'group-view.html', context)
 
@@ -34,15 +40,26 @@ def group_view (request, group_id) :
 # finds an empty gidnumber to use, create new group with it
 # and then passes to the group_view for editing
 #
-@admin_login
-def group_new (request) :
-	g = models.Group ()
-	if g.create_new() :
-		return redirect ('group-view', group_id=g.gidnumber)
-	else :
-		# show the list again with an error in context
-		return redirect ('groups')
 
+
+@admin_login
+def group_new(request):
+    g = models.Group()
+    if g.create_new():
+		return redirect('group-view', group_id=g.gidnumber)
+    else:
+        # show the list again with an error in context
+        # can only happen when settings.GIDNUMBER_RANGES is defined
+        groups = models.Group.objects.all().order_by('name')
+        error = "Il n'y a plus de gidNumber disponibles dans les ranges autorisés:\n<ul>"
+        for group_range in settings.GIDNUMBER_RANGES:
+            error += "<li>%d - %d</li>\n"%(group_range[0], group_range[1])
+        error += "</ul>"
+        context = {
+            'groups': groups,
+            'error': error
+        }
+        return render(request, 'group-list.html', context)
 
 #------------------------------------------------------------------------------
 # 
@@ -267,5 +284,3 @@ def group_view_field (request, group_id, action, fieldtype, fieldname) :
 			data = group_view_description_field (request, group_id, action)
 	jsdata = json.dumps(data)
 	return HttpResponse(jsdata, content_type='application/json') 
-
-

@@ -4,6 +4,7 @@
 <p><a href="{% url 'dashboard' %}">retour au dashboard</a></p>
 <h1>liste des groupes</h1>
 <p>{{ groups|length }} groupes <button form="new-group">nouveau groupe</button></p>
+{% if error %}<div class="error-block">{{ error | safe }}</div>{% endif %}
 <table>
   <tbody>
 {% for group in groups %}

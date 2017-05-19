@@ -2,6 +2,12 @@ html {
 	font-size      : 10pt;
 	font-family    : segoe ui, sans, sans-serif;
 }
+.error-block {
+	border: 1px solid red;
+	background-color: #ffffbb;
+	width: 50%;
+	padding: 4pt;
+}
 #headblock {
 	font-size: 8pt;
 }
