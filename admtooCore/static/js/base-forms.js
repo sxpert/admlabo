@@ -30,6 +30,7 @@ function df_set_edit_icon (elem) {
 	if ((ec!==undefined)&&((ec=="false")||(ec=="0"))) 
 		return;
 	elem.find('[data-control=button]').remove();
+	elem.find('[data-control=error]').remove();
 	//elem.prepend(icon_button('content/svg/design/ic_create_24px',df_start_edit));
 	elem.prepend(icon_button('create',df_start_edit));
 } 
@@ -450,13 +451,16 @@ function df_text_set_value (field, data) {
 		errors = data['errors'];
 		console.log(errors);
 		var input_field = field.find('[data-control=text]');
-		var error = $('<span/>');
-		error.addClass('material-icons');
-		error.attr('data-control','button');
+		var error = field.find('[data-control=error]');
+		if (error.length == 0) {
+			error = $('<span/>');
+			error.addClass('material-icons');
+			error.attr('data-control','error');
+			error.text('error');
+			error.css('color','red');
+			error.insertBefore(input_field);
+		}
 		error.attr('title', errors);
-		error.text('error');
-		error.css('color','red');
-		error.insertBefore(input_field);
 	} else {
 		field.find('[data-control=text]').remove();
 		if (!('value' in data)) return;
