@@ -19,6 +19,7 @@ class Core_LdapOsug (object) :
 		if DEBUG :
 			trace = 1
 		ldap.set_option (ldap.OPT_X_TLS_REQUIRE_CERT, ldap.OPT_X_TLS_NEVER)
+		print "Ldap server %s"%(OSUG_LDAP_URI)
 		l = ldap.initialize (OSUG_LDAP_URI)
 		if l is None :
 			self._log ('LdapOsug: unable to connect to ldap')
@@ -186,12 +187,35 @@ class Core_LdapOsug (object) :
 
 	def _users_get (self) :
 		f='(&(objectClass=posixAccount)(objectClass=organizationalPerson))'
-		v = self._l.search_s(OSUG_LDAP_IPAG_BASE, ldap.SCOPE_SUBTREE, f)
+		#f='(objectClass=posixAccount)'
+		v = self._l.search_s(OSUG_LDAP_IPAG_PEOPLE_OU+','+OSUG_LDAP_IPAG_BASE, ldap.SCOPE_SUBTREE, f)
+		print "ldap returned %d entries"%(len(v))
+		#v = self._l.search_s(OSUG_LDAP_IPAG_PEOPLE_OU+','+OSUG_LDAP_IPAG_BASE, ldap.SCOPE_SUBTREE)
 		users = {}
+		counter = 0
+		uidnumberlist = []
 		for u in v :
-			cn, d = self._ldap_clean_record(u)
+			counter+=1
+			rec = self._ldap_clean_record(u)
+			if rec is None:
+				print "user not valid"
+				print u
+				continue
+			cn, d = rec
+			if 'uidNumber' not in d.keys():
+				print "user has no uidNumber entry"
+				print cn
+				print d
+				continue 
 			uidNumber = d['uidNumber']
+			if uidNumber in uidnumberlist:
+				olduser = users[uidNumber]
+				print "user with uidNumber %s already exists, user %s conflicts with user %s"%(uidNumber, d['uid'], olduser['uid'])
+				continue
+			uidnumberlist.append(uidNumber)
 			users[uidNumber] = d
+		print "seen %d users in the loop"%(counter)
+		print "%d users after filtering"%(len(users.keys()))
 		return users
 		
 

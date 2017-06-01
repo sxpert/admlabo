@@ -14,7 +14,7 @@ class LdapSync (object) :
 	def run (self) :
 		l = plugins.Core_LdapOsug
 		users = l.GetUsers()
-		print users
+		print "%d users found in ldap server"%(len(users))
 		added_users = 0
 		modified_users = 0
 		deleted_users = 0
@@ -22,6 +22,7 @@ class LdapSync (object) :
 		# in some cases, users exist with no valid uidnumber, those are skipped
 		for uidnumber in users.keys() :
 			lu = users[uidnumber]
+			#print lu['uid']
 			create = False
 			try :
 				u = User.objects.get(uidnumber=uidnumber)
@@ -44,8 +45,8 @@ class LdapSync (object) :
 						u.uidnumber = uidnumber
 						u.save ()
 			if create :
-				print lu
 				u.login = lu['uid']
+				print "create user %s"%(u.login)
 				u.login_shell = lu['loginShell']
 				u.first_name = lu['givenName']
 				u.last_name = lu['sn']
@@ -130,6 +131,7 @@ class LdapSync (object) :
 
 				# the user was modified, save it
 				if modified : 
+					print "modify user %s"%(u.login)
 					modified_users+=1
 					u.save()
 				
